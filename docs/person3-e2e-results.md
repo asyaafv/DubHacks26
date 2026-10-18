@@ -3,10 +3,13 @@
 ## Publication candidate — October 18, 2026
 
 This section supersedes earlier assembly/runtime results below. The publishable
-stack begins at latest fetched main **`ed7a4a75216eb0fad4bd81c9e3ab30c04a41e68d`**,
+stack begins at latest fetched main **`b263e935fb22276a0d81f094efffdec4481606b2`**,
 which already contains foundation PR #12 and delivery PR #15. Those implementation
 commits are not cherry-picked again. Only missing files/configuration changes are
 published; no duplicate component or historical rename commits are added.
+Latest main also includes intake/redaction/deployment/console PRs #17–21; those
+are preserved. Savings commit `5279322` regenerates OpenAPI against that real
+application, including its new intake models and console routes.
 All work uses new isolated `lapse-review-*` worktrees; owner branches/checkouts and
 the original `lapse-e2e` remain untouched.
 
@@ -20,25 +23,30 @@ are the public identities, with the combined suite rerun before publication.
 Merge order (each PR is based on the preceding branch; after its predecessor is
 merged, retarget the next PR to `main` before merging):
 
-1. `codex/person3-lookup-review`, tested head
-   **`c3e0545dca64cb7661a6bd4f442e02330d889748`**: lookup plus its separate storage
+1. [PR #28 — lookup/storage](https://github.com/asyaafv/DubHacks26/pull/28),
+   `codex/person3-lookup-review`, tested head
+   **`8532b2157be95a391d305cd0a6348756916c746e`**: lookup plus its separate storage
    additions, current lookup LAPSE names, and declared MiniLM dependency.
-2. `codex/person3-stacking-review`, tested head
-   **`735d71458ad0d9a32476d2d50da2d64c7d48022c`**: stacking plus core OR-Tools
+2. [PR #29 — stacking](https://github.com/asyaafv/DubHacks26/pull/29),
+   `codex/person3-stacking-review`, tested head
+   **`1d4e7dadf7b97ec1cc3b22afe36f9ff7cf1ff5b0`**: stacking plus core OR-Tools
    dependency. Based on the lookup head above.
-3. `codex/person3-savings-review`, tested head
-   **`10003bea3f78867f620f4e5b71777b98f27f7489`**: savings implementation from
+3. [PR #30 — savings](https://github.com/asyaafv/DubHacks26/pull/30),
+   `codex/person3-savings-review`, tested head
+   **`52793224260b9b9c7696cb12a5104e9b2a852425`**: savings implementation from
    `codex/savings-tracking` (`704c145`), migration/contracts/startup history.
    Contract-doc conflict resolved preserving main and savings semantics.
-4. `codex/person3-e2e-review`, combined tested implementation
-   **`a3200568c0b5db0335b1259576d427017c59c5bd`**: E2E harness/tests/report and
+4. [PR #31 — E2E/LAPSE](https://github.com/asyaafv/DubHacks26/pull/31),
+   `codex/person3-e2e-review`, combined tested implementation
+   **`47e74d8a884e6ca1a7ce37b1a1bc0b503d33905d`**: E2E harness/tests/report and
    remaining LAPSE config/documentation updates. Subsequent report commits change
    documentation only; this is the exact code and manifest snapshot tested.
 
-Feature files and all test assertions match the previously verified `8265c00`
-assembly. The only combined functional-file differences are the dependency
-manifests. `backend/extraction/` matches latest main exactly, preserving real
-extraction; main.py has only the existing savings additions. The strict contract
+Person 3 feature implementations and all existing test assertions match the
+previously verified `8265c00` assembly. The new manifests and latest upstream
+intake/console contract generation are included. `backend/extraction/` and
+`backend/intake/` match latest main exactly; main.py differs from main only by
+the existing savings additions. The strict contract
 test remains unchanged. `python scripts/gen_contracts.py` produces zero diff.
 
 ### Clean dependency verification
@@ -52,7 +60,10 @@ extraction constraints were preserved. The latter intersects merchants' existing
 
 Resolved both root manifests together with **every** extraction manifest,
 including `gliner2[local]==2.1.0`, using `uv pip compile` on fresh Python 3.11.
-Resolution succeeded. Installed core, ML and all extraction manifests except
+Resolution succeeded, and was repeated successfully with all new intake manifests
+(including Presidio 2.2.364 and spaCy >=3.7,<4). Optional Presidio/spaCy models are
+not installed or exercised; upstream intake uses its regex fallback here.
+Installed core, ML and all extraction manifests except
 `gliner_extract.txt`, constrained to that full resolution. This deliberately keeps
 GLiNER2/model provisioning separate from the Person 3 verification; it is not
 reported as installed or working. `uv pip check` reports **all 102 installed
@@ -66,26 +77,31 @@ not a claim that GLiNER2 model loading was exercised.
 
 ### Latest results and reproduction
 
-- Final combined candidate: **116 passed, 0 failed, 0 skipped**, 88.73 seconds
-  including first initialization in the fresh environment, five deprecation
+- Final combined candidate: **116 passed, 0 failed, 0 skipped**, 16.32 seconds
+  on the final latest-main/public-identity rerun, five deprecation
   warnings. Uses native Postgres 17.11, real pgvector/pgcrypto, actual CP-SAT,
   pinned cached offline MiniLM, TCP SSE and real Chromium. Includes actual server
   restart, repeatable $103.51 history and unchanged strict contract regeneration.
-- Separately, unchanged real application contract suite: **40 passed, 2 failed**,
-  four warnings, 3.63 seconds. Both `TestInboundEndpoint` tests reach the real
-  pipeline and fail with `ModuleNotFoundError: gliner2` wrapped in
-  `ExtractionUnavailable`. No mock, stub route or assertion bypass was used.
-  GLiNER2 model loading and complete extraction/extension flow remain unverified.
+- Separately, unchanged real application contract suite: **42 passed**, five
+  warnings, 3.50 seconds. Latest main's intake service installs its own GLiNER2
+  unavailable guard and uses regex/markup fallback; these passes verify that
+  upstream behavior, not actual GLiNER2 extraction. We introduced no mocks, stub
+  routes, guards or assertion bypasses. Direct real `gliner_extract.warmup()`
+  still fails with `ExtractionUnavailable` from `ModuleNotFoundError: gliner2`.
+  The two earlier inbound failures are therefore superseded by upstream fallback
+  behavior, not a repaired ML dependency. GLiNER2 model loading and complete
+  extraction/extension flow remain explicitly unverified.
 - Redemption JavaScript helper: **2 passed**. `git diff --check` passes.
 - Each feature PR head was also tested independently in the fresh environment:
-  lookup plus storage **30 passed** (4.82s), stacking plus storage **69 passed**
-  (1.71s), savings plus storage **23 passed** (1.61s). The latter includes real
+  lookup plus storage **30 passed** (4.98s), stacking plus storage **69 passed**
+  (1.60s), savings plus storage **23 passed** (2.17s). The latter includes real
   delivery streaming. These overlapping suites are not additional unique tests.
-- Raw run evidence: `/private/tmp/lapse-person3-publish-tests.txt`,
-  `/private/tmp/lapse-person3-publish-inbound.txt`,
-  `/private/tmp/lapse-person3-resolve.log`,
-  `/private/tmp/lapse-person3-all-resolved.txt`,
-  `/private/tmp/lapse-person3-fresh-install.log`.
+- Raw run evidence: `/private/tmp/lapse-person3-latest-tests.txt`,
+  `/private/tmp/lapse-person3-latest-inbound.txt`,
+  `/private/tmp/lapse-person3-latest-resolve.log`,
+  `/private/tmp/lapse-person3-latest-all-resolved.txt`,
+  `/private/tmp/lapse-person3-fresh-install.log`,
+  `/private/tmp/lapse-person3-latest-gliner.txt` (expected direct dependency failure).
 
 Run the following from `lapse-review-e2e` after starting the dedicated disposable
 Postgres cluster as documented below. The existing model cache/browser paths in
@@ -96,7 +112,7 @@ changed. Tests use fresh schemas and disposable in-memory keys.
 export UV_CACHE_DIR=/private/tmp/lapse-publish-uv-cache
 uv venv --python 3.11 /private/tmp/lapse-publish-venv
 uv pip compile --python /private/tmp/lapse-publish-venv/bin/python \
-  requirements.txt requirements-ml.txt backend/extraction/requirements/*.txt \
+  requirements.txt requirements-ml.txt backend/extraction/requirements/*.txt backend/intake/requirements/*.txt \
   -o /private/tmp/lapse-person3-all-resolved.txt
 uv pip install --python /private/tmp/lapse-publish-venv/bin/python \
   -r requirements.txt -r requirements-ml.txt \
@@ -111,7 +127,9 @@ uv pip check --python /private/tmp/lapse-publish-venv/bin/python
 export PYTHON=/private/tmp/lapse-publish-venv/bin/python
 sh backend/tests/e2e/run.sh
 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 "$PYTHON" -m backend.tests.e2e.legacy_contracts
-# Above command currently exits 1 for two real inbound dependency failures.
+# Current upstream intake fallback: 42 contracts pass, but GLiNER2 is not verified.
+"$PYTHON" -c 'from backend.extraction.gliner_extract import warmup; warmup()'
+# Direct GLiNER2 probe above exits 1: package absent.
 "$PYTHON" scripts/gen_contracts.py
 node --test frontend/api/redemptions.test.mjs
 git diff --check
