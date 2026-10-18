@@ -59,9 +59,10 @@ def test_mexican_food_puts_tagged_merchants_first(client):
     specific = [h for h in body['results'] if not h['secondary']]
     assert {h['reward']['merchant_name'] for h in specific} == {'Chipotle', 'Taco Bell'}
     assert all('tagged "mexican"' in h['reason'] for h in specific)
-    # Generic restaurant matches trail under the divider.
+    # Default cut: 2 specific + the single best generic under the divider.
+    assert len(body['results']) == 3
     secondary = [h for h in body['results'] if h['secondary']]
-    assert {'McDonald\'s', 'Domino\'s Pizza'} <= {h['reward']['merchant_name'] for h in secondary}
+    assert [h['reward']['merchant_name'] for h in secondary] == ["McDonald's"]
     assert body['secondary_label'] == 'Also in Food'
     # Every secondary hit sorts after every specific hit.
     flags = [h['secondary'] for h in body['results']]
@@ -78,7 +79,8 @@ def test_streetwear_puts_tagged_merchants_first(client):
     assert set(names[:2]) == {'Nike', 'Hollister'}  # tagged streetwear/athletic
     specific = [h for h in body['results'] if not h['secondary']]
     assert all(h['match_component'] == 0.95 for h in specific)
-    assert {'Gap', 'H&M'} <= {h['reward']['merchant_name'] for h in body['results'] if h['secondary']}
+    assert len(body['results']) == 3
+    assert [h['reward']['merchant_name'] for h in body['results'] if h['secondary']] == ['Gap']
     assert body['secondary_label'] == 'Also in Clothing'
 
 
@@ -86,9 +88,11 @@ def test_broad_terms_food_and_clothing(client):
     food = _search(client, 'food').json()
     assert set(_names(food)) <= {'McDonald\'s', 'Taco Bell', 'Chipotle', 'Starbucks',
                                  'Uber Eats', 'Domino\'s Pizza'}
-    assert len(food['results']) >= 5
+    # Broad queries show the flat top 3; the full match count is still reported.
+    assert len(food['results']) == 3 and food['total_matched'] == 6
     clothing = _search(client, 'clothing').json()
-    assert {'Gap', 'Hollister', 'Abercrombie & Fitch', 'H&M', 'Old Navy'} == set(_names(clothing))
+    assert _names(clothing) == ['Gap', 'Abercrombie & Fitch', 'H&M']
+    assert clothing['total_matched'] == 5
     # Broad queries keep a flat ranking: no divider, nothing secondary.
     for body in (food, clothing):
         assert body['secondary_label'] is None
@@ -260,6 +264,36 @@ def test_weak_generic_matches_dropped_when_specifics_exist():
                                          merchants=[chipotle], cards=[], now=NOW)
     assert [h.reward.id for h in hits] == [tagged.id]
     assert matched == 1
+
+
+def test_short_specific_group_fills_from_secondary():
+    """1 primary hit + limit 3 -> the two best secondary hits fill the gap."""
+    chipotle = Merchant(id=uuid4(), name='Chipotle', domain='chipotle.com',
+                        category='Eating Places & Restaurants', mcc='5812')
+    tagged = _reward(merchant_id=chipotle.id, merchant_name='Chipotle')
+    generics = [_reward(merchant_name=f'Diner {i}', value=str(30 - i),
+                        expires_at=NOW + timedelta(days=5)) for i in range(3)]
+    hits, matched, _, label = search_rewards('mexican food', rewards=[tagged, *generics],
+                                             merchants=[chipotle], cards=[], now=NOW)
+    assert matched == 4 and len(hits) == 3
+    assert [h.secondary for h in hits] == [False, True, True]
+    assert hits[0].reward.id == tagged.id
+    assert [h.reward.merchant_name for h in hits[1:]] == ['Diner 0', 'Diner 1']
+    assert label == 'Also in Food'
+
+
+def test_explicit_limit_still_reserves_one_secondary_slot():
+    body_limit = 5
+    chipotle = Merchant(id=uuid4(), name='Chipotle', domain='chipotle.com',
+                        category='Eating Places & Restaurants', mcc='5812')
+    primaries = [_reward(merchant_id=chipotle.id, merchant_name='Chipotle',
+                         value=str(20 - i)) for i in range(6)]
+    generic = _reward(merchant_name='Golden Fork', expires_at=NOW + timedelta(days=5))
+    hits, _, _, _ = search_rewards('mexican food', rewards=[*primaries, generic],
+                                   merchants=[chipotle], cards=[], now=NOW,
+                                   limit=body_limit)
+    assert len(hits) == body_limit
+    assert [h.secondary for h in hits] == [False] * 4 + [True]
 
 
 def test_suggest_chips_counts_only_eligible():

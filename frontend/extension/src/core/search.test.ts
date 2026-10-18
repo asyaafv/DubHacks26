@@ -30,14 +30,23 @@ describe('searchSeed', () => {
       expect(hit.reason).toContain('tagged');
     }
 
+    // Default cut: 2 specific + the single best secondary under the divider.
+    expect(results.length).toBe(3);
     const secondary = results.filter((h) => h.secondary);
-    expect(secondary.length).toBeGreaterThan(0);
-    for (const name of secondary.map((h) => h.reward.merchant_name)) {
-      expect(["McDonald's", "Domino's Pizza", 'Starbucks', 'Uber Eats']).toContain(name);
-    }
+    expect(secondary.map((h) => h.reward.merchant_name)).toEqual(["McDonald's"]);
     // All specific hits come before all secondary hits.
     const firstSecondary = results.findIndex((h) => h.secondary);
     expect(firstSecondary).toBe(specific.length);
+    expect(secondaryLabel).toBe('Also in Food');
+  });
+
+  it('fills from secondary when fewer than 2 specific hits exist', () => {
+    // "pizza" tags only Domino's among active rewards -> 1 specific + 2 generic.
+    const { results, secondaryLabel } = searchSeed('pizza', rewards, merchants, cards, NOW);
+    expect(results.length).toBe(3);
+    expect(results[0]!.reward.merchant_name).toBe("Domino's Pizza");
+    expect(results[0]!.secondary).toBe(false);
+    expect(results.slice(1).every((h) => h.secondary)).toBe(true);
     expect(secondaryLabel).toBe('Also in Food');
   });
 
@@ -48,16 +57,17 @@ describe('searchSeed', () => {
     for (const hit of specific) expect(hit.match_component).toBe(0.95);
     expect(results.slice(0, specific.length).every((h) => !h.secondary)).toBe(true);
 
+    expect(results.length).toBe(3);
     const secondaryNames = results.filter((h) => h.secondary).map((h) => h.reward.merchant_name);
-    for (const name of ['Gap', 'H&M', 'Old Navy', 'Abercrombie & Fitch']) {
-      expect(secondaryNames).toContain(name);
-    }
+    expect(secondaryNames).toEqual(['Gap']);
     expect(secondaryLabel?.startsWith('Also in')).toBe(true);
   });
 
   it('handles broad terms "food" and "clothing" with no secondary split', () => {
     const food = searchSeed('food', rewards, merchants, cards, NOW);
-    expect(food.results.length).toBeGreaterThanOrEqual(5);
+    // Broad queries show the flat top 3; the match count is still reported.
+    expect(food.results.length).toBe(3);
+    expect(food.totalMatched).toBe(6);
     expect(food.results.every((h) => !h.secondary)).toBe(true);
     expect(food.secondaryLabel).toBeNull();
 

@@ -217,7 +217,7 @@ export function searchSeed(
   merchants: Merchant[],
   cards: Card[],
   now: Date = new Date(),
-  limit = 8,
+  limit = 3,
 ): { results: SearchHit[]; totalMatched: number; totalActive: number; secondaryLabel: string | null } {
   const tokens = tokenize(query);
   const mccs = lexiconMccs(tokens);
@@ -248,14 +248,21 @@ export function searchSeed(
   // category/MCC matches follow as secondary. Broad queries stay all-primary.
   const specific = hits.filter((hit) => hit.match_component >= 0.9).sort(byRank);
   let ordered = hits.sort(byRank);
+  // When both groups exist, one slot is reserved for the best secondary hit
+  // (limit 3 -> up to 2 specific + 1 generic); a short specific group lets
+  // further secondary hits fill up to the limit. Mirrors the backend cut.
+  let results: SearchHit[];
   if (specific.length > 0) {
     const generic = hits
       .filter((hit) => hit.match_component < 0.9 && hit.match_component >= 0.75)
       .sort(byRank)
       .map((hit) => ({ ...hit, secondary: true }));
     ordered = [...specific, ...generic];
+    const takeSpecific = generic.length > 0 ? Math.min(specific.length, Math.max(limit - 1, 1)) : Math.min(specific.length, limit);
+    results = [...specific.slice(0, takeSpecific), ...generic.slice(0, limit - takeSpecific)];
+  } else {
+    results = ordered.slice(0, limit);
   }
-  const results = ordered.slice(0, limit);
   const secondaryHits = results.filter((hit) => hit.secondary);
   const chip = CHIP_DEFINITIONS.find((entry) =>
     secondaryHits.some((hit) => entry.mccs.includes(hit.reward.mcc)),

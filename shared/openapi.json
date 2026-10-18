@@ -239,6 +239,50 @@
         }
       }
     },
+    "/demo/console/preview": {
+      "post": {
+        "tags": [
+          "Demo Console"
+        ],
+        "summary": "Preview",
+        "description": "Render the chosen template and return the email exactly as it would be\nsent, parsed back out of the .eml bytes (headers, bodies, raw source,\nsha256). /send returns the same payload for the bytes it actually used.",
+        "operationId": "preview_demo_console_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Preview Demo Console Preview Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/demo/console/send": {
       "post": {
         "tags": [
@@ -2210,6 +2254,37 @@
         "title": "Merchant",
         "description": "Full merchant record with ID."
       },
+      "PreviewRequest": {
+        "properties": {
+          "template_id": {
+            "type": "string",
+            "title": "Template Id"
+          },
+          "overrides": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Overrides"
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "template_id"
+        ],
+        "title": "PreviewRequest",
+        "description": "POST /preview payload (same rendering inputs as /send)."
+      },
       "RedeemRequest": {
         "properties": {
           "saved": {
@@ -3252,7 +3327,8 @@
             "maximum": 20.0,
             "minimum": 1.0,
             "title": "Limit",
-            "default": 8
+            "description": "Total results; one slot is reserved for the best secondary hit when a divider applies",
+            "default": 3
           }
         },
         "type": "object",
@@ -3356,6 +3432,11 @@
               }
             ],
             "title": "User Id"
+          },
+          "force": {
+            "type": "boolean",
+            "title": "Force",
+            "default": false
           }
         },
         "type": "object",
