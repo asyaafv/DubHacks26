@@ -19,7 +19,11 @@ from backend.extraction.types import FieldCandidates, FieldValue
 
 _PERCENT_PATTERN = re.compile(r"(\d+(?:\.\d+)?)\s*%", re.IGNORECASE)
 _DOLLAR_PATTERN = re.compile(r"\$\s*(\d+(?:\.\d+)?)", re.IGNORECASE)
-_POINTS_PATTERN = re.compile(r"(\d+)\s*(?:x\s*)?points?", re.IGNORECASE)
+# Allow qualifiers between the number and "points" ("500 bonus points",
+# "250 extra points") — GLiNER returns the full phrase.
+_POINTS_PATTERN = re.compile(
+    r"(\d+)\s*(?:x\s*)?(?:bonus|extra|reward|loyalty)?\s*points?", re.IGNORECASE
+)
 _POINTS_MULTIPLIER_PATTERN = re.compile(r"(\d+)x\s*points?", re.IGNORECASE)
 _FREE_ITEM_PATTERN = re.compile(r"free\s+\w+", re.IGNORECASE)
 _BOGO_PATTERN = re.compile(r"(?:buy\s+one\s+get\s+one|bogo)", re.IGNORECASE)
@@ -40,6 +44,11 @@ _MERGE_FIELDS = (
     "stackable",
 )
 
+# A bare 4-digit year ("2026") is never a usable expiry/start phrase; GLiNER
+# sometimes emits one and it would out-prioritize a correct regex date.
+_BARE_YEAR = re.compile(r"^\s*(19|20)\d{2}\s*$")
+_DATE_FIELDS = {"expiry", "starts"}
+
 
 def merge_candidates(*candidates: FieldCandidates | None) -> FieldCandidates:
     """
@@ -56,6 +65,8 @@ def merge_candidates(*candidates: FieldCandidates | None) -> FieldCandidates:
         for cand in present:
             fv: FieldValue | None = getattr(cand, name)
             if fv is None or not str(fv.value).strip():
+                continue
+            if name in _DATE_FIELDS and _BARE_YEAR.match(str(fv.value)):
                 continue
             if best is None or (
                 _SOURCE_PRIORITY.get(fv.source, 0),
