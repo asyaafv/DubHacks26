@@ -1,0 +1,35 @@
+# Keep the build context small: only backend/, shared/, scripts/ and the
+# requirements files are COPY'd by the Dockerfile, but a small context also
+# speeds up every build.
+.git
+.gitignore
+.github
+.cursor
+
+# Frontend is not part of the API image
+frontend
+node_modules
+
+# Python cruft
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.venv
+venv
+
+# Locally trained models / caches (retrained inside the image)
+backend/extraction/models
+.hf-cache
+
+# Docs, compose, CI — not needed in the image
+docs
+compose.yaml
+render.yaml
+README.md
+*.md
+
+# Tests are not shipped
+backend/tests
