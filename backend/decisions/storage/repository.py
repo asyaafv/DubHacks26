@@ -153,6 +153,11 @@ class Repository:
             'INSERT INTO events(user_id,event_type,reward_id,data,dedupe_key) VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING RETURNING id',
             self.user_id, event_type.value, reward_id, json.dumps(data), dedupe_key) is not None
 
+    async def event_watermark(self) -> int:
+        """Highest visible sequence for this locked owner; zero if empty."""
+        return await self._conn.fetchval(
+            'SELECT COALESCE(max(sequence), 0) FROM events WHERE user_id=$1', self.user_id)
+
     async def list_events(self, after=0, limit=100):
         if after < 0 or not 1 <= limit <= 1000:
             raise ValueError('Invalid replay window')

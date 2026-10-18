@@ -364,6 +364,8 @@ async def test_database_snapshot_and_timestamp_event_replay(db):
     async with db.transaction(owner) as repo:
         await repo.save_reward(reward(owner))
     async with db.transaction(owner) as repo:
+        initial_cursor = await repo.event_watermark()
+        assert initial_cursor > 0
         watermark = await repo.snapshot_time()
         assert watermark.tzinfo is not None and watermark.utcoffset() == timedelta(0)
         old_rewards = [reward(owner, updated_at=NOW - timedelta(days=365)) for _ in range(3)]
@@ -374,6 +376,8 @@ async def test_database_snapshot_and_timestamp_event_replay(db):
         first = await repo.list_events_since(watermark, limit=2)
         second = await repo.list_events_since(watermark, after=first[-1].sequence, limit=2)
         events = first + second
+        assert await repo.event_watermark() == events[-1].sequence
+        assert events[0].sequence > initial_cursor
         assert [e.event.reward_id for e in events] == [r.id for r in old_rewards]
         assert all(e.event.timestamp >= watermark for e in events)
         assert len(await repo.list_events_since(events[0].event.timestamp)) == 3
@@ -384,3 +388,4 @@ async def test_database_snapshot_and_timestamp_event_replay(db):
             await repo.list_events_since(watermark, limit=0)
     async with db.transaction(other) as repo:
         assert not await repo.list_events_since(watermark)
+        assert await repo.event_watermark() == 0

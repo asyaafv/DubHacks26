@@ -81,3 +81,6 @@ watermarks and replay of events whose reward timestamps predate the watermark.
 
 Additive-interface verification: **13 storage/wallet tests passed** against the same
 real PostgreSQL cluster (one existing TestClient/AnyIO deprecation warning).
+
+`Repository.event_watermark() -> int` additionally provides the locked owner
+maximum sequence (0 empty) for snapshot-to-SSE handoff without history retrieval.

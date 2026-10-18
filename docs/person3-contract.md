@@ -156,3 +156,11 @@ Inside that locked transaction:
   timestamp overlap requires deduplication by StoredEvent.id or sequence.
 
 No public schema/router changes or new migrations are required for these additions.
+
+`await repo.event_watermark() -> int` returns the maximum event sequence scoped to
+that locked owner, or 0 when empty. Capture alongside snapshot_time and snapshot
+reads in the SAME transaction for a snapshot-to-SSE boundary. It does not scan or
+return event history and cannot reveal another user's cursor. The current
+transaction's own writes are included; do not publish the watermark until commit.
+Delivery may expose it as an X-Event-Cursor response header without model changes;
+integration owns header/CORS wiring.
