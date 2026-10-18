@@ -337,6 +337,8 @@ export interface Wallet {
   cards?: Card[];
   /** Store memberships */
   memberships?: Membership[];
+  /** Eligible owned rewards, including known expiration dates for the calendar */
+  rewards?: Reward[];
   /** Number of active rewards */
   active_rewards_count?: number;
   /** Rewards expiring in 3 days */
@@ -349,6 +351,36 @@ export interface WalletUpdate {
   remove_card_ids?: string[];
   add_memberships?: MembershipBase[];
   remove_membership_ids?: string[];
+}
+
+/** Record actual reward savings, optionally calculating them from a known cart. */
+export interface RedeemRequest {
+  /** Actual savings in USD; supplied by the applied stack result */
+  saved?: string | null;
+  /** Optional eligible cart subtotal when saved is omitted */
+  cart_total?: string | null;
+}
+
+/** A user-scoped savings history item; never contains a reward code. */
+export interface Redemption {
+  reward_id: string;
+  merchant_name: string | null;
+  description: string | null;
+  saved: string;
+  redeemed_at: string;
+}
+
+/** Cumulative USD savings at the end of a UTC day with a redemption. */
+export interface SavingsPoint {
+  date: string;
+  cumulative: string;
+}
+
+/** Exact savings ledger, newest-first items, and ascending daily running totals. */
+export interface SavingsSummary {
+  total: string;
+  items: Redemption[];
+  series: SavingsPoint[];
 }
 
 /** Individual cart item for stacking calculation. */

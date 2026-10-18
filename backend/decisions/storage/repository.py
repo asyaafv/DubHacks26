@@ -1,11 +1,13 @@
 """User-scoped persistence. Construct only through Database.transaction()."""
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from decimal import Decimal
 import json
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from backend.app.schemas import (Reward, RewardStatus, Event, EventType, Card,
-                                 Membership, Merchant, Wallet, EmailClassification)
+                                 Membership, Merchant, Wallet, EmailClassification,
+                                 Redemption)
 from backend.decisions.common import (utc, canonical_domain, vector_literal, exact_number)
 
 ELIGIBLE = "status='active' AND (starts_at IS NULL OR starts_at <= $2) AND (expires_at IS NULL OR expires_at > $2)"
@@ -167,6 +169,34 @@ class Repository:
             await self.append_event(EventType.reward_used if status == RewardStatus.used else EventType.reward_updated, reward_id)
         return row is not None
 
+    async def get_redemption(self, reward_id):
+        row = await self._conn.fetchrow(
+            'SELECT reward_id,merchant_name,description,saved,redeemed_at '
+            'FROM redemptions WHERE user_id=$1 AND reward_id=$2', self.user_id, reward_id)
+        return Redemption.model_validate(dict(row)) if row else None
+
+    async def record_redemption(self, reward_id, saved, description, *,
+                                redeemed_at=None, redemption_id=None):
+        """Called inside the owner-locked transaction; row/status/event commit together."""
+        saved = exact_number(saved, 2, maximum=Decimal('99999999.99'))
+        reward = await self.get_reward(reward_id)
+        if reward is None:
+            raise ValueError('Reward not found for redemption owner')
+        inserted = await self._conn.fetchval(
+            'INSERT INTO redemptions(id,user_id,reward_id,merchant_name,description,saved,redeemed_at) '
+            'VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT(user_id,reward_id) DO NOTHING RETURNING id',
+            redemption_id or uuid4(), self.user_id, reward_id, reward.merchant_name,
+            description, saved, utc(redeemed_at))
+        if inserted:
+            await self.set_reward_status(reward_id, RewardStatus.used)
+        return inserted is not None
+
+    async def list_redemptions(self):
+        rows = await self._conn.fetch(
+            'SELECT reward_id,merchant_name,description,saved,redeemed_at '
+            'FROM redemptions WHERE user_id=$1 ORDER BY redeemed_at DESC,id DESC', self.user_id)
+        return [Redemption.model_validate(dict(row)) for row in rows]
+
     async def claim_email(self, message_id, classification, *, content_hash=None, rewards_extracted=0):
         return await self._conn.fetchval(
             'INSERT INTO processed_emails(user_id,message_id,classification,content_hash,rewards_extracted) VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING RETURNING message_id',
@@ -264,4 +294,5 @@ class Repository:
         memberships = [Membership.model_validate(dict(row)) for row in rows]
         counts = await self._conn.fetchrow(f'SELECT count(*) AS active,count(*) FILTER(WHERE expires_at <= $3) AS expiring FROM rewards WHERE user_id=$1 AND {ELIGIBLE}', self.user_id, now, now + timedelta(days=3))
         return Wallet(user_id=self.user_id, cards=cards, memberships=memberships,
+                      rewards=await self.list_rewards(now=now),
                       active_rewards_count=counts['active'], expiring_soon_count=counts['expiring'])

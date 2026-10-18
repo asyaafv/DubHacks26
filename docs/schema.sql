@@ -1,7 +1,7 @@
 -- Lapse Database Schema
 -- Postgres + pgvector + pgcrypto
 -- 
--- Historical baseline, preserved as migrations/001_initial.sql.
+-- Reference DDL including the savings ledger; 001 preserves the original baseline.
 -- For the current schema run: python -m backend.decisions.storage migrate
 -- See docs/database-setup.md; do not apply this file separately.
 
@@ -102,6 +102,7 @@ CREATE TABLE rewards (
 );
 
 -- Indexes for common queries
+ALTER TABLE rewards ADD CONSTRAINT rewards_owner_id_unique UNIQUE(user_id,id);
 CREATE INDEX idx_rewards_user_id ON rewards(user_id);
 CREATE INDEX idx_rewards_user_status ON rewards(user_id, status);
 CREATE INDEX idx_rewards_merchant ON rewards(merchant_id);
@@ -121,6 +122,25 @@ CREATE TRIGGER rewards_updated_at
     BEFORE UPDATE ON rewards
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at();
+
+-- =============================================================================
+-- REDEMPTIONS
+-- =============================================================================
+
+-- Savings ledger. Apply migration 003_redemptions.sql to an existing migrated DB.
+CREATE TABLE redemptions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    reward_id UUID NOT NULL REFERENCES rewards(id),
+    merchant_name TEXT,
+    description TEXT,
+    saved NUMERIC(10, 2) NOT NULL CHECK (saved >= 0 AND saved <> 'NaN'::NUMERIC),
+    redeemed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (user_id, reward_id),
+    FOREIGN KEY (user_id, reward_id) REFERENCES rewards(user_id, id)
+);
+
+CREATE INDEX idx_redemptions_user_date ON redemptions(user_id, redeemed_at);
 
 -- =============================================================================
 -- CARDS

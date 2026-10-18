@@ -1,0 +1,36 @@
+{
+  "additionalProperties": false,
+  "description": "Record actual reward savings, optionally calculating them from a known cart.",
+  "properties": {
+    "saved": {
+      "anyOf": [
+        {
+          "pattern": "^\\d+\\.\\d{2}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Actual savings in USD; supplied by the applied stack result",
+      "title": "Saved"
+    },
+    "cart_total": {
+      "anyOf": [
+        {
+          "pattern": "^\\d+\\.\\d{2}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional eligible cart subtotal when saved is omitted",
+      "title": "Cart Total"
+    }
+  },
+  "title": "RedeemRequest",
+  "type": "object"
+}

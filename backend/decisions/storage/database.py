@@ -42,7 +42,7 @@ class Database:
         return [row["id"] for row in rows]
 
     async def migrate(self):
-        """Explicit CLI operation, never run DDL or seeds on application startup."""
+        """Explicit CLI operation; never run DDL on application startup."""
         async with self.pool.acquire() as conn, conn.transaction():
             await conn.execute("SELECT pg_advisory_xact_lock(72635103)")
             await conn.execute("CREATE TABLE IF NOT EXISTS schema_migrations (version text PRIMARY KEY, applied_at timestamptz NOT NULL DEFAULT now())")

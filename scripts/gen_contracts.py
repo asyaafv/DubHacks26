@@ -58,6 +58,10 @@ from backend.app.schemas import (
     Wallet,
     WalletUpdate,
     CardNetwork,
+    RedeemRequest,
+    Redemption,
+    SavingsPoint,
+    SavingsSummary,
 )
 
 # Models to export
@@ -88,6 +92,11 @@ MODELS = [
     # Wallet
     Wallet,
     WalletUpdate,
+    # Savings tracking
+    RedeemRequest,
+    Redemption,
+    SavingsPoint,
+    SavingsSummary,
     # Stacking
     CartItem,
     StackRequest,

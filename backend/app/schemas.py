@@ -12,13 +12,20 @@ Architecture: Chrome Extension + FastAPI Backend + Postgres/pgvector
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date as Date, datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Any
+from typing import Annotated, Any
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, PlainSerializer, WithJsonSchema
+
+
+Money = Annotated[
+    Decimal,
+    PlainSerializer(lambda value: format(value, '.2f'), return_type=str, when_used='json'),
+    WithJsonSchema({'type': 'string', 'pattern': r'^\d+\.\d{2}$'}),
+]
 
 
 # =============================================================================
@@ -239,6 +246,7 @@ class Wallet(BaseModel):
     user_id: UUID = Field(..., description="User ID")
     cards: list[Card] = Field(default_factory=list, description="Payment cards")
     memberships: list[Membership] = Field(default_factory=list, description="Store memberships")
+    rewards: list[Reward] = Field(default_factory=list, description="Eligible owned rewards, including known expiration dates for the calendar")
     active_rewards_count: int = Field(default=0, description="Number of active rewards")
     expiring_soon_count: int = Field(default=0, description="Rewards expiring in 3 days")
 
@@ -249,6 +257,43 @@ class WalletUpdate(BaseModel):
     remove_card_ids: list[UUID] = Field(default_factory=list)
     add_memberships: list[MembershipBase] = Field(default_factory=list)
     remove_membership_ids: list[UUID] = Field(default_factory=list)
+
+
+# =============================================================================
+# REDEMPTION AND SAVINGS MODELS
+# =============================================================================
+
+
+class RedeemRequest(BaseModel):
+    """Record actual reward savings, optionally calculating them from a known cart."""
+    model_config = ConfigDict(extra='forbid')
+
+    saved: Money | None = Field(None, ge=0, max_digits=10, decimal_places=2,
+                               allow_inf_nan=False, description="Actual savings in USD; supplied by the applied stack result")
+    cart_total: Money | None = Field(None, ge=0, max_digits=10, decimal_places=2,
+                                    allow_inf_nan=False, description="Optional eligible cart subtotal when saved is omitted")
+
+
+class Redemption(BaseModel):
+    """A user-scoped savings history item; never contains a reward code."""
+    reward_id: UUID
+    merchant_name: str | None
+    description: str | None
+    saved: Money = Field(..., ge=0, max_digits=10, decimal_places=2, allow_inf_nan=False)
+    redeemed_at: datetime
+
+
+class SavingsPoint(BaseModel):
+    """Cumulative USD savings at the end of a UTC day with a redemption."""
+    date: Date
+    cumulative: Money = Field(..., ge=0, allow_inf_nan=False)
+
+
+class SavingsSummary(BaseModel):
+    """Exact savings ledger, newest-first items, and ascending daily running totals."""
+    total: Money = Field(..., ge=0, allow_inf_nan=False)
+    items: list[Redemption]
+    series: list[SavingsPoint]
 
 
 # =============================================================================

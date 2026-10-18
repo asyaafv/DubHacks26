@@ -40,6 +40,11 @@ reset status changes. Existing reward timestamps are preserved, so eligible rewa
 counts naturally change with actual time. Seed cards discard demo last_four values;
 no card-number data is collected or persisted by the wallet API.
 
+The demo redemption history is an exception to explicit-only seeding: after
+migrations, configured application startup imports its eight historical records
+once, totaling $103.51. These use separate historical reward IDs and never spend
+the live offers. Explicit `seed` also loads this history. See `savings-tracking.md`.
+
 Tests:
 
 ```sh

@@ -669,6 +669,14 @@
           "title": "Memberships",
           "type": "array"
         },
+        "rewards": {
+          "description": "Eligible owned rewards, including known expiration dates for the calendar",
+          "items": {
+            "$ref": "#/$defs/Reward"
+          },
+          "title": "Rewards",
+          "type": "array"
+        },
         "active_rewards_count": {
           "default": 0,
           "description": "Number of active rewards",
