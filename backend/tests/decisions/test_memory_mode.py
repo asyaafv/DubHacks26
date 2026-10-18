@@ -94,6 +94,67 @@ def test_sync_returns_full_snapshot_with_all_statuses(client):
     assert {'active', 'used', 'needs_review'} <= statuses
 
 
+def test_redeem_queues_reward_used_event(client):
+    """The in-memory redeem path must queue reward_used for /events so the
+    other surface (dashboard vs extension) can refresh its savings live."""
+    from uuid import UUID
+    from backend.intake.service import drain_events
+
+    user = UUID(DEMO)
+    reward_id = '22222222-2222-2222-2222-222222222202'
+    drain_events(user)  # clear anything queued by startup/seeding
+    resp = client.post(f'/rewards/{reward_id}/redeem', headers={'X-User-Id': DEMO},
+                       json={'saved': '5.00'})
+    assert resp.status_code == 200, resp.text
+    used = [e for e in drain_events(user) if e.event_type.value == 'reward_used']
+    assert len(used) == 1 and str(used[0].reward_id) == reward_id
+    assert used[0].data['saved'] == '5.00'
+    # Idempotent: redeeming again queues nothing new.
+    client.post(f'/rewards/{reward_id}/redeem', headers={'X-User-Id': DEMO})
+    assert drain_events(user) == []
+
+
+@pytest.mark.asyncio
+async def test_events_fan_out_to_all_connections(client):
+    """Every open /events connection must receive each event: the intake queue
+    is single-consumer, so without fan-out only one of two clients (extension
+    vs dashboard) would see a reward_added/reward_used event."""
+    import asyncio
+    from uuid import UUID
+    from backend.app.main import event_generator
+    from backend.app.schemas import Event, EventType
+    from backend.intake.service import drain_events, emit_event
+
+    user = UUID(DEMO)
+    drain_events(user)
+    frames_a: list[str] = []
+    frames_b: list[str] = []
+
+    async def collect(frames):
+        async for frame in event_generator(user):
+            frames.append(frame)
+
+    task_a = asyncio.create_task(collect(frames_a))
+    task_b = asyncio.create_task(collect(frames_b))
+    try:
+        await asyncio.sleep(0.2)  # both connections past the hello frame
+        emit_event(Event(event_type=EventType.reward_used, user_id=user,
+                         reward_id=UUID('22222222-2222-2222-2222-222222222202'),
+                         data={'saved': '5.00'}))
+        deadline = asyncio.get_event_loop().time() + 5
+        while asyncio.get_event_loop().time() < deadline:
+            if (any('reward_used' in f for f in frames_a)
+                    and any('reward_used' in f for f in frames_b)):
+                break
+            await asyncio.sleep(0.1)
+        assert any('reward_used' in f for f in frames_a), frames_a
+        assert any('reward_used' in f for f in frames_b), frames_b
+    finally:
+        task_a.cancel()
+        task_b.cancel()
+        await asyncio.gather(task_a, task_b, return_exceptions=True)
+
+
 def test_memory_mode_isolation_and_id_guessing(client):
     reward_id = '22222222-2222-2222-2222-222222222206'
     resp = client.post(f'/rewards/{reward_id}/redeem', headers={'X-User-Id': OTHER},

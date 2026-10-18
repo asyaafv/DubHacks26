@@ -92,6 +92,12 @@ def redeem(user_id: UUID, reward_id: UUID, saved: Decimal | None) -> Reward:
         _store().append(Redemption(id=uuid4(), user_id=user_id, reward_id=reward_id,
                                    merchant_name=reward.merchant_name, description=describe(reward),
                                    saved=amount, redeemed_at=utc()))
+        # Queue reward_used for /events so an open dashboard (or extension)
+        # refreshes its savings when the other surface redeems.
+        from backend.app.schemas import Event, EventType
+        from backend.intake.service import emit_event
+        emit_event(Event(event_type=EventType.reward_used, user_id=user_id, reward_id=reward_id,
+                         data={'merchant_name': reward.merchant_name, 'saved': str(amount)}))
     reward.status = RewardStatus.used
     reward.updated_at = utc()
     return reward

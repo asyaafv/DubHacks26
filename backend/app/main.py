@@ -547,6 +547,19 @@ async def sync_rewards(
     )
 
 
+# Per-user SSE fan-out. The intake queue is single-consumer (drain pops), so
+# with both the extension and the dashboard connected only one of them would
+# get each event. Instead, whichever connection drains an event broadcasts it
+# to every open connection for that user (including itself).
+_sse_subscribers: dict[UUID, list[asyncio.Queue]] = {}
+
+
+def broadcast_event(event: Event) -> None:
+    """Deliver an event to every open /events connection for its user."""
+    for queue in _sse_subscribers.get(event.user_id, []):
+        queue.put_nowait(event)
+
+
 async def event_generator(user_id: UUID) -> AsyncGenerator[str, None]:
     """Generate SSE events for a user."""
     # Send initial connection event
@@ -557,21 +570,34 @@ async def event_generator(user_id: UUID) -> AsyncGenerator[str, None]:
     )
     yield f"event: {event.event_type.value}\ndata: {event.model_dump_json()}\n\n"
 
-    # Deliver reward_added events queued by the intake service (1s poll),
-    # plus the original stub reward_expiring event every 30 seconds.
+    queue: asyncio.Queue = asyncio.Queue()
+    _sse_subscribers.setdefault(user_id, []).append(queue)
+
+    # Deliver events queued by intake and redemptions (1s poll, fanned out to
+    # all connections), plus the original stub reward_expiring event every 30s.
     ticks = 0
-    while True:
-        await asyncio.sleep(1)
-        ticks += 1
-        for event in drain_intake_events(user_id):
-            yield f"event: {event.event_type.value}\ndata: {event.model_dump_json()}\n\n"
-        if ticks % 30 == 0:
-            event = Event(
-                event_type=EventType.reward_expiring,
-                user_id=user_id,
-                data={"message": "Stub event - rewards expiring soon"},
-            )
-            yield f"event: {event.event_type.value}\ndata: {event.model_dump_json()}\n\n"
+    try:
+        while True:
+            await asyncio.sleep(1)
+            ticks += 1
+            for event in drain_intake_events(user_id):
+                broadcast_event(event)
+            while not queue.empty():
+                event = queue.get_nowait()
+                yield f"event: {event.event_type.value}\ndata: {event.model_dump_json()}\n\n"
+            if ticks % 30 == 0:
+                event = Event(
+                    event_type=EventType.reward_expiring,
+                    user_id=user_id,
+                    data={"message": "Stub event - rewards expiring soon"},
+                )
+                yield f"event: {event.event_type.value}\ndata: {event.model_dump_json()}\n\n"
+    finally:
+        subscribers = _sse_subscribers.get(user_id, [])
+        if queue in subscribers:
+            subscribers.remove(queue)
+        if not subscribers:
+            _sse_subscribers.pop(user_id, None)
 
 
 @app.get("/events", tags=["Sync"])
