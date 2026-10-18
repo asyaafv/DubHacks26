@@ -1,0 +1,54 @@
+{
+  "$defs": {
+    "EmailClassification": {
+      "description": "SetFit email classifier categories.",
+      "enum": [
+        "reward",
+        "receipt",
+        "promo",
+        "other"
+      ],
+      "title": "EmailClassification",
+      "type": "string"
+    }
+  },
+  "description": "Result of processing an inbound email.",
+  "properties": {
+    "message_id": {
+      "title": "Message Id",
+      "type": "string"
+    },
+    "classification": {
+      "$ref": "#/$defs/EmailClassification"
+    },
+    "rewards_extracted": {
+      "default": 0,
+      "title": "Rewards Extracted",
+      "type": "integer"
+    },
+    "reward_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Reward Ids",
+      "type": "array"
+    },
+    "needs_review": {
+      "default": false,
+      "title": "Needs Review",
+      "type": "boolean"
+    },
+    "processing_time_ms": {
+      "default": 0,
+      "title": "Processing Time Ms",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "message_id",
+    "classification"
+  ],
+  "title": "InboundResult",
+  "type": "object"
+}

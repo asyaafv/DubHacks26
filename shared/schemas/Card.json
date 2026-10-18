@@ -1,0 +1,156 @@
+{
+  "$defs": {
+    "CardNetwork": {
+      "description": "Payment card network.",
+      "enum": [
+        "visa",
+        "mastercard",
+        "amex",
+        "discover"
+      ],
+      "title": "CardNetwork",
+      "type": "string"
+    },
+    "CategoryRate": {
+      "description": "Cashback rate for a specific category or MCC.",
+      "properties": {
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Category name",
+          "examples": [
+            "Dining"
+          ],
+          "title": "Category"
+        },
+        "mcc_codes": {
+          "description": "Matching MCC codes",
+          "items": {
+            "type": "string"
+          },
+          "title": "Mcc Codes",
+          "type": "array"
+        },
+        "rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Cashback rate (percentage)",
+          "examples": [
+            "3.0"
+          ],
+          "title": "Rate"
+        }
+      },
+      "required": [
+        "rate"
+      ],
+      "title": "CategoryRate",
+      "type": "object"
+    }
+  },
+  "description": "Full card record.",
+  "properties": {
+    "issuer": {
+      "description": "Card issuer",
+      "examples": [
+        "Chase"
+      ],
+      "title": "Issuer",
+      "type": "string"
+    },
+    "network": {
+      "$ref": "#/$defs/CardNetwork",
+      "description": "Card network"
+    },
+    "name": {
+      "description": "Card product name",
+      "examples": [
+        "Freedom Unlimited"
+      ],
+      "title": "Name",
+      "type": "string"
+    },
+    "base_rate": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "description": "Base cashback rate (%)",
+      "examples": [
+        "1.5"
+      ],
+      "title": "Base Rate"
+    },
+    "category_rates": {
+      "description": "Bonus category rates",
+      "items": {
+        "$ref": "#/$defs/CategoryRate"
+      },
+      "title": "Category Rates",
+      "type": "array"
+    },
+    "id": {
+      "description": "Unique card ID",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "user_id": {
+      "description": "Owner user ID",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    },
+    "last_four": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Last 4 digits (display only)",
+      "title": "Last Four"
+    },
+    "is_demo": {
+      "default": false,
+      "description": "Demo card flag",
+      "title": "Is Demo",
+      "type": "boolean"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "issuer",
+    "network",
+    "name",
+    "base_rate",
+    "id",
+    "user_id"
+  ],
+  "title": "Card",
+  "type": "object"
+}

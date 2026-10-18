@@ -1,0 +1,185 @@
+{
+  "$defs": {
+    "RewardKind": {
+      "description": "Type of reward/discount offered.",
+      "enum": [
+        "percent_off",
+        "amount_off",
+        "points",
+        "free_item",
+        "bogo",
+        "cashback"
+      ],
+      "title": "RewardKind",
+      "type": "string"
+    }
+  },
+  "description": "Base reward fields (for creation).",
+  "properties": {
+    "merchant_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Linked merchant ID",
+      "title": "Merchant Id"
+    },
+    "merchant_name": {
+      "description": "Merchant name",
+      "examples": [
+        "Target"
+      ],
+      "title": "Merchant Name",
+      "type": "string"
+    },
+    "category": {
+      "description": "Reward category",
+      "examples": [
+        "Department Stores"
+      ],
+      "title": "Category",
+      "type": "string"
+    },
+    "mcc": {
+      "description": "Merchant Category Code",
+      "examples": [
+        "5311"
+      ],
+      "title": "Mcc",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/RewardKind",
+      "description": "Type of reward"
+    },
+    "value": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "description": "Reward value (percentage or amount)",
+      "examples": [
+        "10.00"
+      ],
+      "title": "Value"
+    },
+    "currency": {
+      "default": "USD",
+      "description": "Currency code",
+      "title": "Currency",
+      "type": "string"
+    },
+    "min_spend": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Minimum purchase to apply",
+      "examples": [
+        "50.00"
+      ],
+      "title": "Min Spend"
+    },
+    "max_discount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Maximum discount cap",
+      "examples": [
+        "25.00"
+      ],
+      "title": "Max Discount"
+    },
+    "code": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Promo/reward code (encrypted at rest)",
+      "title": "Code"
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Expiration datetime",
+      "title": "Expires At"
+    },
+    "starts_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Start datetime (if future)",
+      "title": "Starts At"
+    },
+    "stackable": {
+      "default": false,
+      "description": "Can combine with other rewards",
+      "title": "Stackable",
+      "type": "boolean"
+    },
+    "exclusions": {
+      "description": "Excluded items/categories",
+      "items": {
+        "type": "string"
+      },
+      "title": "Exclusions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "merchant_name",
+    "category",
+    "mcc",
+    "kind",
+    "value"
+  ],
+  "title": "RewardBase",
+  "type": "object"
+}

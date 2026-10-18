@@ -1,0 +1,11 @@
+{
+  "title": "RewardSource",
+  "type": "string",
+  "enum": [
+    "email_jsonld",
+    "gliner",
+    "regex",
+    "manual",
+    "seed"
+  ]
+}

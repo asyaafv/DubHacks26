@@ -1,0 +1,61 @@
+{
+  "description": "Request to find relevant rewards for a merchant.",
+  "properties": {
+    "user_id": {
+      "description": "User ID",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    },
+    "merchant_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Merchant Id"
+    },
+    "domain": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Domain"
+    },
+    "query": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional text query for semantic search",
+      "title": "Query"
+    },
+    "limit": {
+      "default": 3,
+      "maximum": 10,
+      "minimum": 1,
+      "title": "Limit",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "user_id"
+  ],
+  "title": "LookupRequest",
+  "type": "object"
+}

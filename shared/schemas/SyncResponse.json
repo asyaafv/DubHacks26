@@ -1,0 +1,728 @@
+{
+  "$defs": {
+    "Card": {
+      "description": "Full card record.",
+      "properties": {
+        "issuer": {
+          "description": "Card issuer",
+          "examples": [
+            "Chase"
+          ],
+          "title": "Issuer",
+          "type": "string"
+        },
+        "network": {
+          "$ref": "#/$defs/CardNetwork",
+          "description": "Card network"
+        },
+        "name": {
+          "description": "Card product name",
+          "examples": [
+            "Freedom Unlimited"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "base_rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Base cashback rate (%)",
+          "examples": [
+            "1.5"
+          ],
+          "title": "Base Rate"
+        },
+        "category_rates": {
+          "description": "Bonus category rates",
+          "items": {
+            "$ref": "#/$defs/CategoryRate"
+          },
+          "title": "Category Rates",
+          "type": "array"
+        },
+        "id": {
+          "description": "Unique card ID",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "Owner user ID",
+          "format": "uuid",
+          "title": "User Id",
+          "type": "string"
+        },
+        "last_four": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last 4 digits (display only)",
+          "title": "Last Four"
+        },
+        "is_demo": {
+          "default": false,
+          "description": "Demo card flag",
+          "title": "Is Demo",
+          "type": "boolean"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "issuer",
+        "network",
+        "name",
+        "base_rate",
+        "id",
+        "user_id"
+      ],
+      "title": "Card",
+      "type": "object"
+    },
+    "CardNetwork": {
+      "description": "Payment card network.",
+      "enum": [
+        "visa",
+        "mastercard",
+        "amex",
+        "discover"
+      ],
+      "title": "CardNetwork",
+      "type": "string"
+    },
+    "CategoryRate": {
+      "description": "Cashback rate for a specific category or MCC.",
+      "properties": {
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Category name",
+          "examples": [
+            "Dining"
+          ],
+          "title": "Category"
+        },
+        "mcc_codes": {
+          "description": "Matching MCC codes",
+          "items": {
+            "type": "string"
+          },
+          "title": "Mcc Codes",
+          "type": "array"
+        },
+        "rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Cashback rate (percentage)",
+          "examples": [
+            "3.0"
+          ],
+          "title": "Rate"
+        }
+      },
+      "required": [
+        "rate"
+      ],
+      "title": "CategoryRate",
+      "type": "object"
+    },
+    "Event": {
+      "description": "SSE event payload.",
+      "properties": {
+        "event_type": {
+          "$ref": "#/$defs/EventType"
+        },
+        "timestamp": {
+          "format": "date-time",
+          "title": "Timestamp",
+          "type": "string"
+        },
+        "user_id": {
+          "format": "uuid",
+          "title": "User Id",
+          "type": "string"
+        },
+        "reward_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reward Id"
+        },
+        "data": {
+          "additionalProperties": true,
+          "title": "Data",
+          "type": "object"
+        }
+      },
+      "required": [
+        "event_type",
+        "user_id"
+      ],
+      "title": "Event",
+      "type": "object"
+    },
+    "EventType": {
+      "description": "SSE event types for real-time updates.",
+      "enum": [
+        "reward_added",
+        "reward_expiring",
+        "reward_updated",
+        "reward_used",
+        "sync_complete"
+      ],
+      "title": "EventType",
+      "type": "string"
+    },
+    "FieldConfidence": {
+      "description": "Per-field extraction confidence scores.",
+      "properties": {
+        "value": {
+          "default": 1.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Value",
+          "type": "number"
+        },
+        "expires_at": {
+          "default": 1.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Expires At",
+          "type": "number"
+        },
+        "code": {
+          "default": 1.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Code",
+          "type": "number"
+        },
+        "min_spend": {
+          "default": 1.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Min Spend",
+          "type": "number"
+        },
+        "merchant": {
+          "default": 1.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Merchant",
+          "type": "number"
+        }
+      },
+      "title": "FieldConfidence",
+      "type": "object"
+    },
+    "Membership": {
+      "description": "Full membership record.",
+      "properties": {
+        "merchant_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Linked merchant ID",
+          "title": "Merchant Id"
+        },
+        "merchant_name": {
+          "description": "Merchant name",
+          "examples": [
+            "Costco"
+          ],
+          "title": "Merchant Name",
+          "type": "string"
+        },
+        "program_name": {
+          "description": "Membership program name",
+          "examples": [
+            "Executive"
+          ],
+          "title": "Program Name",
+          "type": "string"
+        },
+        "tier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Membership tier",
+          "examples": [
+            "Gold"
+          ],
+          "title": "Tier"
+        },
+        "member_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Membership number (encrypted)",
+          "title": "Member Id"
+        },
+        "benefits": {
+          "description": "Membership benefits",
+          "items": {
+            "type": "string"
+          },
+          "title": "Benefits",
+          "type": "array"
+        },
+        "annual_reward_rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Annual reward rate (%)",
+          "title": "Annual Reward Rate"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Membership expiration",
+          "title": "Expires At"
+        },
+        "id": {
+          "description": "Unique membership ID",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "Owner user ID",
+          "format": "uuid",
+          "title": "User Id",
+          "type": "string"
+        },
+        "is_active": {
+          "default": true,
+          "title": "Is Active",
+          "type": "boolean"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "merchant_name",
+        "program_name",
+        "id",
+        "user_id"
+      ],
+      "title": "Membership",
+      "type": "object"
+    },
+    "Reward": {
+      "description": "Full reward record.",
+      "properties": {
+        "merchant_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Linked merchant ID",
+          "title": "Merchant Id"
+        },
+        "merchant_name": {
+          "description": "Merchant name",
+          "examples": [
+            "Target"
+          ],
+          "title": "Merchant Name",
+          "type": "string"
+        },
+        "category": {
+          "description": "Reward category",
+          "examples": [
+            "Department Stores"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "mcc": {
+          "description": "Merchant Category Code",
+          "examples": [
+            "5311"
+          ],
+          "title": "Mcc",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/RewardKind",
+          "description": "Type of reward"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Reward value (percentage or amount)",
+          "examples": [
+            "10.00"
+          ],
+          "title": "Value"
+        },
+        "currency": {
+          "default": "USD",
+          "description": "Currency code",
+          "title": "Currency",
+          "type": "string"
+        },
+        "min_spend": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum purchase to apply",
+          "examples": [
+            "50.00"
+          ],
+          "title": "Min Spend"
+        },
+        "max_discount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum discount cap",
+          "examples": [
+            "25.00"
+          ],
+          "title": "Max Discount"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Promo/reward code (encrypted at rest)",
+          "title": "Code"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expiration datetime",
+          "title": "Expires At"
+        },
+        "starts_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start datetime (if future)",
+          "title": "Starts At"
+        },
+        "stackable": {
+          "default": false,
+          "description": "Can combine with other rewards",
+          "title": "Stackable",
+          "type": "boolean"
+        },
+        "exclusions": {
+          "description": "Excluded items/categories",
+          "items": {
+            "type": "string"
+          },
+          "title": "Exclusions",
+          "type": "array"
+        },
+        "id": {
+          "description": "Unique reward ID",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "Owner user ID",
+          "format": "uuid",
+          "title": "User Id",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/RewardSource",
+          "description": "How this reward was extracted"
+        },
+        "source_email_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source email message ID",
+          "title": "Source Email Id"
+        },
+        "field_confidence": {
+          "$ref": "#/$defs/FieldConfidence"
+        },
+        "overall_confidence": {
+          "default": 1.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Overall Confidence",
+          "type": "number"
+        },
+        "status": {
+          "$ref": "#/$defs/RewardStatus",
+          "default": "active"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "merchant_name",
+        "category",
+        "mcc",
+        "kind",
+        "value",
+        "id",
+        "user_id",
+        "source"
+      ],
+      "title": "Reward",
+      "type": "object"
+    },
+    "RewardKind": {
+      "description": "Type of reward/discount offered.",
+      "enum": [
+        "percent_off",
+        "amount_off",
+        "points",
+        "free_item",
+        "bogo",
+        "cashback"
+      ],
+      "title": "RewardKind",
+      "type": "string"
+    },
+    "RewardSource": {
+      "description": "How the reward was extracted/created.",
+      "enum": [
+        "email_jsonld",
+        "gliner",
+        "regex",
+        "manual",
+        "seed"
+      ],
+      "title": "RewardSource",
+      "type": "string"
+    },
+    "RewardStatus": {
+      "description": "Current status of the reward.",
+      "enum": [
+        "active",
+        "needs_review",
+        "used",
+        "expired"
+      ],
+      "title": "RewardStatus",
+      "type": "string"
+    },
+    "Wallet": {
+      "description": "User's complete wallet state.",
+      "properties": {
+        "user_id": {
+          "description": "User ID",
+          "format": "uuid",
+          "title": "User Id",
+          "type": "string"
+        },
+        "cards": {
+          "description": "Payment cards",
+          "items": {
+            "$ref": "#/$defs/Card"
+          },
+          "title": "Cards",
+          "type": "array"
+        },
+        "memberships": {
+          "description": "Store memberships",
+          "items": {
+            "$ref": "#/$defs/Membership"
+          },
+          "title": "Memberships",
+          "type": "array"
+        },
+        "active_rewards_count": {
+          "default": 0,
+          "description": "Number of active rewards",
+          "title": "Active Rewards Count",
+          "type": "integer"
+        },
+        "expiring_soon_count": {
+          "default": 0,
+          "description": "Rewards expiring in 3 days",
+          "title": "Expiring Soon Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "Wallet",
+      "type": "object"
+    }
+  },
+  "description": "Polling sync response.",
+  "properties": {
+    "user_id": {
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    },
+    "rewards": {
+      "items": {
+        "$ref": "#/$defs/Reward"
+      },
+      "title": "Rewards",
+      "type": "array"
+    },
+    "wallet": {
+      "$ref": "#/$defs/Wallet"
+    },
+    "last_sync": {
+      "format": "date-time",
+      "title": "Last Sync",
+      "type": "string"
+    },
+    "pending_events": {
+      "items": {
+        "$ref": "#/$defs/Event"
+      },
+      "title": "Pending Events",
+      "type": "array"
+    }
+  },
+  "required": [
+    "user_id",
+    "wallet"
+  ],
+  "title": "SyncResponse",
+  "type": "object"
+}

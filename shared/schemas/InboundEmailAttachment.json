@@ -1,0 +1,30 @@
+{
+  "description": "Email attachment metadata (Postmark-compatible).",
+  "properties": {
+    "Name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "Content": {
+      "description": "Base64-encoded content",
+      "title": "Content",
+      "type": "string"
+    },
+    "ContentType": {
+      "title": "Contenttype",
+      "type": "string"
+    },
+    "ContentLength": {
+      "title": "Contentlength",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "Name",
+    "Content",
+    "ContentType",
+    "ContentLength"
+  ],
+  "title": "InboundEmailAttachment",
+  "type": "object"
+}

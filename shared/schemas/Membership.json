@@ -1,0 +1,132 @@
+{
+  "description": "Full membership record.",
+  "properties": {
+    "merchant_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Linked merchant ID",
+      "title": "Merchant Id"
+    },
+    "merchant_name": {
+      "description": "Merchant name",
+      "examples": [
+        "Costco"
+      ],
+      "title": "Merchant Name",
+      "type": "string"
+    },
+    "program_name": {
+      "description": "Membership program name",
+      "examples": [
+        "Executive"
+      ],
+      "title": "Program Name",
+      "type": "string"
+    },
+    "tier": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Membership tier",
+      "examples": [
+        "Gold"
+      ],
+      "title": "Tier"
+    },
+    "member_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Membership number (encrypted)",
+      "title": "Member Id"
+    },
+    "benefits": {
+      "description": "Membership benefits",
+      "items": {
+        "type": "string"
+      },
+      "title": "Benefits",
+      "type": "array"
+    },
+    "annual_reward_rate": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Annual reward rate (%)",
+      "title": "Annual Reward Rate"
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Membership expiration",
+      "title": "Expires At"
+    },
+    "id": {
+      "description": "Unique membership ID",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "user_id": {
+      "description": "Owner user ID",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    },
+    "is_active": {
+      "default": true,
+      "title": "Is Active",
+      "type": "boolean"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "merchant_name",
+    "program_name",
+    "id",
+    "user_id"
+  ],
+  "title": "Membership",
+  "type": "object"
+}

@@ -1,0 +1,56 @@
+{
+  "$defs": {
+    "EventType": {
+      "description": "SSE event types for real-time updates.",
+      "enum": [
+        "reward_added",
+        "reward_expiring",
+        "reward_updated",
+        "reward_used",
+        "sync_complete"
+      ],
+      "title": "EventType",
+      "type": "string"
+    }
+  },
+  "description": "SSE event payload.",
+  "properties": {
+    "event_type": {
+      "$ref": "#/$defs/EventType"
+    },
+    "timestamp": {
+      "format": "date-time",
+      "title": "Timestamp",
+      "type": "string"
+    },
+    "user_id": {
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    },
+    "reward_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reward Id"
+    },
+    "data": {
+      "additionalProperties": true,
+      "title": "Data",
+      "type": "object"
+    }
+  },
+  "required": [
+    "event_type",
+    "user_id"
+  ],
+  "title": "Event",
+  "type": "object"
+}

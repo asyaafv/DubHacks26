@@ -1,0 +1,2793 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PerkSense API",
+    "description": "Find and stack store rewards, card cashback, and memberships",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Health Check",
+        "description": "Health check endpoint.",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthCheck"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inbound": {
+      "post": {
+        "tags": [
+          "Intake"
+        ],
+        "summary": "Process Inbound Email",
+        "description": "Process inbound email from Postmark webhook.\n\nSTUB: Returns mock extraction result.\nREAL: Presidio PII redaction -> dedupe -> SetFit classify -> extraction cascade",
+        "operationId": "process_inbound_email_inbound_post",
+        "parameters": [
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-User-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InboundEmail"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InboundResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/demo/inject": {
+      "post": {
+        "tags": [
+          "Intake"
+        ],
+        "summary": "Inject Demo Email",
+        "description": "Replay a stored .eml file through the intake pipeline.\n\nSTUB: Returns mock result based on filename.\nREAL: Loads .eml, parses, runs through full pipeline.",
+        "operationId": "inject_demo_email_demo_inject_post",
+        "parameters": [
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-User-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DemoInjectRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InboundResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wallet": {
+      "get": {
+        "tags": [
+          "Wallet"
+        ],
+        "summary": "Get Wallet",
+        "description": "Get user's complete wallet (cards + memberships + reward counts).\n\nSTUB: Returns seed data for demo user.",
+        "operationId": "get_wallet_wallet_get",
+        "parameters": [
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-User-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Wallet"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Wallet"
+        ],
+        "summary": "Update Wallet",
+        "description": "Update user's wallet (add/remove cards and memberships).\n\nSTUB: Returns current wallet unchanged.\nREAL: Persists changes to database.",
+        "operationId": "update_wallet_wallet_post",
+        "parameters": [
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-User-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WalletUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Wallet"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stack": {
+      "post": {
+        "tags": [
+          "Stacking"
+        ],
+        "summary": "Calculate Stack",
+        "description": "Calculate optimal reward stacking for a purchase.\n\nSTUB: Returns hardcoded stacking result.\nREAL: CP-SAT solver with constraints for non-combinable rewards,\n      min spend, max one promo code, etc.",
+        "operationId": "calculate_stack_stack_post",
+        "parameters": [
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-User-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StackResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "tags": [
+          "Lookup"
+        ],
+        "summary": "Lookup Rewards",
+        "description": "Find top relevant rewards for a merchant.\n\nRanking formula: score = value_usd * match * (1 + exp(-days_left/3))\n\nSTUB: Returns top rewards by simple scoring.\nREAL: Uses pgvector for semantic search if query provided.",
+        "operationId": "lookup_rewards_lookup_post",
+        "parameters": [
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-User-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LookupRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LookupResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sync": {
+      "get": {
+        "tags": [
+          "Sync"
+        ],
+        "summary": "Sync Rewards",
+        "description": "Polling endpoint for reward sync.\n\nSTUB: Returns all active rewards.\nREAL: Returns only rewards changed since `since` timestamp.",
+        "operationId": "sync_rewards_sync_get",
+        "parameters": [
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Return changes since this timestamp",
+              "title": "Since"
+            },
+            "description": "Return changes since this timestamp"
+          },
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-User-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events": {
+      "get": {
+        "tags": [
+          "Sync"
+        ],
+        "summary": "Sse Events",
+        "description": "Server-Sent Events endpoint for real-time updates.\n\nEvents:\n- reward_added: New reward extracted from email\n- reward_expiring: Reward expiring within 24 hours\n- reward_updated: Reward status or details changed\n- reward_used: Reward marked as used\n- sync_complete: Initial sync completed\n\nSTUB: Sends periodic test events.\nREAL: Publishes events when rewards change.",
+        "operationId": "sse_events_events_get",
+        "parameters": [
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-User-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/classify-merchant": {
+      "post": {
+        "tags": [
+          "Extraction"
+        ],
+        "summary": "Classify Merchant",
+        "description": "Classify an unknown merchant by domain.\n\nSTUB: Returns match from seed merchants or generic classification.\nREAL: Embeds domain/title, searches pgvector, falls back to LLM classification.",
+        "operationId": "classify_merchant_classify_merchant_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClassifyMerchantRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassifyMerchantResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Card-Input": {
+        "properties": {
+          "issuer": {
+            "type": "string",
+            "title": "Issuer",
+            "description": "Card issuer",
+            "examples": [
+              "Chase"
+            ]
+          },
+          "network": {
+            "$ref": "#/components/schemas/CardNetwork",
+            "description": "Card network"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Card product name",
+            "examples": [
+              "Freedom Unlimited"
+            ]
+          },
+          "base_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Base Rate",
+            "description": "Base cashback rate (%)",
+            "examples": [
+              "1.5"
+            ]
+          },
+          "category_rates": {
+            "items": {
+              "$ref": "#/components/schemas/CategoryRate-Input"
+            },
+            "type": "array",
+            "title": "Category Rates",
+            "description": "Bonus category rates"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id",
+            "description": "Unique card ID"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id",
+            "description": "Owner user ID"
+          },
+          "last_four": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Four",
+            "description": "Last 4 digits (display only)"
+          },
+          "is_demo": {
+            "type": "boolean",
+            "title": "Is Demo",
+            "description": "Demo card flag",
+            "default": false
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "issuer",
+          "network",
+          "name",
+          "base_rate",
+          "id",
+          "user_id"
+        ],
+        "title": "Card",
+        "description": "Full card record."
+      },
+      "Card-Output": {
+        "properties": {
+          "issuer": {
+            "type": "string",
+            "title": "Issuer",
+            "description": "Card issuer",
+            "examples": [
+              "Chase"
+            ]
+          },
+          "network": {
+            "$ref": "#/components/schemas/CardNetwork",
+            "description": "Card network"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Card product name",
+            "examples": [
+              "Freedom Unlimited"
+            ]
+          },
+          "base_rate": {
+            "type": "string",
+            "title": "Base Rate",
+            "description": "Base cashback rate (%)",
+            "examples": [
+              "1.5"
+            ]
+          },
+          "category_rates": {
+            "items": {
+              "$ref": "#/components/schemas/CategoryRate-Output"
+            },
+            "type": "array",
+            "title": "Category Rates",
+            "description": "Bonus category rates"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id",
+            "description": "Unique card ID"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id",
+            "description": "Owner user ID"
+          },
+          "last_four": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Four",
+            "description": "Last 4 digits (display only)"
+          },
+          "is_demo": {
+            "type": "boolean",
+            "title": "Is Demo",
+            "description": "Demo card flag",
+            "default": false
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "issuer",
+          "network",
+          "name",
+          "base_rate",
+          "id",
+          "user_id"
+        ],
+        "title": "Card",
+        "description": "Full card record."
+      },
+      "CardBase": {
+        "properties": {
+          "issuer": {
+            "type": "string",
+            "title": "Issuer",
+            "description": "Card issuer",
+            "examples": [
+              "Chase"
+            ]
+          },
+          "network": {
+            "$ref": "#/components/schemas/CardNetwork",
+            "description": "Card network"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Card product name",
+            "examples": [
+              "Freedom Unlimited"
+            ]
+          },
+          "base_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Base Rate",
+            "description": "Base cashback rate (%)",
+            "examples": [
+              "1.5"
+            ]
+          },
+          "category_rates": {
+            "items": {
+              "$ref": "#/components/schemas/CategoryRate-Input"
+            },
+            "type": "array",
+            "title": "Category Rates",
+            "description": "Bonus category rates"
+          }
+        },
+        "type": "object",
+        "required": [
+          "issuer",
+          "network",
+          "name",
+          "base_rate"
+        ],
+        "title": "CardBase",
+        "description": "Payment card for cashback tracking."
+      },
+      "CardNetwork": {
+        "type": "string",
+        "enum": [
+          "visa",
+          "mastercard",
+          "amex",
+          "discover"
+        ],
+        "title": "CardNetwork",
+        "description": "Payment card network."
+      },
+      "CartItem": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Item name"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category",
+            "description": "Item category"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Price",
+            "description": "Item price"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity",
+            "default": 1
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "price"
+        ],
+        "title": "CartItem",
+        "description": "Individual cart item for stacking calculation."
+      },
+      "CategoryRate-Input": {
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category",
+            "description": "Category name",
+            "examples": [
+              "Dining"
+            ]
+          },
+          "mcc_codes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Mcc Codes",
+            "description": "Matching MCC codes"
+          },
+          "rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Rate",
+            "description": "Cashback rate (percentage)",
+            "examples": [
+              "3.0"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "rate"
+        ],
+        "title": "CategoryRate",
+        "description": "Cashback rate for a specific category or MCC."
+      },
+      "CategoryRate-Output": {
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category",
+            "description": "Category name",
+            "examples": [
+              "Dining"
+            ]
+          },
+          "mcc_codes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Mcc Codes",
+            "description": "Matching MCC codes"
+          },
+          "rate": {
+            "type": "string",
+            "title": "Rate",
+            "description": "Cashback rate (percentage)",
+            "examples": [
+              "3.0"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "rate"
+        ],
+        "title": "CategoryRate",
+        "description": "Cashback rate for a specific category or MCC."
+      },
+      "ChosenReward-Input": {
+        "properties": {
+          "reward_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Reward Id"
+          },
+          "reward": {
+            "$ref": "#/components/schemas/Reward-Input"
+          },
+          "savings": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Savings",
+            "description": "Savings from this reward"
+          },
+          "applied_order": {
+            "type": "integer",
+            "title": "Applied Order",
+            "description": "Order in which to apply"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reward_id",
+          "reward",
+          "savings",
+          "applied_order"
+        ],
+        "title": "ChosenReward",
+        "description": "A reward chosen by the stacking solver."
+      },
+      "ChosenReward-Output": {
+        "properties": {
+          "reward_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Reward Id"
+          },
+          "reward": {
+            "$ref": "#/components/schemas/Reward-Output"
+          },
+          "savings": {
+            "type": "string",
+            "title": "Savings",
+            "description": "Savings from this reward"
+          },
+          "applied_order": {
+            "type": "integer",
+            "title": "Applied Order",
+            "description": "Order in which to apply"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reward_id",
+          "reward",
+          "savings",
+          "applied_order"
+        ],
+        "title": "ChosenReward",
+        "description": "A reward chosen by the stacking solver."
+      },
+      "ClassifyMerchantRequest": {
+        "properties": {
+          "domain": {
+            "type": "string",
+            "title": "Domain",
+            "description": "Domain to classify",
+            "examples": [
+              "unknownstore.com"
+            ]
+          },
+          "page_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page Title",
+            "description": "Page title for context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "domain"
+        ],
+        "title": "ClassifyMerchantRequest",
+        "description": "Request to classify an unknown merchant."
+      },
+      "ClassifyMerchantResult": {
+        "properties": {
+          "domain": {
+            "type": "string",
+            "title": "Domain"
+          },
+          "merchant_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Merchant Id",
+            "description": "Matched merchant ID if known"
+          },
+          "merchant_name": {
+            "type": "string",
+            "title": "Merchant Name",
+            "description": "Merchant name (inferred if unknown)"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category",
+            "description": "Inferred category"
+          },
+          "mcc": {
+            "type": "string",
+            "title": "Mcc",
+            "description": "Inferred MCC code"
+          },
+          "confidence": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence",
+            "description": "Classification confidence"
+          },
+          "is_new": {
+            "type": "boolean",
+            "title": "Is New",
+            "description": "True if merchant was not in database"
+          }
+        },
+        "type": "object",
+        "required": [
+          "domain",
+          "merchant_name",
+          "category",
+          "mcc",
+          "confidence",
+          "is_new"
+        ],
+        "title": "ClassifyMerchantResult",
+        "description": "Merchant classification result."
+      },
+      "DemoInjectRequest": {
+        "properties": {
+          "eml_filename": {
+            "type": "string",
+            "title": "Eml Filename",
+            "description": "Filename from shared/seed/emails/"
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Id",
+            "description": "Override user ID"
+          }
+        },
+        "type": "object",
+        "required": [
+          "eml_filename"
+        ],
+        "title": "DemoInjectRequest",
+        "description": "Request to inject a demo/test email."
+      },
+      "EmailClassification": {
+        "type": "string",
+        "enum": [
+          "reward",
+          "receipt",
+          "promo",
+          "other"
+        ],
+        "title": "EmailClassification",
+        "description": "SetFit email classifier categories."
+      },
+      "Event": {
+        "properties": {
+          "event_type": {
+            "$ref": "#/components/schemas/EventType"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timestamp"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "reward_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reward Id"
+          },
+          "data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "event_type",
+          "user_id"
+        ],
+        "title": "Event",
+        "description": "SSE event payload."
+      },
+      "EventType": {
+        "type": "string",
+        "enum": [
+          "reward_added",
+          "reward_expiring",
+          "reward_updated",
+          "reward_used",
+          "sync_complete"
+        ],
+        "title": "EventType",
+        "description": "SSE event types for real-time updates."
+      },
+      "FieldConfidence": {
+        "properties": {
+          "value": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Value",
+            "default": 1.0
+          },
+          "expires_at": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Expires At",
+            "default": 1.0
+          },
+          "code": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Code",
+            "default": 1.0
+          },
+          "min_spend": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Min Spend",
+            "default": 1.0
+          },
+          "merchant": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Merchant",
+            "default": 1.0
+          }
+        },
+        "type": "object",
+        "title": "FieldConfidence",
+        "description": "Per-field extraction confidence scores."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthCheck": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "healthy"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "default": "0.1.0"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timestamp"
+          },
+          "services": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Services"
+          }
+        },
+        "type": "object",
+        "title": "HealthCheck",
+        "description": "Health check response."
+      },
+      "InboundEmail": {
+        "properties": {
+          "MessageID": {
+            "type": "string",
+            "title": "Messageid",
+            "description": "Unique message ID"
+          },
+          "FromFull": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Fromfull",
+            "description": "Sender info with Email and Name"
+          },
+          "ToFull": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Tofull",
+            "description": "Recipients"
+          },
+          "Subject": {
+            "type": "string",
+            "title": "Subject"
+          },
+          "TextBody": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Textbody"
+          },
+          "HtmlBody": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Htmlbody"
+          },
+          "Date": {
+            "type": "string",
+            "title": "Date",
+            "description": "Email date string"
+          },
+          "MailboxHash": {
+            "type": "string",
+            "title": "Mailboxhash",
+            "description": "Hash for user routing",
+            "default": ""
+          },
+          "Attachments": {
+            "items": {
+              "$ref": "#/components/schemas/InboundEmailAttachment"
+            },
+            "type": "array",
+            "title": "Attachments"
+          },
+          "Headers": {
+            "items": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Headers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "MessageID",
+          "FromFull",
+          "ToFull",
+          "Subject",
+          "Date"
+        ],
+        "title": "InboundEmail",
+        "description": "Postmark inbound webhook payload (subset of fields we use)."
+      },
+      "InboundEmailAttachment": {
+        "properties": {
+          "Name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "Content": {
+            "type": "string",
+            "title": "Content",
+            "description": "Base64-encoded content"
+          },
+          "ContentType": {
+            "type": "string",
+            "title": "Contenttype"
+          },
+          "ContentLength": {
+            "type": "integer",
+            "title": "Contentlength"
+          }
+        },
+        "type": "object",
+        "required": [
+          "Name",
+          "Content",
+          "ContentType",
+          "ContentLength"
+        ],
+        "title": "InboundEmailAttachment",
+        "description": "Email attachment metadata (Postmark-compatible)."
+      },
+      "InboundResult": {
+        "properties": {
+          "message_id": {
+            "type": "string",
+            "title": "Message Id"
+          },
+          "classification": {
+            "$ref": "#/components/schemas/EmailClassification"
+          },
+          "rewards_extracted": {
+            "type": "integer",
+            "title": "Rewards Extracted",
+            "default": 0
+          },
+          "reward_ids": {
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "type": "array",
+            "title": "Reward Ids"
+          },
+          "needs_review": {
+            "type": "boolean",
+            "title": "Needs Review",
+            "default": false
+          },
+          "processing_time_ms": {
+            "type": "integer",
+            "title": "Processing Time Ms",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "message_id",
+          "classification"
+        ],
+        "title": "InboundResult",
+        "description": "Result of processing an inbound email."
+      },
+      "LookupRequest": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id",
+            "description": "User ID"
+          },
+          "merchant_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Merchant Id"
+          },
+          "domain": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domain"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Query",
+            "description": "Optional text query for semantic search"
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "default": 3
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id"
+        ],
+        "title": "LookupRequest",
+        "description": "Request to find relevant rewards for a merchant."
+      },
+      "LookupResult": {
+        "properties": {
+          "merchant": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Merchant"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rewards": {
+            "items": {
+              "$ref": "#/components/schemas/ScoredReward-Output"
+            },
+            "type": "array",
+            "title": "Rewards",
+            "description": "Top rewards by score"
+          },
+          "total_available": {
+            "type": "integer",
+            "title": "Total Available",
+            "description": "Total rewards available for user"
+          }
+        },
+        "type": "object",
+        "required": [
+          "merchant",
+          "rewards",
+          "total_available"
+        ],
+        "title": "LookupResult",
+        "description": "Top rewards for a merchant lookup."
+      },
+      "Membership-Input": {
+        "properties": {
+          "merchant_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Merchant Id",
+            "description": "Linked merchant ID"
+          },
+          "merchant_name": {
+            "type": "string",
+            "title": "Merchant Name",
+            "description": "Merchant name",
+            "examples": [
+              "Costco"
+            ]
+          },
+          "program_name": {
+            "type": "string",
+            "title": "Program Name",
+            "description": "Membership program name",
+            "examples": [
+              "Executive"
+            ]
+          },
+          "tier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tier",
+            "description": "Membership tier",
+            "examples": [
+              "Gold"
+            ]
+          },
+          "member_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Member Id",
+            "description": "Membership number (encrypted)"
+          },
+          "benefits": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Benefits",
+            "description": "Membership benefits"
+          },
+          "annual_reward_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Reward Rate",
+            "description": "Annual reward rate (%)"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At",
+            "description": "Membership expiration"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id",
+            "description": "Unique membership ID"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id",
+            "description": "Owner user ID"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "merchant_name",
+          "program_name",
+          "id",
+          "user_id"
+        ],
+        "title": "Membership",
+        "description": "Full membership record."
+      },
+      "Membership-Output": {
+        "properties": {
+          "merchant_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Merchant Id",
+            "description": "Linked merchant ID"
+          },
+          "merchant_name": {
+            "type": "string",
+            "title": "Merchant Name",
+            "description": "Merchant name",
+            "examples": [
+              "Costco"
+            ]
+          },
+          "program_name": {
+            "type": "string",
+            "title": "Program Name",
+            "description": "Membership program name",
+            "examples": [
+              "Executive"
+            ]
+          },
+          "tier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tier",
+            "description": "Membership tier",
+            "examples": [
+              "Gold"
+            ]
+          },
+          "member_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Member Id",
+            "description": "Membership number (encrypted)"
+          },
+          "benefits": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Benefits",
+            "description": "Membership benefits"
+          },
+          "annual_reward_rate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Reward Rate",
+            "description": "Annual reward rate (%)"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At",
+            "description": "Membership expiration"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id",
+            "description": "Unique membership ID"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id",
+            "description": "Owner user ID"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "merchant_name",
+          "program_name",
+          "id",
+          "user_id"
+        ],
+        "title": "Membership",
+        "description": "Full membership record."
+      },
+      "MembershipBase": {
+        "properties": {
+          "merchant_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Merchant Id",
+            "description": "Linked merchant ID"
+          },
+          "merchant_name": {
+            "type": "string",
+            "title": "Merchant Name",
+            "description": "Merchant name",
+            "examples": [
+              "Costco"
+            ]
+          },
+          "program_name": {
+            "type": "string",
+            "title": "Program Name",
+            "description": "Membership program name",
+            "examples": [
+              "Executive"
+            ]
+          },
+          "tier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tier",
+            "description": "Membership tier",
+            "examples": [
+              "Gold"
+            ]
+          },
+          "member_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Member Id",
+            "description": "Membership number (encrypted)"
+          },
+          "benefits": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Benefits",
+            "description": "Membership benefits"
+          },
+          "annual_reward_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Reward Rate",
+            "description": "Annual reward rate (%)"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At",
+            "description": "Membership expiration"
+          }
+        },
+        "type": "object",
+        "required": [
+          "merchant_name",
+          "program_name"
+        ],
+        "title": "MembershipBase",
+        "description": "Store membership/loyalty program."
+      },
+      "Merchant": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Merchant display name",
+            "examples": [
+              "Target"
+            ]
+          },
+          "domain": {
+            "type": "string",
+            "title": "Domain",
+            "description": "Primary domain",
+            "examples": [
+              "target.com"
+            ]
+          },
+          "mcc": {
+            "type": "string",
+            "title": "Mcc",
+            "description": "Merchant Category Code (4 digits)",
+            "examples": [
+              "5311"
+            ]
+          },
+          "category": {
+            "type": "string",
+            "title": "Category",
+            "description": "Human-readable category",
+            "examples": [
+              "Department Stores"
+            ]
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id",
+            "description": "Unique merchant ID"
+          },
+          "aliases": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Aliases",
+            "description": "Alternative domains/names"
+          },
+          "logo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Url",
+            "description": "Logo URL for display"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "domain",
+          "mcc",
+          "category",
+          "id"
+        ],
+        "title": "Merchant",
+        "description": "Full merchant record with ID."
+      },
+      "Reward-Input": {
+        "properties": {
+          "merchant_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Merchant Id",
+            "description": "Linked merchant ID"
+          },
+          "merchant_name": {
+            "type": "string",
+            "title": "Merchant Name",
+            "description": "Merchant name",
+            "examples": [
+              "Target"
+            ]
+          },
+          "category": {
+            "type": "string",
+            "title": "Category",
+            "description": "Reward category",
+            "examples": [
+              "Department Stores"
+            ]
+          },
+          "mcc": {
+            "type": "string",
+            "title": "Mcc",
+            "description": "Merchant Category Code",
+            "examples": [
+              "5311"
+            ]
+          },
+          "kind": {
+            "$ref": "#/components/schemas/RewardKind",
+            "description": "Type of reward"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Value",
+            "description": "Reward value (percentage or amount)",
+            "examples": [
+              "10.00"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency",
+            "description": "Currency code",
+            "default": "USD"
+          },
+          "min_spend": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Spend",
+            "description": "Minimum purchase to apply",
+            "examples": [
+              "50.00"
+            ]
+          },
+          "max_discount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Discount",
+            "description": "Maximum discount cap",
+            "examples": [
+              "25.00"
+            ]
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code",
+            "description": "Promo/reward code (encrypted at rest)"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At",
+            "description": "Expiration datetime"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At",
+            "description": "Start datetime (if future)"
+          },
+          "stackable": {
+            "type": "boolean",
+            "title": "Stackable",
+            "description": "Can combine with other rewards",
+            "default": false
+          },
+          "exclusions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Exclusions",
+            "description": "Excluded items/categories"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id",
+            "description": "Unique reward ID"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id",
+            "description": "Owner user ID"
+          },
+          "source": {
+            "$ref": "#/components/schemas/RewardSource",
+            "description": "How this reward was extracted"
+          },
+          "source_email_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Email Id",
+            "description": "Source email message ID"
+          },
+          "field_confidence": {
+            "$ref": "#/components/schemas/FieldConfidence"
+          },
+          "overall_confidence": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Overall Confidence",
+            "default": 1.0
+          },
+          "status": {
+            "$ref": "#/components/schemas/RewardStatus",
+            "default": "active"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "merchant_name",
+          "category",
+          "mcc",
+          "kind",
+          "value",
+          "id",
+          "user_id",
+          "source"
+        ],
+        "title": "Reward",
+        "description": "Full reward record."
+      },
+      "Reward-Output": {
+        "properties": {
+          "merchant_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Merchant Id",
+            "description": "Linked merchant ID"
+          },
+          "merchant_name": {
+            "type": "string",
+            "title": "Merchant Name",
+            "description": "Merchant name",
+            "examples": [
+              "Target"
+            ]
+          },
+          "category": {
+            "type": "string",
+            "title": "Category",
+            "description": "Reward category",
+            "examples": [
+              "Department Stores"
+            ]
+          },
+          "mcc": {
+            "type": "string",
+            "title": "Mcc",
+            "description": "Merchant Category Code",
+            "examples": [
+              "5311"
+            ]
+          },
+          "kind": {
+            "$ref": "#/components/schemas/RewardKind",
+            "description": "Type of reward"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value",
+            "description": "Reward value (percentage or amount)",
+            "examples": [
+              "10.00"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency",
+            "description": "Currency code",
+            "default": "USD"
+          },
+          "min_spend": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Spend",
+            "description": "Minimum purchase to apply",
+            "examples": [
+              "50.00"
+            ]
+          },
+          "max_discount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Discount",
+            "description": "Maximum discount cap",
+            "examples": [
+              "25.00"
+            ]
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code",
+            "description": "Promo/reward code (encrypted at rest)"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At",
+            "description": "Expiration datetime"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At",
+            "description": "Start datetime (if future)"
+          },
+          "stackable": {
+            "type": "boolean",
+            "title": "Stackable",
+            "description": "Can combine with other rewards",
+            "default": false
+          },
+          "exclusions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Exclusions",
+            "description": "Excluded items/categories"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id",
+            "description": "Unique reward ID"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id",
+            "description": "Owner user ID"
+          },
+          "source": {
+            "$ref": "#/components/schemas/RewardSource",
+            "description": "How this reward was extracted"
+          },
+          "source_email_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Email Id",
+            "description": "Source email message ID"
+          },
+          "field_confidence": {
+            "$ref": "#/components/schemas/FieldConfidence"
+          },
+          "overall_confidence": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Overall Confidence",
+            "default": 1.0
+          },
+          "status": {
+            "$ref": "#/components/schemas/RewardStatus",
+            "default": "active"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "merchant_name",
+          "category",
+          "mcc",
+          "kind",
+          "value",
+          "id",
+          "user_id",
+          "source"
+        ],
+        "title": "Reward",
+        "description": "Full reward record."
+      },
+      "RewardKind": {
+        "type": "string",
+        "enum": [
+          "percent_off",
+          "amount_off",
+          "points",
+          "free_item",
+          "bogo",
+          "cashback"
+        ],
+        "title": "RewardKind",
+        "description": "Type of reward/discount offered."
+      },
+      "RewardSource": {
+        "type": "string",
+        "enum": [
+          "email_jsonld",
+          "gliner",
+          "regex",
+          "manual",
+          "seed"
+        ],
+        "title": "RewardSource",
+        "description": "How the reward was extracted/created."
+      },
+      "RewardStatus": {
+        "type": "string",
+        "enum": [
+          "active",
+          "needs_review",
+          "used",
+          "expired"
+        ],
+        "title": "RewardStatus",
+        "description": "Current status of the reward."
+      },
+      "ScoredReward-Input": {
+        "properties": {
+          "reward": {
+            "$ref": "#/components/schemas/Reward-Input"
+          },
+          "score": {
+            "type": "number",
+            "title": "Score",
+            "description": "Final ranking score"
+          },
+          "value_component": {
+            "type": "number",
+            "title": "Value Component",
+            "description": "Score from value_usd"
+          },
+          "match_component": {
+            "type": "number",
+            "title": "Match Component",
+            "description": "Score from merchant/category match"
+          },
+          "urgency_component": {
+            "type": "number",
+            "title": "Urgency Component",
+            "description": "Score from expiry urgency"
+          },
+          "days_until_expiry": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Days Until Expiry"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reward",
+          "score",
+          "value_component",
+          "match_component",
+          "urgency_component"
+        ],
+        "title": "ScoredReward",
+        "description": "Reward with relevance score breakdown."
+      },
+      "ScoredReward-Output": {
+        "properties": {
+          "reward": {
+            "$ref": "#/components/schemas/Reward-Output"
+          },
+          "score": {
+            "type": "number",
+            "title": "Score",
+            "description": "Final ranking score"
+          },
+          "value_component": {
+            "type": "number",
+            "title": "Value Component",
+            "description": "Score from value_usd"
+          },
+          "match_component": {
+            "type": "number",
+            "title": "Match Component",
+            "description": "Score from merchant/category match"
+          },
+          "urgency_component": {
+            "type": "number",
+            "title": "Urgency Component",
+            "description": "Score from expiry urgency"
+          },
+          "days_until_expiry": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Days Until Expiry"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reward",
+          "score",
+          "value_component",
+          "match_component",
+          "urgency_component"
+        ],
+        "title": "ScoredReward",
+        "description": "Reward with relevance score breakdown."
+      },
+      "StackRequest": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id",
+            "description": "User ID"
+          },
+          "merchant_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Merchant Id",
+            "description": "Merchant ID if known"
+          },
+          "domain": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domain",
+            "description": "Merchant domain if ID unknown"
+          },
+          "cart_total": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Cart Total",
+            "description": "Total cart value",
+            "examples": [
+              "150.00"
+            ]
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CartItem"
+            },
+            "type": "array",
+            "title": "Items",
+            "description": "Cart items (for exclusion matching)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "cart_total"
+        ],
+        "title": "StackRequest",
+        "description": "Request to calculate optimal reward stacking."
+      },
+      "StackResult": {
+        "properties": {
+          "chosen_rewards": {
+            "items": {
+              "$ref": "#/components/schemas/ChosenReward-Output"
+            },
+            "type": "array",
+            "title": "Chosen Rewards",
+            "description": "Rewards to use, in order"
+          },
+          "recommended_card": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Card-Output"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Best card for this purchase"
+          },
+          "card_cashback": {
+            "type": "string",
+            "title": "Card Cashback",
+            "description": "Cashback from card",
+            "default": "0"
+          },
+          "original_price": {
+            "type": "string",
+            "title": "Original Price",
+            "description": "Original cart total"
+          },
+          "final_price": {
+            "type": "string",
+            "title": "Final Price",
+            "description": "Price after all discounts"
+          },
+          "total_savings": {
+            "type": "string",
+            "title": "Total Savings",
+            "description": "Total savings (rewards + cashback)"
+          },
+          "savings_percent": {
+            "type": "string",
+            "title": "Savings Percent",
+            "description": "Savings as percentage"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation",
+            "description": "Human-readable explanation of stacking"
+          },
+          "alternatives": {
+            "items": {
+              "$ref": "#/components/schemas/ChosenReward-Output"
+            },
+            "type": "array",
+            "title": "Alternatives",
+            "description": "Other rewards that could be used but weren't optimal"
+          },
+          "solver_status": {
+            "type": "string",
+            "title": "Solver Status",
+            "description": "CP-SAT solver status",
+            "default": "optimal"
+          }
+        },
+        "type": "object",
+        "required": [
+          "chosen_rewards",
+          "original_price",
+          "final_price",
+          "total_savings",
+          "savings_percent",
+          "explanation"
+        ],
+        "title": "StackResult",
+        "description": "Optimal stacking result from CP-SAT solver."
+      },
+      "SyncResponse": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "rewards": {
+            "items": {
+              "$ref": "#/components/schemas/Reward-Output"
+            },
+            "type": "array",
+            "title": "Rewards"
+          },
+          "wallet": {
+            "$ref": "#/components/schemas/Wallet"
+          },
+          "last_sync": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Last Sync"
+          },
+          "pending_events": {
+            "items": {
+              "$ref": "#/components/schemas/Event"
+            },
+            "type": "array",
+            "title": "Pending Events"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "wallet"
+        ],
+        "title": "SyncResponse",
+        "description": "Polling sync response."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "Wallet": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id",
+            "description": "User ID"
+          },
+          "cards": {
+            "items": {
+              "$ref": "#/components/schemas/Card-Output"
+            },
+            "type": "array",
+            "title": "Cards",
+            "description": "Payment cards"
+          },
+          "memberships": {
+            "items": {
+              "$ref": "#/components/schemas/Membership-Output"
+            },
+            "type": "array",
+            "title": "Memberships",
+            "description": "Store memberships"
+          },
+          "active_rewards_count": {
+            "type": "integer",
+            "title": "Active Rewards Count",
+            "description": "Number of active rewards",
+            "default": 0
+          },
+          "expiring_soon_count": {
+            "type": "integer",
+            "title": "Expiring Soon Count",
+            "description": "Rewards expiring in 3 days",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id"
+        ],
+        "title": "Wallet",
+        "description": "User's complete wallet state."
+      },
+      "WalletUpdate": {
+        "properties": {
+          "add_cards": {
+            "items": {
+              "$ref": "#/components/schemas/CardBase"
+            },
+            "type": "array",
+            "title": "Add Cards"
+          },
+          "remove_card_ids": {
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "type": "array",
+            "title": "Remove Card Ids"
+          },
+          "add_memberships": {
+            "items": {
+              "$ref": "#/components/schemas/MembershipBase"
+            },
+            "type": "array",
+            "title": "Add Memberships"
+          },
+          "remove_membership_ids": {
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "type": "array",
+            "title": "Remove Membership Ids"
+          }
+        },
+        "type": "object",
+        "title": "WalletUpdate",
+        "description": "Wallet update payload."
+      }
+    }
+  }
+}

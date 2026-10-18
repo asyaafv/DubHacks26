@@ -1,0 +1,29 @@
+{
+  "description": "Health check response.",
+  "properties": {
+    "status": {
+      "default": "healthy",
+      "title": "Status",
+      "type": "string"
+    },
+    "version": {
+      "default": "0.1.0",
+      "title": "Version",
+      "type": "string"
+    },
+    "timestamp": {
+      "format": "date-time",
+      "title": "Timestamp",
+      "type": "string"
+    },
+    "services": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Services",
+      "type": "object"
+    }
+  },
+  "title": "HealthCheck",
+  "type": "object"
+}

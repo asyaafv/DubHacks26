@@ -1,0 +1,108 @@
+{
+  "description": "Store membership/loyalty program.",
+  "properties": {
+    "merchant_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Linked merchant ID",
+      "title": "Merchant Id"
+    },
+    "merchant_name": {
+      "description": "Merchant name",
+      "examples": [
+        "Costco"
+      ],
+      "title": "Merchant Name",
+      "type": "string"
+    },
+    "program_name": {
+      "description": "Membership program name",
+      "examples": [
+        "Executive"
+      ],
+      "title": "Program Name",
+      "type": "string"
+    },
+    "tier": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Membership tier",
+      "examples": [
+        "Gold"
+      ],
+      "title": "Tier"
+    },
+    "member_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Membership number (encrypted)",
+      "title": "Member Id"
+    },
+    "benefits": {
+      "description": "Membership benefits",
+      "items": {
+        "type": "string"
+      },
+      "title": "Benefits",
+      "type": "array"
+    },
+    "annual_reward_rate": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Annual reward rate (%)",
+      "title": "Annual Reward Rate"
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Membership expiration",
+      "title": "Expires At"
+    }
+  },
+  "required": [
+    "merchant_name",
+    "program_name"
+  ],
+  "title": "MembershipBase",
+  "type": "object"
+}

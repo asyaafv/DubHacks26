@@ -1,0 +1,10 @@
+{
+  "title": "CardNetwork",
+  "type": "string",
+  "enum": [
+    "visa",
+    "mastercard",
+    "amex",
+    "discover"
+  ]
+}

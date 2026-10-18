@@ -1,0 +1,115 @@
+{
+  "$defs": {
+    "CartItem": {
+      "description": "Individual cart item for stacking calculation.",
+      "properties": {
+        "name": {
+          "description": "Item name",
+          "title": "Name",
+          "type": "string"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item category",
+          "title": "Category"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Item price",
+          "title": "Price"
+        },
+        "quantity": {
+          "default": 1,
+          "title": "Quantity",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "price"
+      ],
+      "title": "CartItem",
+      "type": "object"
+    }
+  },
+  "description": "Request to calculate optimal reward stacking.",
+  "properties": {
+    "user_id": {
+      "description": "User ID",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    },
+    "merchant_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Merchant ID if known",
+      "title": "Merchant Id"
+    },
+    "domain": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Merchant domain if ID unknown",
+      "title": "Domain"
+    },
+    "cart_total": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "description": "Total cart value",
+      "examples": [
+        "150.00"
+      ],
+      "title": "Cart Total"
+    },
+    "items": {
+      "description": "Cart items (for exclusion matching)",
+      "items": {
+        "$ref": "#/$defs/CartItem"
+      },
+      "title": "Items",
+      "type": "array"
+    }
+  },
+  "required": [
+    "user_id",
+    "cart_total"
+  ],
+  "title": "StackRequest",
+  "type": "object"
+}

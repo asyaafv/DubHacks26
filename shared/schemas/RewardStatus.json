@@ -1,0 +1,10 @@
+{
+  "title": "RewardStatus",
+  "type": "string",
+  "enum": [
+    "active",
+    "needs_review",
+    "used",
+    "expired"
+  ]
+}

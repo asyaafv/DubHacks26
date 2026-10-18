@@ -1,0 +1,42 @@
+{
+  "description": "Per-field extraction confidence scores.",
+  "properties": {
+    "value": {
+      "default": 1.0,
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Value",
+      "type": "number"
+    },
+    "expires_at": {
+      "default": 1.0,
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Expires At",
+      "type": "number"
+    },
+    "code": {
+      "default": 1.0,
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Code",
+      "type": "number"
+    },
+    "min_spend": {
+      "default": 1.0,
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Min Spend",
+      "type": "number"
+    },
+    "merchant": {
+      "default": 1.0,
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Merchant",
+      "type": "number"
+    }
+  },
+  "title": "FieldConfidence",
+  "type": "object"
+}

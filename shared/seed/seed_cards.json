@@ -1,0 +1,85 @@
+{
+  "_comment": "Demo Visa cards with category cashback rates. NOT real card data - for demo purposes only.",
+  "demo_user_id": "00000000-0000-0000-0000-000000000001",
+  "cards": [
+    {
+      "id": "33333333-3333-3333-3333-333333333301",
+      "user_id": "00000000-0000-0000-0000-000000000001",
+      "issuer": "Chase",
+      "network": "visa",
+      "name": "Sapphire Preferred (DEMO)",
+      "last_four": "4242",
+      "base_rate": "1.0",
+      "category_rates": [
+        {"category": "Dining", "mcc_codes": ["5812", "5813", "5814"], "rate": "3.0"},
+        {"category": "Travel", "mcc_codes": ["4111", "4112", "4121", "4131", "4411", "4511", "4722", "7011", "7012"], "rate": "2.0"},
+        {"category": "Online Grocery", "mcc_codes": ["5411", "5422"], "rate": "3.0"},
+        {"category": "Streaming", "mcc_codes": ["4899", "5815", "5816", "5817", "5818"], "rate": "3.0"}
+      ],
+      "is_demo": true,
+      "created_at": "2026-01-15T10:00:00Z"
+    },
+    {
+      "id": "33333333-3333-3333-3333-333333333302",
+      "user_id": "00000000-0000-0000-0000-000000000001",
+      "issuer": "Chase",
+      "network": "visa",
+      "name": "Freedom Unlimited (DEMO)",
+      "last_four": "1234",
+      "base_rate": "1.5",
+      "category_rates": [
+        {"category": "Dining", "mcc_codes": ["5812", "5813", "5814"], "rate": "3.0"},
+        {"category": "Drugstores", "mcc_codes": ["5912"], "rate": "3.0"}
+      ],
+      "is_demo": true,
+      "created_at": "2026-02-20T14:30:00Z"
+    },
+    {
+      "id": "33333333-3333-3333-3333-333333333303",
+      "user_id": "00000000-0000-0000-0000-000000000001",
+      "issuer": "Capital One",
+      "network": "visa",
+      "name": "SavorOne (DEMO)",
+      "last_four": "5678",
+      "base_rate": "1.0",
+      "category_rates": [
+        {"category": "Dining", "mcc_codes": ["5812", "5813", "5814"], "rate": "3.0"},
+        {"category": "Entertainment", "mcc_codes": ["7832", "7841", "7911", "7922", "7929", "7932", "7933", "7941", "7991", "7992", "7993", "7994", "7996", "7998", "7999"], "rate": "3.0"},
+        {"category": "Grocery Stores", "mcc_codes": ["5411", "5422", "5441", "5451", "5462"], "rate": "3.0"},
+        {"category": "Streaming", "mcc_codes": ["4899", "5815", "5816", "5817", "5818"], "rate": "3.0"}
+      ],
+      "is_demo": true,
+      "created_at": "2026-03-10T09:15:00Z"
+    },
+    {
+      "id": "33333333-3333-3333-3333-333333333304",
+      "user_id": "00000000-0000-0000-0000-000000000001",
+      "issuer": "Citi",
+      "network": "visa",
+      "name": "Custom Cash (DEMO)",
+      "last_four": "9012",
+      "base_rate": "1.0",
+      "category_rates": [
+        {"category": "Top Category (Auto)", "mcc_codes": [], "rate": "5.0"}
+      ],
+      "is_demo": true,
+      "created_at": "2026-04-05T16:45:00Z"
+    },
+    {
+      "id": "33333333-3333-3333-3333-333333333305",
+      "user_id": "00000000-0000-0000-0000-000000000001",
+      "issuer": "US Bank",
+      "network": "visa",
+      "name": "Cash+ (DEMO)",
+      "last_four": "3456",
+      "base_rate": "1.0",
+      "category_rates": [
+        {"category": "Department Stores", "mcc_codes": ["5311"], "rate": "5.0"},
+        {"category": "Home Improvement", "mcc_codes": ["5200", "5211", "5251"], "rate": "5.0"},
+        {"category": "Fast Food", "mcc_codes": ["5814"], "rate": "2.0"}
+      ],
+      "is_demo": true,
+      "created_at": "2026-05-12T11:20:00Z"
+    }
+  ]
+}

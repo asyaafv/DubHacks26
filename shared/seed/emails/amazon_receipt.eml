@@ -1,0 +1,87 @@
+MIME-Version: 1.0
+Date: Wed, 16 Oct 2026 14:22:00 -0700
+Message-ID: <receipt-001@amazon.com>
+From: "Amazon.com" <auto-confirm@amazon.com>
+To: demo@perk.app
+Subject: Your Amazon.com order of "Sony WH-1000XM5..." has shipped!
+Content-Type: multipart/alternative; boundary="amazonreceipt"
+
+--amazonreceipt
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+Your order has shipped!
+
+Order #112-3456789-0123456
+Arriving: Friday, October 18
+
+Sony WH-1000XM5 Wireless Industry Leading Noise Canceling Headphones
+Sold by: Amazon.com Services LLC
+Quantity: 1
+Price: $328.00
+
+Subtotal: $328.00
+Shipping & Handling: $0.00
+Tax: $29.52
+Order Total: $357.52
+
+Track your package: https://amazon.com/track/...
+
+Thank you for shopping with us!
+Amazon.com
+
+--amazonreceipt
+Content-Type: text/html; charset="UTF-8"
+
+<!DOCTYPE html>
+<html>
+<head>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Order",
+  "orderNumber": "112-3456789-0123456",
+  "orderStatus": "https://schema.org/OrderDelivered",
+  "merchant": {
+    "@type": "Organization",
+    "name": "Amazon.com"
+  },
+  "priceCurrency": "USD",
+  "price": "357.52",
+  "acceptedOffer": {
+    "@type": "Offer",
+    "itemOffered": {
+      "@type": "Product",
+      "name": "Sony WH-1000XM5 Wireless Headphones"
+    },
+    "price": "328.00",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+</head>
+<body>
+<div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
+  <h1>Your order has shipped!</h1>
+  <p>Hello,</p>
+  <table style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+        <strong>Sony WH-1000XM5 Wireless Headphones</strong><br>
+        Sold by: Amazon.com Services LLC<br>
+        Qty: 1
+      </td>
+      <td style="text-align: right; padding: 10px; border-bottom: 1px solid #ddd;">$328.00</td>
+    </tr>
+    <tr>
+      <td style="padding: 10px;">Order Total:</td>
+      <td style="text-align: right; padding: 10px;"><strong>$357.52</strong></td>
+    </tr>
+  </table>
+  <p><a href="https://amazon.com/track">Track your package</a></p>
+</div>
+</body>
+</html>
+
+--amazonreceipt--
