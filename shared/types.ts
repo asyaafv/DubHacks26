@@ -452,6 +452,7 @@ export interface SearchRequest {
   user_id?: string | null;
   /** Search phrase */
   query: string;
+  /** Total results; one slot is reserved for the best secondary hit when a divider applies */
   limit?: number;
 }
 

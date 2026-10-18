@@ -23,7 +23,8 @@
       "type": "string"
     },
     "limit": {
-      "default": 8,
+      "default": 3,
+      "description": "Total results; one slot is reserved for the best secondary hit when a divider applies",
       "maximum": 20,
       "minimum": 1,
       "title": "Limit",

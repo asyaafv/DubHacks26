@@ -152,7 +152,7 @@ export function mockLookup(request: LookupRequest, now: Date = new Date()): Look
 }
 
 /** Mock fallback for POST /search: same lexicon/ranking shape as the backend, over seed data. */
-export function mockSearch(query: string, limit = 8, now: Date = new Date()) {
+export function mockSearch(query: string, limit = 3, now: Date = new Date()) {
   const { results, totalMatched, totalActive, secondaryLabel } = searchSeed(
     query,
     allRewards(),

@@ -342,7 +342,9 @@ class SearchRequest(BaseModel):
     """Free-text search over the user's own rewards ("mexican food", "streetwear")."""
     user_id: UUID | None = Field(None, description="Optional; X-User-Id header wins")
     query: str = Field(..., min_length=1, max_length=200, description="Search phrase")
-    limit: int = Field(default=8, ge=1, le=20)
+    limit: int = Field(default=3, ge=1, le=20,
+                       description="Total results; one slot is reserved for the best "
+                                   "secondary hit when a divider applies")
 
 
 class SearchBestCard(BaseModel):
