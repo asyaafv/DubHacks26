@@ -60,6 +60,8 @@ from .schemas import (
 from backend.decisions.storage import Database
 from backend.decisions.common import resolve_user
 from backend.decisions.wallet.router import router as wallet_router
+from backend.decisions.wallet.service import wallet_snapshot
+from backend.decisions.savings import router as savings_router
 
 from backend.intake.service import (
     DemoInjectWithForce,
@@ -393,15 +395,12 @@ if demo_console_router is not None:
 
 
 app.include_router(wallet_router)
+app.include_router(savings_router)
 
 
 async def get_wallet(x_user_id=None):
     """Compatibility bridge for the existing sync stub until integration wiring."""
-    database = getattr(app.state, "database", None)
-    if database is None:
-        raise HTTPException(503, "Database is not configured")
-    async with database.transaction(resolve_user(x_user_id)) as repo:
-        return await repo.get_wallet()
+    return await wallet_snapshot(app, resolve_user(x_user_id))
 
 
 # =============================================================================
