@@ -1,6 +1,6 @@
 import { lookup, listenForEvents, redeemReward, stack, sync } from '../api/client';
-import { USE_MOCKS } from '../api/config';
-import { toastMessage } from '../api/mock';
+import { API_BASE, USE_MOCKS } from '../api/config';
+import { mockSync, toastMessage } from '../api/mock';
 import {
   emptyState,
   type CalculateStackMessage,
@@ -176,21 +176,32 @@ async function startEvents(): Promise<void> {
     return;
   }
 
-  // Live mode: keep the SSE stream alive across drops; after repeated
-  // failures fall back to /sync polling (which itself mock-falls-back).
-  let failures = 0;
-  while (failures < 5) {
+  // Live mode: keep the SSE stream alive across drops. A network-unreachable
+  // backend emits the mock seed event once (clearly logged) and keeps retrying
+  // so live toasts resume as soon as the backend comes back. Repeated HTTP
+  // failures fall back to /sync polling instead.
+  let httpFailures = 0;
+  let mockEmitted = false;
+  while (httpFailures < 5) {
     try {
       for await (const event of listenForEvents()) {
-        failures = 0;
+        httpFailures = 0;
         await publishEvent(event);
       }
       console.warn('[Lapse] /events stream ended, reconnecting');
     } catch (error) {
-      failures += 1;
-      console.warn(`[Lapse] /events unavailable (attempt ${failures})`, error);
+      if (error instanceof TypeError) {
+        console.warn(`[Lapse] backend unreachable at ${API_BASE} — serving MOCK events, retrying SSE`, error);
+        if (!mockEmitted) {
+          mockEmitted = true;
+          for (const event of mockSync().pending_events ?? []) await publishEvent(event);
+        }
+      } else {
+        httpFailures += 1;
+        console.warn(`[Lapse] /events failed (attempt ${httpFailures})`, error);
+      }
     }
-    await new Promise((resolve) => setTimeout(resolve, Math.min(1000 * 2 ** failures, 15_000)));
+    await new Promise((resolve) => setTimeout(resolve, 5000));
   }
 
   console.warn('[Lapse] /events gave up, polling /sync instead');
