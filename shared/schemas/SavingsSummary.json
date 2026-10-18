@@ -1,0 +1,105 @@
+{
+  "$defs": {
+    "Redemption": {
+      "description": "A user-scoped savings history item; never contains a reward code.",
+      "properties": {
+        "reward_id": {
+          "format": "uuid",
+          "title": "Reward Id",
+          "type": "string"
+        },
+        "merchant_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Merchant Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "saved": {
+          "pattern": "^\\d+\\.\\d{2}$",
+          "title": "Saved",
+          "type": "string"
+        },
+        "redeemed_at": {
+          "format": "date-time",
+          "title": "Redeemed At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reward_id",
+        "merchant_name",
+        "description",
+        "saved",
+        "redeemed_at"
+      ],
+      "title": "Redemption",
+      "type": "object"
+    },
+    "SavingsPoint": {
+      "description": "Cumulative USD savings at the end of a UTC day with a redemption.",
+      "properties": {
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "cumulative": {
+          "pattern": "^\\d+\\.\\d{2}$",
+          "title": "Cumulative",
+          "type": "string"
+        }
+      },
+      "required": [
+        "date",
+        "cumulative"
+      ],
+      "title": "SavingsPoint",
+      "type": "object"
+    }
+  },
+  "description": "Exact savings ledger, newest-first items, and ascending daily running totals.",
+  "properties": {
+    "total": {
+      "pattern": "^\\d+\\.\\d{2}$",
+      "title": "Total",
+      "type": "string"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/Redemption"
+      },
+      "title": "Items",
+      "type": "array"
+    },
+    "series": {
+      "items": {
+        "$ref": "#/$defs/SavingsPoint"
+      },
+      "title": "Series",
+      "type": "array"
+    }
+  },
+  "required": [
+    "total",
+    "items",
+    "series"
+  ],
+  "title": "SavingsSummary",
+  "type": "object"
+}

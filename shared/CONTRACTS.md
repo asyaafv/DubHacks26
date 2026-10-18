@@ -36,6 +36,33 @@ All errors return:
 
 ## Endpoints
 
+### Savings tracking
+
+`POST /rewards/{id}/redeem` uses `X-User-Id` and accepts `{"saved":"12.50"}`.
+It returns the owned Reward with status `used`, atomically records its savings,
+and appends a durable `reward_used` event. Requests are idempotent per user/reward.
+The optional `cart_total` permits exact percent/amount-off calculation when saved
+is omitted; without a cart the nominal face value is used. Applied stacks should
+send each chosen reward's actual savings explicitly.
+
+`GET /savings` uses the same header and returns:
+
+```json
+{
+  "total": "103.51",
+  "items": [{"reward_id":"77777777-7777-7777-7777-777777777708", "merchant_name":"Target", "description":"Circle offer on a previous purchase", "saved":"15.00", "redeemed_at":"2026-10-17T06:00:00Z"}],
+  "series": [{"date":"2026-10-17", "cumulative":"103.51"}]
+}
+```
+
+The arrays above are abbreviated. Items are newest first; series contains one
+ascending UTC daily point per redemption day, with cumulative totals over the
+complete history. All money is a two-decimal string. Empty history has total
+`"0.00"` and empty arrays. Only USD is aggregated. `/wallet` additionally exposes
+eligible owned `rewards`, preserving `expires_at` for calendar rendering.
+See `docs/savings-tracking.md` for status/error, startup demo seed and integration
+details, including the pending live delivery and extension hookup.
+
 ### Health Check
 
 ```
@@ -174,8 +201,9 @@ GET /wallet
 ---
 
 Wallet now requires configured Postgres and an externally supplied encryption key;
-missing database configuration returns 503. Startup does not seed or migrate. Missing
-identity uses the demo user only with `PERK_ALLOW_DEMO_IDENTITY=true`; conflicting
+missing database configuration returns 503. Startup loads the one-time demo savings
+history only; it does not migrate or reset the existing wallet/reward datasets. Missing
+identity uses the demo user only with `LAPSE_ALLOW_DEMO_IDENTITY=true`; conflicting
 body/header identities return 400. Counts exclude expired, future, used, and review
 rewards. See `docs/database-setup.md` for explicit migration/seed commands.
 
@@ -376,7 +404,7 @@ Server-Sent Events for durable replay and live updates.
 - `Last-Event-ID: <user UUID>:<durable sequence>` (optional)
 
 Missing identity returns 401 unless explicit demo fallback is enabled through
-`PERK_ALLOW_DEMO_IDENTITY=true`. X-User-Id remains demo identification, not
+`LAPSE_ALLOW_DEMO_IDENTITY=true`. X-User-Id remains demo identification, not
 authentication. Invalid UUIDs or malformed, foreign-user or future cursors return
 400. Never manufacture cursors; use server-issued values from sync or SSE.
 

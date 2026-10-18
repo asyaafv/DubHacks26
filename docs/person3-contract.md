@@ -18,7 +18,9 @@ main.py wiring; this branch changes only lifecycle and wallet wiring.
 characters, supplied outside repo and DB). `close()` closes the pool. FastAPI lifespan
 stores it in `app.state.database`; `get_database(request)` is overridable in tests.
 Missing DB configuration produces wallet 503, never an in-memory persistence fallback.
-Startup does not migrate or seed. `python -m backend.decisions.storage migrate|seed`
+Startup does not migrate or reset wallet/reward datasets. The demo savings history
+is imported once at configured startup, using its own ledger and historical reward
+IDs. `python -m backend.decisions.storage migrate|seed`
 is explicit. Migrations run under one transaction/advisory lock; 001 preserves the
 original docs/schema.sql. Existing manually initialized databases must record 001 in
 schema_migrations after verifying that baseline, before applying 002.

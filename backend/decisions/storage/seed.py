@@ -23,3 +23,6 @@ async def seed(database, directory=SEEDS):
                 data = json.loads((directory / filename).read_text())
                 for row in data[key]:
                     await save(model.model_validate(row))
+    # Keep a separate owner-locked transaction/ledger for the startup history.
+    from backend.decisions.savings.seed import seed_redemptions
+    await seed_redemptions(database, directory)

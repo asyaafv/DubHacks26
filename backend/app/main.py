@@ -60,6 +60,8 @@ from .schemas import (
 from backend.decisions.storage import Database
 from backend.decisions.common import resolve_user
 from backend.decisions.wallet.router import router as wallet_router
+from backend.decisions.savings.router import router as savings_router
+from backend.decisions.savings.seed import seed_redemptions
 
 from backend.intake.service import (
     DemoInjectWithForce,
@@ -82,6 +84,8 @@ async def lifespan(app):
     if os.getenv("DATABASE_URL"):
         app.state.database = await Database.connect()
     try:
+        if app.state.database is not None:
+            await seed_redemptions(app.state.database)
         yield
     finally:
         if app.state.database is not None:
@@ -395,6 +399,7 @@ if demo_console_router is not None:
 
 
 app.include_router(wallet_router)
+app.include_router(savings_router)
 
 
 async def get_wallet(x_user_id=None):

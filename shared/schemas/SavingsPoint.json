@@ -1,0 +1,21 @@
+{
+  "description": "Cumulative USD savings at the end of a UTC day with a redemption.",
+  "properties": {
+    "date": {
+      "format": "date",
+      "title": "Date",
+      "type": "string"
+    },
+    "cumulative": {
+      "pattern": "^\\d+\\.\\d{2}$",
+      "title": "Cumulative",
+      "type": "string"
+    }
+  },
+  "required": [
+    "date",
+    "cumulative"
+  ],
+  "title": "SavingsPoint",
+  "type": "object"
+}

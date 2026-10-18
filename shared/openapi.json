@@ -34,7 +34,7 @@
           "Intake"
         ],
         "summary": "Process Inbound Email",
-        "description": "Process inbound email from Postmark webhook.\n\nSTUB: Returns mock extraction result.\nREAL: Presidio PII redaction -> dedupe -> SetFit classify -> extraction cascade",
+        "description": "Process inbound email from Postmark webhook.\n\nRuns the real extraction pipeline (clean -> classify -> markup ->\nGLiNER/regex -> normalize -> merchant) and stores extracted rewards.",
         "operationId": "process_inbound_email_inbound_post",
         "parameters": [
           {
@@ -94,7 +94,7 @@
           "Intake"
         ],
         "summary": "Inject Demo Email",
-        "description": "Replay a stored .eml file through the intake pipeline.\n\nSTUB: Returns mock result based on filename.\nREAL: Loads .eml, parses, runs through full pipeline.",
+        "description": "Replay a stored .eml file through the real extraction pipeline.",
         "operationId": "inject_demo_email_demo_inject_post",
         "parameters": [
           {
@@ -239,6 +239,126 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Wallet"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rewards/{id}/redeem": {
+      "post": {
+        "tags": [
+          "Savings"
+        ],
+        "summary": "Redeem",
+        "description": "Atomically record a reward's savings and publish reward_used; retries are idempotent.",
+        "operationId": "redeem_rewards__id__redeem_post",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Id"
+            }
+          },
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-User-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RedeemRequest",
+                "default": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reward-Output"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/savings": {
+      "get": {
+        "tags": [
+          "Savings"
+        ],
+        "summary": "Get Savings",
+        "description": "Exact total, newest-first redemption items and cumulative UTC daily points.",
+        "operationId": "get_savings_savings_get",
+        "parameters": [
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-User-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavingsSummary"
                 }
               }
             }
@@ -1935,6 +2055,91 @@
         "title": "Merchant",
         "description": "Full merchant record with ID."
       },
+      "RedeemRequest": {
+        "properties": {
+          "saved": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d+\\.\\d{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Saved",
+            "description": "Actual savings in USD; supplied by the applied stack result"
+          },
+          "cart_total": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d+\\.\\d{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cart Total",
+            "description": "Optional eligible cart subtotal when saved is omitted"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "RedeemRequest",
+        "description": "Record actual reward savings, optionally calculating them from a known cart."
+      },
+      "Redemption": {
+        "properties": {
+          "reward_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Reward Id"
+          },
+          "merchant_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Merchant Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "saved": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d{2}$",
+            "title": "Saved"
+          },
+          "redeemed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Redeemed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reward_id",
+          "merchant_name",
+          "description",
+          "saved",
+          "redeemed_at"
+        ],
+        "title": "Redemption",
+        "description": "A user-scoped savings history item; never contains a reward code."
+      },
       "Reward-Input": {
         "properties": {
           "merchant_id": {
@@ -2396,6 +2601,58 @@
         "title": "RewardStatus",
         "description": "Current status of the reward."
       },
+      "SavingsPoint": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "cumulative": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d{2}$",
+            "title": "Cumulative"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date",
+          "cumulative"
+        ],
+        "title": "SavingsPoint",
+        "description": "Cumulative USD savings at the end of a UTC day with a redemption."
+      },
+      "SavingsSummary": {
+        "properties": {
+          "total": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d{2}$",
+            "title": "Total"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Redemption"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/SavingsPoint"
+            },
+            "type": "array",
+            "title": "Series"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "items",
+          "series"
+        ],
+        "title": "SavingsSummary",
+        "description": "Exact savings ledger, newest-first items, and ascending daily running totals."
+      },
       "ScoredReward-Input": {
         "properties": {
           "reward": {
@@ -2730,6 +2987,14 @@
             "type": "array",
             "title": "Memberships",
             "description": "Store memberships"
+          },
+          "rewards": {
+            "items": {
+              "$ref": "#/components/schemas/Reward-Output"
+            },
+            "type": "array",
+            "title": "Rewards",
+            "description": "Eligible owned rewards, including known expiration dates for the calendar"
           },
           "active_rewards_count": {
             "type": "integer",

@@ -1,0 +1,15 @@
+{
+  "demo_user_id": "00000000-0000-0000-0000-000000000001",
+  "total": "103.51",
+  "_comment": "UTC dates are anchored to the first startup/import using days_ago, then remain fixed. These reference separate historical rewards so active demo offers remain usable.",
+  "redemptions": [
+    {"id": "88888888-8888-8888-8888-888888888801", "reward_id": "77777777-7777-7777-7777-777777777701", "merchant_name": "Hollister", "category": "Clothing", "mcc": "5651", "description": "Voucher on a previous Hollister order", "saved": "20.00", "days_ago": 40},
+    {"id": "88888888-8888-8888-8888-888888888802", "reward_id": "77777777-7777-7777-7777-777777777702", "merchant_name": "Taco Bell", "category": "Fast Food", "mcc": "5814", "description": "Loyalty reward on lunch", "saved": "5.00", "days_ago": 34},
+    {"id": "88888888-8888-8888-8888-888888888803", "reward_id": "77777777-7777-7777-7777-777777777703", "merchant_name": "Ulta Beauty", "category": "Beauty", "mcc": "5977", "description": "Beauty rewards voucher", "saved": "12.50", "days_ago": 28},
+    {"id": "88888888-8888-8888-8888-888888888804", "reward_id": "77777777-7777-7777-7777-777777777704", "merchant_name": "H&M", "category": "Clothing", "mcc": "5651", "description": "Member discount on a previous order", "saved": "18.00", "days_ago": 22},
+    {"id": "88888888-8888-8888-8888-888888888805", "reward_id": "77777777-7777-7777-7777-777777777705", "merchant_name": "PacSun", "category": "Clothing", "mcc": "5651", "description": "Rewards voucher on apparel", "saved": "15.00", "days_ago": 16},
+    {"id": "88888888-8888-8888-8888-888888888806", "reward_id": "77777777-7777-7777-7777-777777777706", "merchant_name": "McDonald's", "category": "Fast Food", "mcc": "5814", "description": "Free item redeemed with loyalty rewards", "saved": "3.51", "days_ago": 10},
+    {"id": "88888888-8888-8888-8888-888888888807", "reward_id": "77777777-7777-7777-7777-777777777707", "merchant_name": "Aéropostale", "category": "Clothing", "mcc": "5651", "description": "Apparel rewards voucher", "saved": "14.50", "days_ago": 4},
+    {"id": "88888888-8888-8888-8888-888888888808", "reward_id": "77777777-7777-7777-7777-777777777708", "merchant_name": "Target", "category": "Department Stores", "mcc": "5311", "description": "Circle offer on a previous purchase", "saved": "15.00", "days_ago": 1}
+  ]
+}
