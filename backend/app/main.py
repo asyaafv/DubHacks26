@@ -62,6 +62,7 @@ from backend.decisions.common import resolve_user
 from backend.decisions.wallet.router import router as wallet_router
 from backend.decisions.wallet.service import wallet_snapshot
 from backend.decisions.savings import router as savings_router
+from backend.decisions.stacking import solve_stack
 
 from backend.intake.service import (
     DemoInjectWithForce,
@@ -416,95 +417,17 @@ async def calculate_stack(
     """
     Calculate optimal reward stacking for a purchase.
 
-    STUB: Returns hardcoded stacking result.
-    REAL: CP-SAT solver with constraints for non-combinable rewards,
-          min spend, max one promo code, etc.
+    CP-SAT solver (backend/decisions/stacking/) with max-one-promo-code,
+    min-spend, exclusions and non-combinable constraints, best card via
+    card_rate, and a greedy fallback if the solver fails within 200 ms.
     """
     user_id = get_user_id(x_user_id)
-    cart_total = request.cart_total
-
-    # Find matching rewards
-    rewards = [r for r in get_rewards() if r.user_id == user_id and r.status == RewardStatus.active]
-
-    # Filter by merchant if specified
-    merchant = None
-    if request.merchant_id:
-        merchant = next((m for m in get_merchants() if m.id == request.merchant_id), None)
-        rewards = [r for r in rewards if r.merchant_id == request.merchant_id]
-    elif request.domain:
-        merchant = next((m for m in get_merchants() if request.domain in m.aliases or m.domain == request.domain), None)
-        if merchant:
-            rewards = [r for r in rewards if r.merchant_id == merchant.id]
-
-    # Stub: Pick first applicable reward
-    chosen: list[ChosenReward] = []
-    total_savings = Decimal("0")
-
-    for idx, reward in enumerate(rewards[:2]):  # Max 2 for demo
-        if reward.min_spend and cart_total < reward.min_spend:
-            continue
-
-        if reward.kind == RewardKind.percent_off:
-            savings = cart_total * reward.value / 100
-            if reward.max_discount:
-                savings = min(savings, reward.max_discount)
-        elif reward.kind == RewardKind.amount_off:
-            savings = reward.value
-        else:
-            savings = Decimal("0")
-
-        total_savings += savings
-        chosen.append(
-            ChosenReward(
-                reward_id=reward.id,
-                reward=reward,
-                savings=savings,
-                applied_order=idx + 1,
-            )
-        )
-
-        if not reward.stackable:
-            break
-
-    # Find best card
-    cards = [c for c in get_cards() if c.user_id == user_id]
-    best_card = cards[0] if cards else None
-    card_cashback = Decimal("0")
-
-    if best_card and merchant:
-        # Find matching category rate
-        for rate in best_card.category_rates:
-            if merchant.mcc in rate.mcc_codes:
-                card_cashback = (cart_total - total_savings) * rate.rate / 100
-                break
-        else:
-            card_cashback = (cart_total - total_savings) * best_card.base_rate / 100
-
-    final_price = cart_total - total_savings
-    total_savings_with_cashback = total_savings + card_cashback
-
-    # Build explanation
-    parts = []
-    for c in chosen:
-        if c.reward.code:
-            parts.append(f"Applied {c.reward.code} for {c.reward.kind.value} ({c.savings:.2f} savings)")
-        else:
-            parts.append(f"Applied {c.reward.kind.value} reward ({c.savings:.2f} savings)")
-    if best_card and card_cashback > 0:
-        parts.append(f"Use {best_card.name} for {card_cashback:.2f} cashback")
-    explanation = ". ".join(parts) + f". Total savings: ${total_savings_with_cashback:.2f}"
-
-    return StackResult(
-        chosen_rewards=chosen,
-        recommended_card=best_card,
-        card_cashback=card_cashback,
-        original_price=cart_total,
-        final_price=final_price,
-        total_savings=total_savings_with_cashback,
-        savings_percent=(total_savings_with_cashback / cart_total * 100) if cart_total > 0 else Decimal("0"),
-        explanation=explanation,
-        alternatives=[],
-        solver_status="stub",
+    return solve_stack(
+        request,
+        user_id=user_id,
+        rewards=get_rewards(),
+        cards=get_cards(),
+        merchants=get_merchants(),
     )
 
 
