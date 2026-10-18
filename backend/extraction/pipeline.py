@@ -269,10 +269,27 @@ def _fallback_extract_fields(text: str) -> FieldCandidates:
 
 
 try:
-    from backend.extraction.gliner_extract import extract_fields
+    from backend.extraction.gliner_extract import ExtractionUnavailable, extract_fields
 except ImportError:
     extract_fields = _fallback_extract_fields
     FALLBACKS_ACTIVE.append("gliner")
+
+    class ExtractionUnavailable(Exception):  # type: ignore[no-redef]
+        """Stand-in when gliner_extract itself is missing (never raised then)."""
+
+
+# gliner_extract imports fine without the gliner2 package but raises
+# ExtractionUnavailable at CALL time; warn only on the first occurrence.
+_gliner_unavailable_logged = False
+
+
+def _log_gliner_unavailable(exc: Exception) -> None:
+    global _gliner_unavailable_logged
+    if not _gliner_unavailable_logged:
+        _gliner_unavailable_logged = True
+        logger.warning(
+            "GLiNER2 unavailable, degrading to regex candidates only: %s", exc
+        )
 
 
 # =============================================================================
@@ -616,7 +633,10 @@ def run_pipeline(email: InboundEmail, user_id: UUID | str) -> PipelineResult:
 
     candidates: list[FieldCandidates] = [markup_fc] if markup_fc else []
     if _markup_incomplete(markup_fc):
-        candidates.append(timed("gliner_ms", extract_fields, cleaned.text))
+        try:
+            candidates.append(timed("gliner_ms", extract_fields, cleaned.text))
+        except ExtractionUnavailable as exc:
+            _log_gliner_unavailable(exc)
         candidates.append(timed("regex_ms", extract_fields_regex, cleaned.text))
 
     merged: FieldCandidates = timed("merge_ms", _call_merge, candidates)
