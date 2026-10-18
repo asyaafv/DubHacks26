@@ -103,3 +103,29 @@ def test_pipeline_reports_stage_timings():
         assert stage in timings
         assert timings[stage] >= 0
     assert timings["total_ms"] >= max(v for k, v in timings.items() if k != "total_ms")
+
+
+def test_fallback_normalize_free_item_bogo_value_matches_real_normalize():
+    """The built-in fallback normalizer must use the same value convention as
+    normalize.py (free_item/bogo -> Decimal('1')), so envs without the ML deps
+    produce identical console cards (intake audit finding)."""
+    from datetime import datetime, timezone
+    from decimal import Decimal
+
+    from backend.extraction.pipeline import _fallback_normalize
+    from backend.extraction.types import FieldCandidates, FieldValue
+
+    email_date = datetime(2026, 10, 18, tzinfo=timezone.utc)
+
+    bogo = _fallback_normalize(
+        FieldCandidates(discount_value=FieldValue("bogo", 0.6, "regex")), email_date
+    )
+    assert bogo["kind"] == "bogo"
+    assert bogo["value"] == Decimal("1")
+
+    free = _fallback_normalize(
+        FieldCandidates(discount_value=FieldValue("free Crunchwrap Supreme", 0.6, "regex")),
+        email_date,
+    )
+    assert free["kind"] == "free_item"
+    assert free["value"] == Decimal("1")

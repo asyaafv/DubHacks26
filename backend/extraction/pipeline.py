@@ -444,12 +444,14 @@ def _fallback_normalize(c: FieldCandidates, email_date: datetime) -> dict:
         elif m := re.search(r"\$\s*(\d+(?:\.\d{2})?)", raw):
             out["kind"] = "amount_off"
             out["value"] = Decimal(m.group(1))
+        # Convention: bogo/free_item carry value=1 (matches normalize.py; the
+        # decisions savings math treats these kinds specially, not via value).
         elif "bogo" in raw or "buy one" in raw:
             out["kind"] = "bogo"
-            out["value"] = Decimal("0")
+            out["value"] = Decimal("1")
         elif raw.startswith("free"):
             out["kind"] = "free_item"
-            out["value"] = Decimal("0")
+            out["value"] = Decimal("1")
         elif "cashback" in raw or "cash back" in raw:
             out["kind"] = "cashback"
             out["value"] = _parse_decimal(raw) or Decimal("0")

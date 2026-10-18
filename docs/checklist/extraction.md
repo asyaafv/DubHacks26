@@ -81,7 +81,10 @@ at container start eliminates this — keep it in the Docker start path (it is a
    extractor's correct "November 1" and made the reward expire "today").
 3. `backend/tests/extraction/test_normalize.py` — 3 regression tests for the above.
 
-Tests: 234 passed (231 pre-existing + 3 new), 0 failed, full ML stack active.
+4. `backend/extraction/pipeline.py` — fallback normalizer bogo/free_item value `0` → `1` to match
+   `normalize.py` (see FLAG section below), plus regression test.
+
+Tests: extraction 235 passed (231 pre-existing + 4 new), intake 134 passed, 0 failed, full ML stack active.
 
 ## Needs fix elsewhere
 
@@ -96,15 +99,24 @@ Tests: 234 passed (231 pre-existing + 3 new), 0 failed, full ML stack active.
   change the runtime threshold this close to demo, since 0.7 would flip chipotle/tacobell
   (overall 0.807) safe, but anything GLiNER-sourced near 0.6–0.7 would start flagging.
 
-## FLAG (do not change): free_item value convention
+## FLAG: free_item/bogo value convention (standardized to 1 inside extraction)
 
-- `backend/extraction/normalize.py` emits `value=1` for `free_item` (and `bogo`).
-- `shared/seed/seed_rewards.json` seeds free_item rewards with `value=0.00` (Chipotle FREEGUAC,
-  McDonald's FREEFRIES).
-- `backend/decisions/README.md` says: on redeem without a cart, "use the reward's face value" as
-  the saved amount — so an *extracted* free-item reward would record $1.00 saved while a *seeded*
-  one records $0.00 for the same kind of reward. (The ranking guidance separately hardcodes
-  `value_usd = 5.0` for free items/BOGO/points, ignoring `value` entirely.)
-- Inconsistent but intentional-looking on both sides; left unchanged per audit instructions.
-  Recommendation for later: pick one convention (0 seems safer — "face value" of a free item is
-  not $1) and have savings/ranking special-case `free_item`/`bogo` explicitly.
+- `backend/decisions/README.md` does NOT specify a numeric value for free_item/bogo: the redeem
+  fallback says "use the reward's face value" without defining it, and the ranking guidance
+  hardcodes `value_usd = 5.0` for free items/BOGO/points, ignoring `value` entirely. So the
+  convention was unspecified → per the intake-audit follow-up, extraction standardizes on
+  **normalize.py's `Decimal("1")`**.
+- Fixed in this PR: `pipeline.py`'s built-in fallback normalizer used `Decimal("0")` for
+  bogo/free_item while the real `normalize.py` used `Decimal("1")` — in ML-less environments the
+  PacSun BOGO and Taco Bell console cards came out `value=0` and 3 intake console tests failed.
+  The fallback now emits `1`, matching normalize.py, with a regression test
+  (`test_fallback_normalize_free_item_bogo_value_matches_real_normalize`).
+- One stale expectation in `backend/tests/intake/test_service_e2e.py` (chipotle free_item
+  expected `Decimal("0")` — it was already failing under the full ML stack) updated to `1`;
+  one line outside the extraction area, changed at the intake auditor's request so
+  `backend/tests/intake` passes: **134 passed** (extraction: **235 passed**).
+- STILL INCONSISTENT elsewhere (flag, not changed): `shared/seed/seed_rewards.json` seeds
+  free_item rewards with `value=0.00` (Chipotle FREEGUAC, McDonald's FREEFRIES), so a seeded
+  free item records $0.00 "face value" savings while an extracted one records $1.00. Decide one
+  product-wide convention and have savings/ranking special-case `free_item`/`bogo` explicitly;
+  if 1 is kept, update the two seed rows to `1.00`.
