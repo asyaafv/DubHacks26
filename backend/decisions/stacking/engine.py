@@ -59,9 +59,14 @@ def _money(cents: int) -> Decimal:
     return (Decimal(cents) / 100).quantize(CENTS, rounding=ROUND_HALF_UP)
 
 
+def _plain(value) -> str:
+    """Trim trailing zeros without scientific notation (10.00 -> 10, not 1E+1)."""
+    return format(Decimal(value).normalize(), 'f')
+
+
 def _describe(reward: Reward) -> str:
     if reward.kind == RewardKind.percent_off:
-        return f"{Decimal(reward.value).normalize()}% off"
+        return f"{_plain(reward.value)}% off"
     if reward.kind in (RewardKind.amount_off, RewardKind.cashback):
         return f"${_money(_cents(reward.value))} {reward.kind.value.replace('_', ' ')}"
     return reward.kind.value.replace('_', ' ')
@@ -317,13 +322,13 @@ def solve_stack(
                              .to_integral_value(rounding=ROUND_HALF_UP))
         where = f"MCC {mcc} ({category})" if merchant else 'this purchase'
         explanations.append(
-            f"Pay with {best_card.name}: {Decimal(entry['rate']).normalize()}% back on {where}"
+            f"Pay with {best_card.name}: {_plain(entry['rate'])}% back on {where}"
             f" → ${_money(cashback_cents)} cashback."
         )
         for other in ranked_cards:
             if other['card'].id != best_card.id:
                 explanations.append(
-                    f"Skipped {other['card'].name}: earns only {Decimal(other['rate']).normalize()}% here."
+                    f"Skipped {other['card'].name}: earns only {_plain(other['rate'])}% here."
                 )
 
     total_savings_cents = reward_savings_cents + cashback_cents
