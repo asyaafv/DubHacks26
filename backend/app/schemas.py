@@ -334,6 +334,63 @@ class LookupResult(BaseModel):
 
 
 # =============================================================================
+# SEARCH MODELS (free-text reward search from the extension popup)
+# =============================================================================
+
+
+class SearchRequest(BaseModel):
+    """Free-text search over the user's own rewards ("mexican food", "streetwear")."""
+    user_id: UUID | None = Field(None, description="Optional; X-User-Id header wins")
+    query: str = Field(..., min_length=1, max_length=200, description="Search phrase")
+    limit: int = Field(default=8, ge=1, le=20)
+
+
+class SearchBestCard(BaseModel):
+    """Best wallet card to pair with a reward, by MCC/category cashback rate."""
+    card_id: UUID
+    name: str = Field(..., description="Issuer + product name")
+    rate: Decimal = Field(..., description="Cashback percent at this reward's MCC")
+
+
+class SearchHit(BaseModel):
+    """A matched reward with an explainable score and match reason."""
+    reward: Reward
+    score: float = Field(..., description="value * match * urgency")
+    value_component: float
+    match_component: float
+    urgency_component: float
+    days_until_expiry: int | None = None
+    expiring_soon: bool = Field(default=False, description="Expires within 3 days")
+    reason: str = Field(..., description="Human-readable why-it-matched")
+    best_card: SearchBestCard | None = None
+    secondary: bool = Field(
+        default=False,
+        description="Generic same-category match shown below the specific hits")
+
+
+class SearchResponse(BaseModel):
+    """Ranked search results for a query."""
+    query: str
+    results: list[SearchHit]
+    total_matched: int = Field(..., description="Matches before the limit cut")
+    total_active: int = Field(..., description="User's eligible rewards searched")
+    secondary_label: str | None = Field(
+        None, description='Divider label for secondary results, e.g. "Also in Food"')
+
+
+class SearchChip(BaseModel):
+    """Quick-search suggestion derived from categories present in the wallet."""
+    label: str
+    query: str
+    count: int = Field(..., description="Eligible rewards this chip would match")
+
+
+class SearchSuggestions(BaseModel):
+    """Chips for categories the user actually has rewards in."""
+    chips: list[SearchChip]
+
+
+# =============================================================================
 # EMAIL INTAKE MODELS
 # =============================================================================
 

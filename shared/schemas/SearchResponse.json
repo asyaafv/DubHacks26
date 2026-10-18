@@ -1,0 +1,462 @@
+{
+  "$defs": {
+    "FieldConfidence": {
+      "description": "Per-field extraction confidence scores.",
+      "properties": {
+        "value": {
+          "default": 1.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Value",
+          "type": "number"
+        },
+        "expires_at": {
+          "default": 1.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Expires At",
+          "type": "number"
+        },
+        "code": {
+          "default": 1.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Code",
+          "type": "number"
+        },
+        "min_spend": {
+          "default": 1.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Min Spend",
+          "type": "number"
+        },
+        "merchant": {
+          "default": 1.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Merchant",
+          "type": "number"
+        }
+      },
+      "title": "FieldConfidence",
+      "type": "object"
+    },
+    "Reward": {
+      "description": "Full reward record.",
+      "properties": {
+        "merchant_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Linked merchant ID",
+          "title": "Merchant Id"
+        },
+        "merchant_name": {
+          "description": "Merchant name",
+          "examples": [
+            "Target"
+          ],
+          "title": "Merchant Name",
+          "type": "string"
+        },
+        "category": {
+          "description": "Reward category",
+          "examples": [
+            "Department Stores"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "mcc": {
+          "description": "Merchant Category Code",
+          "examples": [
+            "5311"
+          ],
+          "title": "Mcc",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/RewardKind",
+          "description": "Type of reward"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Reward value (percentage or amount)",
+          "examples": [
+            "10.00"
+          ],
+          "title": "Value"
+        },
+        "currency": {
+          "default": "USD",
+          "description": "Currency code",
+          "title": "Currency",
+          "type": "string"
+        },
+        "min_spend": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum purchase to apply",
+          "examples": [
+            "50.00"
+          ],
+          "title": "Min Spend"
+        },
+        "max_discount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum discount cap",
+          "examples": [
+            "25.00"
+          ],
+          "title": "Max Discount"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Promo/reward code (encrypted at rest)",
+          "title": "Code"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expiration datetime",
+          "title": "Expires At"
+        },
+        "starts_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start datetime (if future)",
+          "title": "Starts At"
+        },
+        "stackable": {
+          "default": false,
+          "description": "Can combine with other rewards",
+          "title": "Stackable",
+          "type": "boolean"
+        },
+        "exclusions": {
+          "description": "Excluded items/categories",
+          "items": {
+            "type": "string"
+          },
+          "title": "Exclusions",
+          "type": "array"
+        },
+        "id": {
+          "description": "Unique reward ID",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "Owner user ID",
+          "format": "uuid",
+          "title": "User Id",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/RewardSource",
+          "description": "How this reward was extracted"
+        },
+        "source_email_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source email message ID",
+          "title": "Source Email Id"
+        },
+        "field_confidence": {
+          "$ref": "#/$defs/FieldConfidence"
+        },
+        "overall_confidence": {
+          "default": 1.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Overall Confidence",
+          "type": "number"
+        },
+        "status": {
+          "$ref": "#/$defs/RewardStatus",
+          "default": "active"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "merchant_name",
+        "category",
+        "mcc",
+        "kind",
+        "value",
+        "id",
+        "user_id",
+        "source"
+      ],
+      "title": "Reward",
+      "type": "object"
+    },
+    "RewardKind": {
+      "description": "Type of reward/discount offered.",
+      "enum": [
+        "percent_off",
+        "amount_off",
+        "points",
+        "free_item",
+        "bogo",
+        "cashback"
+      ],
+      "title": "RewardKind",
+      "type": "string"
+    },
+    "RewardSource": {
+      "description": "How the reward was extracted/created.",
+      "enum": [
+        "email_jsonld",
+        "gliner",
+        "regex",
+        "manual",
+        "seed"
+      ],
+      "title": "RewardSource",
+      "type": "string"
+    },
+    "RewardStatus": {
+      "description": "Current status of the reward.",
+      "enum": [
+        "active",
+        "needs_review",
+        "used",
+        "expired"
+      ],
+      "title": "RewardStatus",
+      "type": "string"
+    },
+    "SearchBestCard": {
+      "description": "Best wallet card to pair with a reward, by MCC/category cashback rate.",
+      "properties": {
+        "card_id": {
+          "format": "uuid",
+          "title": "Card Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Issuer + product name",
+          "title": "Name",
+          "type": "string"
+        },
+        "rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Cashback percent at this reward's MCC",
+          "title": "Rate"
+        }
+      },
+      "required": [
+        "card_id",
+        "name",
+        "rate"
+      ],
+      "title": "SearchBestCard",
+      "type": "object"
+    },
+    "SearchHit": {
+      "description": "A matched reward with an explainable score and match reason.",
+      "properties": {
+        "reward": {
+          "$ref": "#/$defs/Reward"
+        },
+        "score": {
+          "description": "value * match * urgency",
+          "title": "Score",
+          "type": "number"
+        },
+        "value_component": {
+          "title": "Value Component",
+          "type": "number"
+        },
+        "match_component": {
+          "title": "Match Component",
+          "type": "number"
+        },
+        "urgency_component": {
+          "title": "Urgency Component",
+          "type": "number"
+        },
+        "days_until_expiry": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Days Until Expiry"
+        },
+        "expiring_soon": {
+          "default": false,
+          "description": "Expires within 3 days",
+          "title": "Expiring Soon",
+          "type": "boolean"
+        },
+        "reason": {
+          "description": "Human-readable why-it-matched",
+          "title": "Reason",
+          "type": "string"
+        },
+        "best_card": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SearchBestCard"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "secondary": {
+          "default": false,
+          "description": "Generic same-category match shown below the specific hits",
+          "title": "Secondary",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "reward",
+        "score",
+        "value_component",
+        "match_component",
+        "urgency_component",
+        "reason"
+      ],
+      "title": "SearchHit",
+      "type": "object"
+    }
+  },
+  "description": "Ranked search results for a query.",
+  "properties": {
+    "query": {
+      "title": "Query",
+      "type": "string"
+    },
+    "results": {
+      "items": {
+        "$ref": "#/$defs/SearchHit"
+      },
+      "title": "Results",
+      "type": "array"
+    },
+    "total_matched": {
+      "description": "Matches before the limit cut",
+      "title": "Total Matched",
+      "type": "integer"
+    },
+    "total_active": {
+      "description": "User's eligible rewards searched",
+      "title": "Total Active",
+      "type": "integer"
+    },
+    "secondary_label": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Divider label for secondary results, e.g. \"Also in Food\"",
+      "title": "Secondary Label"
+    }
+  },
+  "required": [
+    "query",
+    "results",
+    "total_matched",
+    "total_active"
+  ],
+  "title": "SearchResponse",
+  "type": "object"
+}

@@ -1,10 +1,12 @@
 import { DEMO_USER_EMAIL } from '../../api/config';
 import { RewardCard } from '../../components/RewardCard';
+import { SearchPanel } from '../../components/SearchPanel';
 import { StackResultView } from '../../components/StackResult';
 import { StoreLogo } from '../../components/StoreLogo';
 import { ToastBanner } from '../../components/ToastBanner';
 import { useEvents } from '../../hooks/useEvents';
 import { useRewards } from '../../hooks/useRewards';
+import { useSearch } from '../../hooks/useSearch';
 import { useStack } from '../../hooks/useStack';
 import { openDashboard } from '../../core/runtime';
 import type { LookupResult } from '../../types';
@@ -15,6 +17,7 @@ function storeName(lookup: LookupResult | null, domain: string): string {
 
 export default function App() {
   const page = useRewards();
+  const search = useSearch();
   const stack = useStack(page.domain);
   const events = useEvents();
   const name = storeName(page.lookup, page.domain);
@@ -35,11 +38,13 @@ export default function App() {
         <ToastBanner key={toast.id} toast={toast} onDismiss={() => events.dismiss(toast.id)} />
       ))}
 
+      <SearchPanel search={search} />
+
       {page.loading ? <p className="text-sm text-stone-500">Checking this store…</p> : null}
 
       {!page.loading && page.error ? <p className="text-sm text-red-700">{page.error}</p> : null}
 
-      {!page.loading && !page.domain ? (
+      {!page.loading && !page.domain && !search.query.trim() ? (
         <p className="rounded-xl bg-white px-3 py-4 text-sm text-stone-600">Open a store to see rewards.</p>
       ) : null}
 

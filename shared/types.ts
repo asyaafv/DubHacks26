@@ -446,6 +446,67 @@ export interface LookupResult {
   total_available: number;
 }
 
+/** Free-text search over the user's own rewards ("mexican food", "streetwear"). */
+export interface SearchRequest {
+  /** Optional; X-User-Id header wins */
+  user_id?: string | null;
+  /** Search phrase */
+  query: string;
+  limit?: number;
+}
+
+/** Best wallet card to pair with a reward, by MCC/category cashback rate. */
+export interface SearchBestCard {
+  card_id: string;
+  /** Issuer + product name */
+  name: string;
+  /** Cashback percent at this reward's MCC */
+  rate: number | string;
+}
+
+/** A matched reward with an explainable score and match reason. */
+export interface SearchHit {
+  reward: Reward;
+  /** value * match * urgency */
+  score: number;
+  value_component: number;
+  match_component: number;
+  urgency_component: number;
+  days_until_expiry?: number | null;
+  /** Expires within 3 days */
+  expiring_soon?: boolean;
+  /** Human-readable why-it-matched */
+  reason: string;
+  best_card?: SearchBestCard | null;
+  /** Generic same-category match shown below the specific hits */
+  secondary?: boolean;
+}
+
+/** Ranked search results for a query. */
+export interface SearchResponse {
+  query: string;
+  results: SearchHit[];
+  /** Matches before the limit cut */
+  total_matched: number;
+  /** User's eligible rewards searched */
+  total_active: number;
+  /** Divider label for secondary results, e.g. "Also in Food" */
+  secondary_label?: string | null;
+}
+
+/** Quick-search suggestion derived from categories present in the wallet. */
+export interface SearchChip {
+  label: string;
+  query: string;
+  /** Eligible rewards this chip would match */
+  count: number;
+}
+
+/** Chips for categories the user actually has rewards in. */
+export interface SearchSuggestions {
+  chips: SearchChip[];
+}
+
 /** Email attachment metadata (Postmark-compatible). */
 export interface InboundEmailAttachment {
   Name: string;
