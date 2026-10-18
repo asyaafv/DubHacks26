@@ -165,7 +165,7 @@ def best_card(reward: Reward, cards) -> SearchBestCard | None:
     return SearchBestCard(card_id=best.id, name=f'{best.issuer} {best.name}', rate=rate)
 
 
-def search_rewards(query: str, *, rewards, merchants, cards, now=None, limit=8,
+def search_rewards(query: str, *, rewards, merchants, cards, now=None, limit=3,
                    similarities: dict | None = None,
                    ) -> tuple[list[SearchHit], int, int, str | None]:
     """Rank the user's eligible rewards against a query.
@@ -179,6 +179,11 @@ def search_rewards(query: str, *, rewards, merchants, cards, now=None, limit=8,
     `secondary` and a divider label ("Also in Food") is returned. Weak generic
     hits (below the MCC tier) are dropped entirely in that case. Broad queries
     with no specific hit keep a single flat ranking.
+
+    The cut keeps `limit` results total: when both groups exist, one slot is
+    reserved for the best secondary hit (so limit=3 shows up to 2 specific +
+    1 generic), and spare slots left by a short specific group are filled from
+    the secondary ranking.
 
     Returns (top hits, total matched, total eligible searched, divider label).
     """
@@ -231,7 +236,13 @@ def search_rewards(query: str, *, rewards, merchants, cards, now=None, limit=8,
         utc(h.reward.expires_at) if h.reward.expires_at else datetime.max.replace(tzinfo=timezone.utc),
         str(h.reward.id)))
     matched = len(hits)
-    hits = hits[:limit]
+    primary = [h for h in hits if not h.secondary]
+    secondary = [h for h in hits if h.secondary]
+    if primary and secondary:
+        take_primary = min(len(primary), max(limit - 1, 1))
+        hits = primary[:take_primary] + secondary[:limit - take_primary]
+    else:
+        hits = hits[:limit]
     if not any(h.secondary for h in hits):
         secondary_label = None
     return hits, matched, len(active), secondary_label

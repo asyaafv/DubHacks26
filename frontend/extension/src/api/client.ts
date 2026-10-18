@@ -82,7 +82,7 @@ export async function lookup(request: Omit<LookupRequest, 'user_id'>): Promise<L
 }
 
 /** POST /search — free-text reward search ("mexican food", "streetwear", "food"). */
-export async function searchRewards(query: string, limit = 8): Promise<SearchResponse> {
+export async function searchRewards(query: string, limit = 3): Promise<SearchResponse> {
   return liveOrMock(
     'search',
     async () => {
