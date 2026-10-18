@@ -485,6 +485,15 @@ For known merchants:
 }
 ```
 
+### Savings & Redemption (planned, Person 3)
+
+| Endpoint | Description | Status |
+|----------|-------------|--------|
+| `POST /rewards/{id}/redeem` | Mark a reward used, record a redemption, emit `reward_used` | planned, Person 3 |
+| `GET /savings` | Total savings, itemized redemptions (newest first), cumulative daily series | planned, Person 3 |
+
+See `backend/decisions/README.md` ("NEW: Savings tracking") for the full spec.
+
 ---
 
 ## Enums
