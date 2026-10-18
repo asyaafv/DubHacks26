@@ -2,16 +2,15 @@ from fastapi import APIRouter, Depends, Header, HTTPException, Request
 from backend.app.schemas import Wallet, WalletUpdate
 from backend.decisions.common import resolve_user
 from backend.decisions.dependencies import get_database
-from .service import update_wallet as apply_wallet_update
+from .service import update_wallet as apply_wallet_update, wallet_snapshot
 
 router = APIRouter(tags=['Wallet'])
 
 
 @router.get('/wallet', response_model=Wallet)
-async def get_wallet(x_user_id: str | None = Header(None, alias='X-User-Id'), database=Depends(get_database)):
-    """Get the persistent wallet and current eligible reward counts."""
-    async with database.transaction(resolve_user(x_user_id)) as repo:
-        return await repo.get_wallet()
+async def get_wallet(request: Request, x_user_id: str | None = Header(None, alias='X-User-Id')):
+    """Wallet with eligible reward counts; in-memory fallback when DATABASE_URL is unset."""
+    return await wallet_snapshot(request.app, resolve_user(x_user_id))
 
 
 @router.post('/wallet', response_model=Wallet)

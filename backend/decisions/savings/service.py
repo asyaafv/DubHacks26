@@ -50,11 +50,11 @@ async def redeem(repo, reward_id, saved: Decimal | None) -> Reward:
     return await repo.get_reward(reward_id, reveal_code=True)
 
 
-async def savings_summary(repo) -> SavingsSummary:
-    items = await repo.list_redemptions()
+def build_summary(items: list[Redemption]) -> SavingsSummary:
+    """Pure summary over redemption rows; shared by the DB and in-memory paths."""
     total = sum((item.saved for item in items), Decimal('0.00'))
     series, running = [], Decimal('0.00')
-    for item in sorted(items, key=lambda i: (utc(i.redeemed_at), i.id)):
+    for item in sorted(items, key=lambda i: (utc(i.redeemed_at), str(i.id))):
         running += item.saved
         day = utc(item.redeemed_at).date()
         if series and series[-1].date == day:
@@ -62,3 +62,7 @@ async def savings_summary(repo) -> SavingsSummary:
         else:
             series.append(SavingsPoint(date=day, cumulative=running))
     return SavingsSummary(total=total.quantize(CENTS), items=items, series=series)
+
+
+async def savings_summary(repo) -> SavingsSummary:
+    return build_summary(await repo.list_redemptions())

@@ -1,6 +1,19 @@
 from uuid import uuid4
 from backend.app.schemas import Card, Membership
+from backend.decisions import memory
 from backend.decisions.common import utc
+
+
+async def wallet_snapshot(app, user_id):
+    """Postgres wallet when configured; in-memory demo wallet when DATABASE_URL is unset."""
+    database = getattr(app.state, 'database', None)
+    if database is None and memory.in_memory_mode(app):
+        return memory.get_wallet(user_id)
+    if database is None:
+        from fastapi import HTTPException
+        raise HTTPException(503, 'Database is not configured')
+    async with database.transaction(user_id) as repo:
+        return await repo.get_wallet()
 
 
 async def update_wallet(repo, update):

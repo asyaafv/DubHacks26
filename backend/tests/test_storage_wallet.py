@@ -303,8 +303,11 @@ async def test_wrong_key_and_foreign_event_constraint(db):
         assert (await repo.get_reward(r.id, reveal_code=True)).code == r.code
 
 
-def test_missing_database_is_explicit():
+def test_missing_database_is_explicit(monkeypatch):
     from fastapi.testclient import TestClient
+    # Configured-but-unavailable Postgres must fail loudly, never serve the
+    # in-memory demo fallback (that fallback requires DATABASE_URL to be unset).
+    monkeypatch.setenv('DATABASE_URL', 'postgresql://configured-but-unavailable.invalid/perk')
     app = FastAPI()
     app.include_router(router)
     with TestClient(app) as client:
