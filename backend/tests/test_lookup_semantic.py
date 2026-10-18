@@ -15,7 +15,7 @@ from backend.tests.test_storage_wallet import db, NOW, reward
 def encoder():
     if os.getenv('RUN_SEMANTIC_TESTS') != '1':
         pytest.skip('Set RUN_SEMANTIC_TESTS=1 with cached MiniLM weights')
-    return MiniLMQueryEncoder(cache_folder=os.getenv('PERK_MODEL_CACHE'), offline=True)
+    return MiniLMQueryEncoder(cache_folder=os.getenv('LAPSE_MODEL_CACHE'), offline=True)
 
 
 @pytest.mark.asyncio

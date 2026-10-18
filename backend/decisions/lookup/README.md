@@ -1,8 +1,8 @@
 # Reward lookup handoff
 
-Worktree: `/Users/asuya/Documents/ChatGPT/DUBHACKS/perk-lookup`.
+Worktree: `/Users/asuya/Documents/ChatGPT/DUBHACKS/lapse-lookup`.
 Branch: `codex/person3-lookup`. All final verification and commits run here;
-the shared `perk-foundation` checkout is not used or modified.
+the shared `lapse-foundation` checkout is not used or modified.
 
 ## Commit dependency and integration order
 
@@ -106,8 +106,8 @@ With network available, before the demo:
 
 ```sh
 python -m pip install 'sentence-transformers>=3,<4'
-export PERK_MODEL_CACHE=/absolute/path/to/persistent/perk-model-cache
-python -c 'import os; from backend.decisions.lookup.embeddings import MiniLMQueryEncoder; MiniLMQueryEncoder(cache_folder=os.environ["PERK_MODEL_CACHE"], offline=False)'
+export LAPSE_MODEL_CACHE=/absolute/path/to/persistent/lapse-model-cache
+python -c 'import os; from backend.decisions.lookup.embeddings import MiniLMQueryEncoder; MiniLMQueryEncoder(cache_folder=os.environ["LAPSE_MODEL_CACHE"], offline=False)'
 ```
 
 Keep that entire cache directory available on the demo machine. During application
@@ -115,7 +115,7 @@ lifespan, integration should initialize (or adapt the already-loaded P2 encoder)
 
 ```python
 app.state.query_encoder = await asyncio.to_thread(
-    MiniLMQueryEncoder, cache_folder=os.environ['PERK_MODEL_CACHE'], offline=True)
+    MiniLMQueryEncoder, cache_folder=os.environ['LAPSE_MODEL_CACHE'], offline=True)
 ```
 
 Set `HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1` for the demo. Offline cache misses fail
@@ -155,9 +155,9 @@ seed embeddings have been persisted or deploy an extraction/backfill pipeline.
 ```sh
 python -m pytest backend/tests/test_lookup_ranking.py -q
 # Real PostgreSQL with vector/pgcrypto/uuid-ossp; disposable test DB only:
-export TEST_DATABASE_URL=postgresql://.../perk_test
+export TEST_DATABASE_URL=postgresql://.../lapse_test
 export RUN_SEMANTIC_TESTS=1
-export PERK_MODEL_CACHE=/absolute/path/to/persistent/perk-model-cache
+export LAPSE_MODEL_CACHE=/absolute/path/to/persistent/lapse-model-cache
 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 python -m pytest backend/tests/test_lookup_semantic.py -v
 ```
 
@@ -178,7 +178,7 @@ integration: main.py registration remains owned by integration.
 
 Final verification after worktree recovery: **30 passed**, consisting of 14 lookup
 component tests, 3 actual MiniLM/pgvector semantic integration tests, and 13 current
-foundation storage tests. Ran entirely from `perk-lookup` with its own `.venv`,
+foundation storage tests. Ran entirely from `lapse-lookup` with its own `.venv`,
 the cached pinned MiniLM revision, both offline flags set, and a disposable local
 PostgreSQL database. One Starlette/AnyIO deprecation warning remains. The earlier
 28-test result above records the previous foundation base; this relocated run is
