@@ -425,6 +425,34 @@ Target Circle
     return subject, text, html
 
 
+# Optional footer with realistic PII (override {"pii_footer": true}). Lets the
+# console demonstrate intake's PII redaction on content that is actually in
+# the sent bytes: the phone number and street address below are exactly what
+# backend.intake.redact scrubs (<PHONE>, <ADDRESS>) before extraction runs.
+_PII_FOOTER_TEXT = """
+--
+Questions? Call our customer care line at (800) 555-0199.
+{merchant} Customer Care, 450 Fashion Ave, Suite 1200, New York, NY 10123
+"""
+
+_PII_FOOTER_HTML = (
+    '<p style="font-size:11px;color:#999999;margin:14px 0 0;">'
+    "Questions? Call our customer care line at (800) 555-0199.<br>"
+    "{merchant} Customer Care, 450 Fashion Ave, Suite 1200, New York, NY 10123</p>"
+)
+
+
+def _apply_pii_footer(merchant: str, text: str, html: str | None) -> tuple[str, str | None]:
+    text = text + _PII_FOOTER_TEXT.format(merchant=merchant)
+    if html:
+        footer = _PII_FOOTER_HTML.format(merchant=merchant)
+        if "</body>" in html:
+            html = html.replace("</body>", footer + "\n</body>", 1)
+        else:
+            html = html + footer
+    return text, html
+
+
 _RENDERERS = {
     "hollister_10": _render_hollister,
     "tacobell_crunchwrap": _render_tacobell,
@@ -446,6 +474,8 @@ def render_email(
         raise KeyError(f"Unknown template: {template_id}")
     offer = _resolve(spec, overrides or {})
     subject, text, html = _RENDERERS[template_id](spec, offer)
+    if (overrides or {}).get("pii_footer"):
+        text, html = _apply_pii_footer(spec.merchant, text, html)
 
     msg = EmailMessage()
     msg["From"] = f'"{spec.from_name}" <{spec.from_email}>'

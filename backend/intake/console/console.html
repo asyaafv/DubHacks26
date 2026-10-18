@@ -15,6 +15,7 @@
     --accent: #5b8cff;
     --accent-2: #7affc1;
     --danger: #ff6b6b;
+    --warn: #ffc76b;
   }
   * { box-sizing: border-box; }
   body {
@@ -41,7 +42,7 @@
   }
   main {
     display: grid; grid-template-columns: 290px 1fr 380px;
-    gap: 18px; padding: 18px 24px; max-width: 1400px; margin: 0 auto;
+    gap: 18px; padding: 18px 24px; max-width: 1480px; margin: 0 auto;
   }
   @media (max-width: 1100px) { main { grid-template-columns: 1fr; } }
   .panel {
@@ -52,6 +53,7 @@
     margin: 0 0 12px; font-size: 12px; font-weight: 700;
     text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted);
   }
+  .wide { grid-column: 1 / -1; }
   .tpl {
     display: flex; align-items: center; gap: 10px;
     padding: 10px 12px; margin-bottom: 8px; cursor: pointer;
@@ -75,6 +77,11 @@
   }
   input:focus { border-color: var(--accent); }
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .check {
+    display: flex; align-items: center; gap: 8px; margin: 14px 0 0;
+    font-size: 12px; color: var(--muted); cursor: pointer;
+  }
+  .check input { width: auto; margin: 0; accent-color: var(--accent); }
   .actions { display: flex; gap: 10px; margin-top: 20px; }
   button {
     flex: 1; padding: 11px 14px; border-radius: 9px; border: none;
@@ -111,13 +118,91 @@
     border-radius: 7px; padding: 4px 10px; margin: 6px 0;
   }
   #card .meta { color: var(--muted); font-size: 12px; margin-top: 6px; }
-  .confbar { height: 6px; border-radius: 4px; background: var(--border); margin-top: 8px; overflow: hidden; }
+  .confbar { height: 6px; border-radius: 4px; background: var(--border); overflow: hidden; }
   .confbar > div { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+  #card .confbar { margin-top: 8px; }
   #timer { font-size: 13px; color: var(--muted); margin-top: 12px; }
   #timer b { color: var(--accent-2); font-size: 15px; }
   #log { font-size: 12px; color: var(--muted); margin-top: 10px; white-space: pre-wrap; }
   .err { color: var(--danger) !important; }
-  .preview { font-size: 12px; color: var(--muted); margin-top: 14px; border-top: 1px solid var(--border); padding-top: 10px; }
+
+  /* ---- Email preview + extraction ---- */
+  .pv-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  .pv-top h2 { margin: 0; }
+  .chip {
+    font-size: 10px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase;
+    border: 1px solid var(--border); border-radius: 99px; padding: 2px 9px;
+    color: var(--muted); white-space: nowrap;
+  }
+  .chip.ok { color: var(--accent-2); border-color: var(--accent-2); }
+  .chip.info { color: var(--accent); border-color: var(--accent); }
+  .chip.warn { color: var(--warn); border-color: var(--warn); }
+  .pv-sum {
+    font-family: ui-monospace, monospace; font-size: 11px; color: var(--muted);
+    margin-left: 2px;
+  }
+  .tabs { margin-left: auto; display: flex; gap: 4px; background: var(--panel-2);
+    border: 1px solid var(--border); border-radius: 9px; padding: 3px; }
+  .tabs .tab {
+    flex: none; padding: 5px 12px; border-radius: 7px; font-size: 12px; font-weight: 600;
+    background: transparent; color: var(--muted); border: none;
+  }
+  .tabs .tab.active { background: var(--accent); color: #fff; }
+  .pv-grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 16px; }
+  @media (max-width: 1100px) { .pv-grid { grid-template-columns: 1fr; } }
+  .hdrs {
+    width: 100%; border-collapse: collapse; font-size: 12.5px;
+    border: 1px solid var(--border); border-radius: 10px 10px 0 0;
+    background: var(--panel-2); overflow: hidden; table-layout: fixed;
+  }
+  .hdrs th {
+    text-align: right; color: var(--muted); font-weight: 600; width: 92px;
+    padding: 5px 10px 5px 0; vertical-align: top; white-space: nowrap;
+  }
+  .hdrs td { padding: 5px 10px 5px 0; word-break: break-all; }
+  .hdrs tr + tr th, .hdrs tr + tr td { border-top: 1px solid var(--border); }
+  .hdrs .mono { font-family: ui-monospace, monospace; font-size: 11px; color: var(--muted); }
+  .pv-body {
+    border: 1px solid var(--border); border-top: none; border-radius: 0 0 10px 10px;
+    overflow: hidden; background: #0c1117;
+  }
+  #pv-frame { display: block; width: 100%; height: 480px; border: none; background: #f4f4f4; }
+  .pv-pre {
+    margin: 0; padding: 16px; height: 480px; overflow: auto;
+    font: 12px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--text); white-space: pre-wrap; word-break: break-word;
+  }
+  mark.hl {
+    background: rgba(122, 255, 193, .22); color: var(--accent-2);
+    border-radius: 3px; padding: 0 2px; outline: 1px solid rgba(122, 255, 193, .45);
+  }
+  .hl-legend { font-size: 11px; color: var(--muted); margin-top: 8px; }
+  .hl-legend b { color: var(--accent-2); font-weight: 700; }
+  .pv-empty { padding: 40px 16px; color: var(--muted); text-align: center; font-size: 13px; }
+
+  .pv-extract h2 { margin-bottom: 10px; }
+  .ex-empty { color: var(--muted); font-size: 13px; padding: 14px 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .ex-merchant { font-size: 17px; font-weight: 800; margin-bottom: 2px; }
+  .ex-sub { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+  .ex-row { display: grid; grid-template-columns: 78px 1fr 44px; gap: 8px;
+    align-items: center; padding: 7px 0; border-top: 1px solid var(--border); }
+  .ex-row .f { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
+  .ex-row .v { font-size: 13px; font-weight: 600; word-break: break-word; }
+  .ex-row .v .codeish { font-family: ui-monospace, monospace; letter-spacing: 1px;
+    border: 1px dashed var(--accent); border-radius: 6px; padding: 1px 7px; }
+  .ex-row .pct { font-size: 11px; color: var(--muted); text-align: right; font-family: ui-monospace, monospace; }
+  .ex-row .confbar { margin-top: 4px; height: 4px; }
+  .ex-overall { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .ex-overall-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .ex-overall-label b { color: var(--accent-2); font-size: 15px; }
+  #ex-dup {
+    border: 1px solid var(--warn); border-radius: 10px; padding: 12px;
+    font-size: 12.5px; color: var(--warn); background: rgba(255, 199, 107, .06);
+    margin-bottom: 12px;
+  }
+  #ex-dup .mono { font-family: ui-monospace, monospace; font-size: 11px; word-break: break-all; color: var(--muted); }
+  #ex-force { margin-top: 10px; background: var(--warn); color: #241a05; width: 100%; }
 </style>
 </head>
 <body>
@@ -160,6 +245,10 @@
     </div>
     <label for="f-recipient">Recipient (Lapse inbox)</label>
     <input id="f-recipient" type="email">
+    <label class="check" for="f-pii">
+      <input id="f-pii" type="checkbox">
+      Include PII footer (support phone + street address — intake scrubs these)
+    </label>
     <div class="actions">
       <button id="btn-email">Send real email</button>
       <button id="btn-instant">Instant inject</button>
@@ -168,7 +257,6 @@
       Real email travels merchant &rarr; Postmark &rarr; Lapse inbound. Instant inject
       runs the same email through intake in-process (for when email is slow).
     </div>
-    <div class="preview" id="subject-preview"></div>
   </section>
 
   <section class="panel">
@@ -188,19 +276,88 @@
     <div id="timer"></div>
     <div id="log"></div>
   </section>
+
+  <section class="panel wide">
+    <div class="pv-top">
+      <h2>Email preview</h2>
+      <span class="chip info" id="pv-status">live preview</span>
+      <span class="chip" id="pv-ctype"></span>
+      <span class="pv-sum" id="pv-sum"></span>
+      <div class="tabs" id="pv-tabs">
+        <button class="tab active" data-tab="rendered" type="button">Rendered</button>
+        <button class="tab" data-tab="text" type="button">Plain text</button>
+        <button class="tab" data-tab="source" type="button">Source (.eml)</button>
+      </div>
+    </div>
+    <div class="pv-grid">
+      <div class="pv-email">
+        <table class="hdrs">
+          <tr><th>From</th><td id="h-from"></td></tr>
+          <tr><th>To</th><td id="h-to"></td></tr>
+          <tr><th>Subject</th><td id="h-subject"></td></tr>
+          <tr><th>Date</th><td id="h-date"></td></tr>
+          <tr><th>Message-ID</th><td id="h-mid" class="mono"></td></tr>
+        </table>
+        <div class="pv-body">
+          <iframe id="pv-frame" sandbox title="Rendered email preview"></iframe>
+          <pre id="pv-text" class="pv-pre" hidden></pre>
+          <pre id="pv-source" class="pv-pre" hidden></pre>
+        </div>
+        <div class="hl-legend" id="hl-legend" hidden></div>
+      </div>
+      <aside class="pv-extract">
+        <h2>Extraction</h2>
+        <div id="ex-empty" class="ex-empty">
+          Send the campaign and Lapse will parse these exact bytes — the extracted
+          reward appears here, side by side with the email it came from.
+        </div>
+        <div id="ex-body" hidden>
+          <div class="chips" id="ex-chips"></div>
+          <div id="ex-dup" hidden></div>
+          <div id="ex-reward" hidden>
+            <div class="ex-merchant" id="ex-merchant"></div>
+            <div class="ex-sub" id="ex-sub"></div>
+            <div id="ex-rows"></div>
+            <div class="ex-overall">
+              <div class="ex-overall-label">Overall confidence <b id="ex-overall-pct"></b></div>
+              <div class="confbar"><div id="ex-overall-bar" style="width:0%"></div></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
 </main>
 
 <script>
 (function () {
   "use strict";
   var base = location.pathname.replace(/\/+$/, "");
-  var state = { templates: [], config: {}, selected: null, pollHandle: null, t0: 0 };
+  var state = {
+    templates: [], config: {}, selected: null, pollHandle: null, t0: 0,
+    email: null,          // last email payload shown (preview or as-sent)
+    emailSent: false,     // whether state.email is the exact sent/injected bytes
+    highlights: [],       // needles located in the email after extraction
+    previewTimer: null,
+    previewSeq: 0,
+    activeTab: "rendered"
+  };
 
   var $ = function (id) { return document.getElementById(id); };
+
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
 
   function kindValueLabel(kind) {
     return { percent_off: "Discount (%)", amount_off: "Discount ($)", points: "Points",
              free_item: "Discount value (n/a)", bogo: "Discount value (n/a)" }[kind] || "Discount value";
+  }
+
+  function kindLabel(kind) {
+    return { percent_off: "Percent off", amount_off: "Amount off", points: "Bonus points",
+             free_item: "Free item", bogo: "Buy one get one", cashback: "Cashback" }[kind] || kind;
   }
 
   function cardValueText(c) {
@@ -241,8 +398,8 @@
     $("f-minspend").value = d.min_spend != null ? d.min_spend : "";
     $("f-item").value = d.item || "";
     $("item-row").style.display = d.item ? "block" : "none";
-    $("subject-preview").textContent = "From: " + t.from_email;
     renderTemplates();
+    refreshPreview();
   }
 
   function overrides() {
@@ -259,8 +416,263 @@
     if (item && $("item-row").style.display !== "none") o.item = item;
     var rcpt = $("f-recipient").value.trim();
     if (rcpt) o.recipient = rcpt;
+    if ($("f-pii").checked) o.pii_footer = true;
     return o;
   }
+
+  // ------------------------------------------------------------------
+  // Email preview: everything shown comes from the server's re-parse of
+  // the exact .eml bytes (headers, bodies, raw source, sha256).
+  // ------------------------------------------------------------------
+
+  function schedulePreview() {
+    if (state.previewTimer) clearTimeout(state.previewTimer);
+    state.previewTimer = setTimeout(refreshPreview, 250);
+  }
+
+  function refreshPreview() {
+    if (!state.selected) return;
+    var seq = ++state.previewSeq;
+    fetch(base + "/preview", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ template_id: state.selected.id, overrides: overrides() })
+    })
+    .then(function (r) { if (!r.ok) throw new Error("preview " + r.status); return r.json(); })
+    .then(function (d) {
+      if (seq !== state.previewSeq) return; // stale response
+      showEmail(d.email, false);
+    })
+    .catch(function () { /* keep the last preview on transient errors */ });
+  }
+
+  function showEmail(e, sent) {
+    state.email = e;
+    state.emailSent = sent;
+    if (!sent) {
+      state.highlights = [];
+      $("hl-legend").hidden = true;
+    }
+    $("h-from").textContent = e.from;
+    $("h-to").textContent = e.to;
+    $("h-subject").textContent = e.subject;
+    $("h-date").textContent = e.date;
+    $("h-mid").textContent = e.message_id;
+    var st = $("pv-status");
+    st.textContent = sent ? "as sent — exact bytes" : "live preview";
+    st.className = "chip " + (sent ? "ok" : "info");
+    $("pv-ctype").textContent = e.content_type;
+    $("pv-sum").textContent = "sha256 " + e.sha256.slice(0, 16) + "… · " +
+      e.size_bytes.toLocaleString() + " bytes";
+    renderBody();
+  }
+
+  function renderedDoc(e) {
+    if (e.html) return e.html;
+    return "<!DOCTYPE html><html><body style=\"margin:0;background:#f4f4f4;\">" +
+      "<div style=\"max-width:600px;margin:0 auto;background:#fff;padding:28px;" +
+      "font:14px/1.6 Arial,Helvetica,sans-serif;color:#1a1a1a;\"><pre style=\"margin:0;" +
+      "white-space:pre-wrap;font:inherit;\">" + esc(e.text || "") + "</pre></div></body></html>";
+  }
+
+  // Wrap each located field value in <mark> while HTML-escaping everything else.
+  function highlightInto(raw, needles) {
+    var ranges = [];
+    var lower = raw.toLowerCase();
+    needles.forEach(function (n) {
+      var needle = n.text.toLowerCase();
+      if (!needle) return;
+      var from = 0, idx;
+      while ((idx = lower.indexOf(needle, from)) !== -1) {
+        ranges.push({ start: idx, end: idx + needle.length });
+        from = idx + needle.length;
+      }
+    });
+    if (!ranges.length) return esc(raw);
+    ranges.sort(function (a, b) { return a.start - b.start || b.end - a.end; });
+    var out = "", pos = 0;
+    ranges.forEach(function (r) {
+      if (r.start < pos) return; // overlap
+      out += esc(raw.slice(pos, r.start)) +
+        '<mark class="hl">' + esc(raw.slice(r.start, r.end)) + "</mark>";
+      pos = r.end;
+    });
+    return out + esc(raw.slice(pos));
+  }
+
+  function renderBody() {
+    var e = state.email;
+    var tab = state.activeTab;
+    $("pv-frame").hidden = tab !== "rendered";
+    $("pv-text").hidden = tab !== "text";
+    $("pv-source").hidden = tab !== "source";
+    if (!e) return;
+    if (tab === "rendered") {
+      $("pv-frame").srcdoc = renderedDoc(e);
+    } else if (tab === "text") {
+      $("pv-text").innerHTML = highlightInto(e.text || "(no text body)", state.highlights);
+    } else {
+      $("pv-source").innerHTML = highlightInto(e.raw || "", state.highlights);
+    }
+  }
+
+  $("pv-tabs").addEventListener("click", function (ev) {
+    var btn = ev.target.closest(".tab");
+    if (!btn) return;
+    state.activeTab = btn.dataset.tab;
+    Array.prototype.forEach.call($("pv-tabs").children, function (b) {
+      b.className = "tab" + (b === btn ? " active" : "");
+    });
+    renderBody();
+  });
+
+  // ------------------------------------------------------------------
+  // Extraction panel: real pipeline output only (per-field confidence,
+  // dedupe hash, PII-redaction counts, processing time).
+  // ------------------------------------------------------------------
+
+  function chip(text, cls) {
+    return '<span class="chip ' + (cls || "") + '">' + esc(text) + "</span>";
+  }
+
+  // Values the pipeline extracted, located back in the email bytes.
+  function buildHighlights(c, email) {
+    var needles = [];
+    if (c.code) needles.push({ field: "code", text: c.code });
+    if (c.merchant_name) needles.push({ field: "merchant", text: c.merchant_name });
+    var v = parseFloat(c.value);
+    if (c.kind === "percent_off") needles.push({ field: "value", text: v + "%" });
+    else if (c.kind === "amount_off") needles.push({ field: "value", text: "$" + v });
+    else if (c.kind === "points") needles.push({ field: "value", text: v + " bonus points" });
+    else if (c.kind === "bogo") needles.push({ field: "value", text: "BOGO" });
+    else if (c.kind === "free_item") needles.push({ field: "value", text: "FREE" });
+    if (c.min_spend) needles.push({ field: "min_spend", text: "$" + parseFloat(c.min_spend) });
+    if (c.expires_at) {
+      var d = new Date(c.expires_at);
+      var opts = { month: "long", day: "numeric", year: "numeric" };
+      var utc = d.toLocaleDateString("en-US", Object.assign({ timeZone: "UTC" }, opts));
+      needles.push({ field: "expires_at", text: utc });
+      var local = d.toLocaleDateString("en-US", opts);
+      if (local !== utc) needles.push({ field: "expires_at", text: local });
+    }
+    // Keep only needles that actually occur in the email bytes.
+    var haystack = ((email && email.raw) || "").toLowerCase();
+    var found = needles.filter(function (n) {
+      return haystack.indexOf(n.text.toLowerCase()) !== -1;
+    });
+    return found;
+  }
+
+  function applyHighlights(card) {
+    state.highlights = buildHighlights(card, state.email);
+    var legend = $("hl-legend");
+    if (state.highlights.length) {
+      legend.hidden = false;
+      legend.innerHTML = "Located in the email bytes (Plain text / Source tabs): " +
+        state.highlights.map(function (n) {
+          return n.field + " <b>" + esc(n.text) + "</b>";
+        }).join(" · ");
+    } else {
+      legend.hidden = true;
+    }
+    renderBody();
+  }
+
+  function confRow(label, valueHtml, conf) {
+    var pct = conf != null ? Math.round(conf * 100) + "%" : "—";
+    var bar = conf != null
+      ? '<div class="confbar"><div style="width:' + Math.round(conf * 100) + '%"></div></div>'
+      : "";
+    return '<div class="ex-row"><span class="f">' + esc(label) + '</span>' +
+      '<span class="v">' + valueHtml + bar + "</span>" +
+      '<span class="pct">' + pct + "</span></div>";
+  }
+
+  function renderExtraction(d) {
+    $("ex-empty").hidden = true;
+    $("ex-body").hidden = false;
+    var result = d.result || {};
+    var card = (d.rewards && d.rewards[0]) || null;
+    var chips = [];
+
+    if (result.classification) {
+      chips.push(chip("classified: " + result.classification,
+        result.classification === "reward" ? "ok" : "warn"));
+    }
+    if (card && card.source) chips.push(chip("source: " + card.source, "info"));
+    if (result.processing_time_ms != null) chips.push(chip("intake " + result.processing_time_ms + " ms"));
+    if (d.elapsed_ms != null) chips.push(chip("round-trip " + d.elapsed_ms + " ms"));
+    if (d.duplicate) {
+      chips.push(chip("dedupe: duplicate — skipped", "warn"));
+    } else if (d.content_hash) {
+      chips.push(chip("dedupe: new · " + d.content_hash.slice(0, 10) + "…", "ok"));
+    }
+    if (d.redaction) {
+      if (d.redaction.total > 0) {
+        var parts = Object.keys(d.redaction.counts).map(function (k) {
+          return k.replace(/_/g, " ").toLowerCase() + " ×" + d.redaction.counts[k];
+        });
+        chips.push(chip("PII scrubbed: " + parts.join(", "), "warn"));
+      } else {
+        chips.push(chip("PII scrubbed: none found"));
+      }
+    }
+    $("ex-chips").innerHTML = chips.join("");
+
+    var dup = $("ex-dup");
+    if (d.duplicate) {
+      dup.hidden = false;
+      dup.innerHTML = "Intake has already processed an email with this exact content " +
+        "for this user, so it was skipped instead of creating a duplicate reward." +
+        '<div class="mono">content hash ' + esc(d.content_hash || "?") + "</div>" +
+        '<button id="ex-force" type="button">Inject again (bypass dedupe)</button>';
+      $("ex-force").onclick = function () { send("instant", true); };
+    } else {
+      dup.hidden = true;
+      dup.innerHTML = "";
+    }
+
+    var rw = $("ex-reward");
+    if (!card) {
+      rw.hidden = true;
+      return;
+    }
+    rw.hidden = false;
+    $("ex-merchant").textContent = card.merchant_name || "(unknown merchant)";
+    $("ex-sub").textContent = kindLabel(card.kind) + " · status: " + card.status;
+    var fc = card.field_confidence || {};
+    var rows = "";
+    rows += confRow("Value", "<b>" + esc(cardValueText(card)) + "</b>", fc.value);
+    rows += confRow("Merchant", esc(card.merchant_name || "—"), fc.merchant);
+    rows += confRow("Code",
+      card.code ? '<span class="codeish">' + esc(card.code) + "</span>" : "—",
+      card.code ? fc.code : null);
+    rows += confRow("Expires",
+      card.expires_at ? esc(new Date(card.expires_at).toLocaleDateString()) : "—",
+      card.expires_at ? fc.expires_at : null);
+    rows += confRow("Min spend",
+      card.min_spend ? "$" + parseFloat(card.min_spend) : "—",
+      card.min_spend ? fc.min_spend : null);
+    $("ex-rows").innerHTML = rows;
+    var overall = card.overall_confidence != null ? card.overall_confidence : 1;
+    $("ex-overall-pct").textContent = Math.round(overall * 100) + "%";
+    $("ex-overall-bar").style.width = Math.round(overall * 100) + "%";
+
+    applyHighlights(card);
+  }
+
+  function resetExtraction() {
+    $("ex-empty").hidden = false;
+    $("ex-body").hidden = true;
+    $("ex-reward").hidden = true;
+    $("ex-dup").hidden = true;
+    state.highlights = [];
+    $("hl-legend").hidden = true;
+  }
+
+  // ------------------------------------------------------------------
+  // Delivery monitor (unchanged behavior) + send flow
+  // ------------------------------------------------------------------
 
   function setStep(id, cls) {
     var el = $(id);
@@ -325,6 +737,8 @@
       expires_at: r.expires_at,
       status: r.status,
       overall_confidence: r.overall_confidence != null ? r.overall_confidence : 1,
+      field_confidence: r.field_confidence || null,
+      source: r.source,
       id: r.id
     };
   }
@@ -345,15 +759,19 @@
           clearInterval(state.pollHandle);
           state.pollHandle = null;
           setStep("st-recv", "done");
-          showCard(normalizeCard(fresh[fresh.length - 1]), Date.now() - state.t0);
+          var c = normalizeCard(fresh[fresh.length - 1]);
+          var elapsed = Date.now() - state.t0;
+          showCard(c, elapsed);
+          renderExtraction({ rewards: [c], result: { classification: "reward" }, elapsed_ms: elapsed });
         }
       }).catch(function () { /* keep polling */ });
     }, 1500);
   }
 
-  function send(mode) {
+  function send(mode, force) {
     if (!state.selected) return;
     resetMonitor();
+    resetExtraction();
     var userId = state.config.demo_user_id;
     setStep("st-sent", "busy");
     state.t0 = Date.now();
@@ -365,7 +783,8 @@
         body: JSON.stringify({
           template_id: state.selected.id,
           overrides: overrides(),
-          mode: mode
+          mode: mode,
+          force: !!force
         })
       })
       .then(function (r) {
@@ -380,15 +799,21 @@
         }
         setStep("st-sent", "done");
         var d = res.data;
+        if (d.email) showEmail(d.email, true); // the exact bytes that went out
         if (mode === "instant") {
           setStep("st-recv", "done");
+          renderExtraction(d);
           if (d.rewards && d.rewards.length) {
             showCard(normalizeCard(d.rewards[0]), d.elapsed_ms);
+          } else if (d.duplicate) {
+            log("Duplicate: intake already processed this exact content; nothing re-extracted.");
           } else {
             log("Processed, but no reward extracted (classified as " +
                 (d.result ? d.result.classification : "?") + ").", true);
           }
-          log('Sent "' + d.subject + '" to ' + d.to + " · processed in " + d.elapsed_ms + "ms");
+          if (d.rewards && d.rewards.length) {
+            log('Sent "' + d.subject + '" to ' + d.to + " · processed in " + d.elapsed_ms + "ms");
+          }
         } else {
           log('Sent "' + d.subject + '" to ' + d.to + " via Postmark (" +
               (d.postmark && d.postmark.message_id ? d.postmark.message_id : "queued") +
@@ -416,6 +841,11 @@
 
   $("btn-email").onclick = function () { send("email"); };
   $("btn-instant").onclick = function () { send("instant"); };
+
+  ["f-value", "f-code", "f-expiry", "f-minspend", "f-item", "f-recipient"].forEach(function (id) {
+    $(id).addEventListener("input", schedulePreview);
+  });
+  $("f-pii").addEventListener("change", refreshPreview);
 
   fetch(base + "/templates")
     .then(function (r) { return r.json(); })
