@@ -79,7 +79,11 @@ export function Dashboard() {
         <h1 className="font-serif text-4xl tracking-tight text-ink">Check out your rewards</h1>
         <div className="mt-4 inline-flex items-center gap-3 rounded-full border border-line bg-white px-4 py-2 shadow-card">
           <span className="font-medium text-ink">{user?.email}</span>
-          <button type="button" onClick={() => void copyAddress()} className="text-sm font-semibold text-accent">
+          <button
+            type="button"
+            onClick={() => void copyAddress()}
+            className="rounded-full bg-accent-soft px-3 py-1 text-sm font-semibold text-accent"
+          >
             {copied ? 'Copied' : 'Copy'}
           </button>
         </div>
