@@ -67,9 +67,31 @@ def test_savings_seeded_and_redeem_idempotent_without_postgres(client):
     assert after['items'][0]['saved'] == '5.00'
     assert after['series'][-1]['cumulative'] == '108.51'
 
-    # The redeemed reward leaves the active sync snapshot.
+    # The redeemed reward stays in the full snapshot as a used tombstone
+    # (CONTRACTS.md: clients filter used/expired locally).
     synced = client.get('/sync', headers={'X-User-Id': DEMO}).json()
-    assert reward_id not in [r['id'] for r in synced['rewards']]
+    statuses = {r['id']: r['status'] for r in synced['rewards']}
+    assert statuses[reward_id] == 'used'
+
+
+def test_redeem_describes_whole_percent_without_scientific_notation(client):
+    # Hollister 10% off (value "10.00"): normalize() alone would render "1E+1".
+    reward_id = '22222222-2222-2222-2222-222222222201'
+    resp = client.post(f'/rewards/{reward_id}/redeem', headers={'X-User-Id': DEMO})
+    assert resp.status_code == 200, resp.text
+    items = client.get('/savings', headers={'X-User-Id': DEMO}).json()['items']
+    description = next(i['description'] for i in items if i['reward_id'] == reward_id)
+    assert description == '10% off'
+
+
+def test_sync_returns_full_snapshot_with_all_statuses(client):
+    body = client.get('/sync', headers={'X-User-Id': DEMO}).json()
+    statuses = {r['status'] for r in body['rewards']}
+    # Seed data includes active, used and needs_review rewards; the snapshot
+    # must carry all of them so the dashboard's review UI and tombstone
+    # handling work (CONTRACTS.md "With no since, replace the local reward
+    # set using this full snapshot (all statuses)").
+    assert {'active', 'used', 'needs_review'} <= statuses
 
 
 def test_memory_mode_isolation_and_id_guessing(client):
