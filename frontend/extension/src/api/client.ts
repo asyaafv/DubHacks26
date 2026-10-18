@@ -51,13 +51,15 @@ async function liveOrMock<T>(label: string, live: () => Promise<T>, mock: () => 
 
 export async function lookup(request: Omit<LookupRequest, 'user_id'>): Promise<LookupResult> {
   const limit = request.limit ?? 3;
+  const scoped = request.domain != null || request.merchant_id != null;
   const payload: LookupRequest = { ...request, user_id: DEMO_USER_ID, limit };
   return liveOrMock(
     'lookup',
     async () => {
-      // The backend ranks across ALL merchants (category matches score 0.7),
-      // so ask for the deepest allowed page (le=10) and keep only codes usable
-      // at THIS merchant (match_component === 1), mirroring the mock's behavior.
+      // A merchant-scoped lookup (domain/merchant_id set) is filtered to that
+      // merchant server-side; request the deepest allowed page (le=10) so every
+      // direct reward comes back, then keep exact matches (match_component ===
+      // 1) as defense in depth, mirroring the mock's behavior.
       const response = await fetch(`${API_BASE}/lookup`, {
         method: 'POST',
         headers: headers(),
@@ -75,9 +77,11 @@ export async function lookup(request: Omit<LookupRequest, 'user_id'>): Promise<L
         seen.add(key);
         return true;
       });
-      return { ...result, rewards: exact.slice(0, limit) };
+      // Merchant-scoped lookups return EVERY direct reward (callers decide how
+      // many to display); only unscoped queries respect the display limit.
+      return { ...result, rewards: scoped ? exact : exact.slice(0, limit) };
     },
-    () => mockLookup(payload),
+    () => mockLookup(scoped ? { ...payload, limit: 10 } : payload),
   );
 }
 
