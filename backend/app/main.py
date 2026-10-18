@@ -101,15 +101,13 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# CORS for Chrome extension
+# CORS for the Chrome extension and local dashboards. Starlette matches
+# allow_origins entries literally (no "*" globbing), so ports/extension ids
+# must be covered by allow_origin_regex instead.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "chrome-extension://*",
-        "http://localhost:*",
-        "http://127.0.0.1:*",
-    ],
-    allow_origin_regex=r"chrome-extension://.*",
+    allow_origins=[],
+    allow_origin_regex=r"chrome-extension://.*|https?://(localhost|127\.0\.0\.1)(:\d+)?",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
