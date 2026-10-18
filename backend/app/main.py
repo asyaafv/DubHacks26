@@ -107,10 +107,38 @@ app = FastAPI(
 # CORS for the Chrome extension and local dashboards. Starlette matches
 # allow_origins entries literally (no "*" globbing), so ports/extension ids
 # must be covered by allow_origin_regex instead.
+BASE_CORS_ORIGIN_REGEX = r"chrome-extension://.*|https?://(localhost|127\.0\.0\.1)(:\d+)?"
+
+
+def build_cors_config() -> tuple[list[str], str]:
+    """Merge deploy-specific origins from the environment into the CORS config.
+
+    - CORS_EXTRA_ORIGINS: comma-separated exact origins (scheme://host[:port])
+      added to allow_origins, e.g. "https://dash.example.com".
+    - CORS_EXTRA_ORIGIN_REGEX: one extra pattern OR'd into allow_origin_regex
+      for origins with variable parts (subdomains, ports).
+
+    Both are optional; when unset the defaults (chrome-extension://* and
+    localhost/127.0.0.1 on any port) are unchanged.
+    """
+    extra_origins = [
+        origin.strip()
+        for origin in os.getenv("CORS_EXTRA_ORIGINS", "").split(",")
+        if origin.strip()
+    ]
+    origin_regex = BASE_CORS_ORIGIN_REGEX
+    extra_regex = os.getenv("CORS_EXTRA_ORIGIN_REGEX", "").strip()
+    if extra_regex:
+        origin_regex = f"{origin_regex}|{extra_regex}"
+    return extra_origins, origin_regex
+
+
+_cors_origins, _cors_origin_regex = build_cors_config()
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[],
-    allow_origin_regex=r"chrome-extension://.*|https?://(localhost|127\.0\.0\.1)(:\d+)?",
+    allow_origins=_cors_origins,
+    allow_origin_regex=_cors_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
