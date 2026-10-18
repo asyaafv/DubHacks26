@@ -26,7 +26,7 @@ async def db():
     url = os.getenv('TEST_DATABASE_URL')
     if not url:
         pytest.skip('TEST_DATABASE_URL is required for real Postgres tests')
-    schema = 'test_perk_' + uuid4().hex
+    schema = 'test_lapse_' + uuid4().hex
     admin = await asyncpg.connect(url)
     for extension in ('pgcrypto', 'vector', 'uuid-ossp'):
         await admin.execute(f'CREATE EXTENSION IF NOT EXISTS "{extension}" WITH SCHEMA public')
@@ -235,7 +235,7 @@ async def test_wallet_http_identity_products_and_atomic_updates(db, monkeypatch)
                     category_rates=[dict(category='Clothing', mcc_codes=['5651'], rate='5')])],
                'add_memberships': [dict(merchant_name='Shop', program_name='Club', member_id='sensitive-id')]}
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url='http://test') as client:
-        monkeypatch.delenv('PERK_ALLOW_DEMO_IDENTITY', raising=False)
+        monkeypatch.delenv('LAPSE_ALLOW_DEMO_IDENTITY', raising=False)
         assert (await client.get('/wallet')).status_code == 401
         assert (await client.get('/wallet', headers={'X-User-Id': 'invalid'})).status_code == 400
         assert (await client.post('/wallet', headers=headers, json={**payload, 'user_id': str(other)})).status_code == 400
@@ -256,7 +256,7 @@ async def test_wallet_http_identity_products_and_atomic_updates(db, monkeypatch)
         assert (await client.post('/wallet', headers=headers, json=number_input)).status_code == 422
         removed = await client.post('/wallet', headers=headers, json={'remove_card_ids': [card_id], 'remove_membership_ids': [member_id]})
         assert removed.json()['cards'] == removed.json()['memberships'] == []
-        monkeypatch.setenv('PERK_ALLOW_DEMO_IDENTITY', 'true')
+        monkeypatch.setenv('LAPSE_ALLOW_DEMO_IDENTITY', 'true')
         assert (await client.get('/wallet')).status_code == 200
 
 
@@ -268,12 +268,12 @@ def test_exact_card_rates_and_identity(monkeypatch):
     c.category_rates[0].mcc_codes = []
     assert card_rate(c, category=' clothing ') == Decimal('5')
     assert card_rate(c, category='Unknown') == Decimal('1.5')
-    monkeypatch.delenv('PERK_ALLOW_DEMO_IDENTITY', raising=False)
+    monkeypatch.delenv('LAPSE_ALLOW_DEMO_IDENTITY', raising=False)
     with pytest.raises(HTTPException):
         resolve_user()
     with pytest.raises(HTTPException):
         resolve_user(uuid4(), uuid4())
-    monkeypatch.setenv('PERK_ALLOW_DEMO_IDENTITY', 'true')
+    monkeypatch.setenv('LAPSE_ALLOW_DEMO_IDENTITY', 'true')
     assert resolve_user() == DEMO_USER_ID
     with pytest.raises(ValueError):
         vector_literal([1.] * 383)

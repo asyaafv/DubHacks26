@@ -2,18 +2,18 @@ services:
   postgres:
     image: pgvector/pgvector:0.8.1-pg17
     environment:
-      POSTGRES_DB: perk
-      POSTGRES_USER: perk
+      POSTGRES_DB: lapse
+      POSTGRES_USER: lapse
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD outside the repository}
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
-      - perk_postgres:/var/lib/postgresql/data
+      - lapse_postgres:/var/lib/postgresql/data
     command: ["postgres", "-c", "log_statement=none", "-c", "log_parameter_max_length=0", "-c", "log_parameter_max_length_on_error=0"]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U perk -d perk"]
+      test: ["CMD-SHELL", "pg_isready -U lapse -d lapse"]
       interval: 2s
       timeout: 3s
       retries: 20
 volumes:
-  perk_postgres:
+  lapse_postgres:

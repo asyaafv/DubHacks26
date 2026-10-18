@@ -10,15 +10,15 @@ import asyncpg
 class Database:
     def __init__(self, pool, encryption_key: str):
         if len(encryption_key) < 32:
-            raise ValueError("PERK_ENCRYPTION_KEY must contain at least 32 characters")
+            raise ValueError("LAPSE_ENCRYPTION_KEY must contain at least 32 characters")
         self.pool = pool
         self._key = encryption_key
 
     @classmethod
     async def connect(cls, url=None, key=None):
-        key = key or os.environ.get("PERK_ENCRYPTION_KEY", "")
+        key = key or os.environ.get("LAPSE_ENCRYPTION_KEY", "")
         if len(key) < 32:
-            raise ValueError("PERK_ENCRYPTION_KEY must contain at least 32 characters")
+            raise ValueError("LAPSE_ENCRYPTION_KEY must contain at least 32 characters")
         pool = await asyncpg.create_pool(url or os.environ["DATABASE_URL"],
                                        min_size=1, max_size=10,
                                        server_settings={"timezone": "UTC"})

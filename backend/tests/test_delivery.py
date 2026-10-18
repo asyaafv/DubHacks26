@@ -287,7 +287,7 @@ async def test_capacity_shutdown_bad_identity_and_history_bound(db, server, monk
     client, app = server
     app.state.delivery.settings = Settings(max_clients_per_user=1, max_sync_events=1, batch_size=1, poll_seconds=.02)
     user = uuid4()
-    monkeypatch.delenv('PERK_ALLOW_DEMO_IDENTITY', raising=False)
+    monkeypatch.delenv('LAPSE_ALLOW_DEMO_IDENTITY', raising=False)
     assert (await client.get('/events')).status_code == 401
     assert (await client.get('/sync', headers={'X-User-Id': 'invalid'})).status_code == 400
     headers = {'X-User-Id': str(user)}
@@ -366,7 +366,7 @@ async def test_scheduling_command_runs_once_and_reruns_safely(db):
     # asyncpg accepts server settings in the DSN; restrict the CLI to this test schema.
     separator = '&' if '?' in db.test_url else '?'
     env = {**os.environ, 'DATABASE_URL': db.test_url + separator + 'search_path=' + db.test_schema + ',public',
-           'PERK_ENCRYPTION_KEY': db._key}
+           'LAPSE_ENCRYPTION_KEY': db._key}
     results = []
     for _ in range(2):
         process = await asyncio.create_subprocess_exec(
@@ -395,7 +395,7 @@ async def test_browser_fetch_streaming(db, server, monkeypatch):
     node = os.getenv('NODE_BINARY')
     if not node or not os.getenv('PLAYWRIGHT_NODE_MODULE'):
         pytest.skip('Set NODE_BINARY and PLAYWRIGHT_NODE_MODULE for real Chromium test')
-    monkeypatch.delenv('PERK_ALLOW_DEMO_IDENTITY', raising=False)
+    monkeypatch.delenv('LAPSE_ALLOW_DEMO_IDENTITY', raising=False)
     client, app = server
 
     @app.get('/browser-test')

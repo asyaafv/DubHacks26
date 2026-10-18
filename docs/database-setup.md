@@ -4,9 +4,9 @@ Use Python 3.11+ and Docker Compose. In your shell (not a committed file):
 
 ```sh
 export POSTGRES_PASSWORD="$(openssl rand -hex 24)"
-export PERK_ENCRYPTION_KEY="$(openssl rand -hex 32)"
-export DATABASE_URL="postgresql://perk:${POSTGRES_PASSWORD}@localhost:5432/perk"
-export PERK_ALLOW_DEMO_IDENTITY=true
+export LAPSE_ENCRYPTION_KEY="$(openssl rand -hex 32)"
+export DATABASE_URL="postgresql://lapse:${POSTGRES_PASSWORD}@localhost:5432/lapse"
+export LAPSE_ALLOW_DEMO_IDENTITY=true
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -17,6 +17,7 @@ uvicorn backend.app.main:app --reload --port 8000
 ```
 
 Keep the password and encryption key in your shell/secret manager for future runs.
+Keep the existing encryption key value when updating application configuration names.
 Changing the encryption key makes existing ciphertext unreadable; rotation requires
 an explicit decrypt/re-encrypt migration. Do not pass the encryption key to the
 Postgres container, SQL migration files or logs. Disable SQL parameter logging in
@@ -49,7 +50,7 @@ Tests:
 
 ```sh
 # Use a separate disposable database; never a production DB.
-export TEST_DATABASE_URL='postgresql://perk:...@localhost:5432/perk_test'
+export TEST_DATABASE_URL='postgresql://lapse:...@localhost:5432/lapse_test'
 pytest backend/tests/test_storage_wallet.py -v
 # Seed a development DB first for the original HTTP contract tests:
 DATABASE_URL="$DATABASE_URL" pytest backend/tests/test_contracts.py -v

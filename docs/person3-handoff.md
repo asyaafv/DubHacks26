@@ -1,7 +1,7 @@
 # Foundation and wallet handoff
 
 Branch: `codex/person3-foundation`. Initial foundation milestone: `648d082`.
-Checkout: `perk-foundation/` inside the original empty local repository; the outer
+Checkout: `lapse-foundation/` inside the original empty local repository; the outer
 repository was left untouched. This implementation is based on origin/main at a2e1def.
 
 ## Exact integration points

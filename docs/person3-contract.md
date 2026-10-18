@@ -14,7 +14,7 @@ main.py wiring; this branch changes only lifecycle and wallet wiring.
 
 ## Database and dependency injection
 
-`Database.connect()` reads DATABASE_URL and PERK_ENCRYPTION_KEY (at least 32 random
+`Database.connect()` reads DATABASE_URL and LAPSE_ENCRYPTION_KEY (at least 32 random
 characters, supplied outside repo and DB). `close()` closes the pool. FastAPI lifespan
 stores it in `app.state.database`; `get_database(request)` is overridable in tests.
 Missing DB configuration produces wallet 503, never an in-memory persistence fallback.
@@ -105,7 +105,7 @@ Changing model/dimension requires a coordinated schema migration and re-embeddin
 
 `resolve_user(header, body_user_id=None)` rejects conflicting IDs with 400 and
 invalid UUIDs with 400. Missing identity uses demo UUID ONLY when
-PERK_ALLOW_DEMO_IDENTITY=true; otherwise 401. Wallet also checks a supplied extra
+LAPSE_ALLOW_DEMO_IDENTITY=true; otherwise 401. Wallet also checks a supplied extra
 body user_id so Pydantic's ignored extras cannot conceal an identity conflict.
 Integration must apply this helper to other endpoints; foundation leaves their
 existing routes untouched. Never log SQL parameters, codes, keys or decrypted models.

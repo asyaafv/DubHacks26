@@ -16,6 +16,6 @@ async def run(command):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Explicit Perk database maintenance')
+    parser = argparse.ArgumentParser(description='Explicit Lapse database maintenance')
     parser.add_argument('command', choices=('migrate', 'seed'))
     asyncio.run(run(parser.parse_args().command))

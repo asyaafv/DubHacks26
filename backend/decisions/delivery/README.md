@@ -47,7 +47,7 @@ The extension requires host permissions for the backend origin.
 ## Identity and browser consumption
 
 Both endpoints resolve the existing `X-User-Id: <uuid>` convention through
-`resolve_user`. No identity yields 401 unless `PERK_ALLOW_DEMO_IDENTITY=true`;
+`resolve_user`. No identity yields 401 unless `LAPSE_ALLOW_DEMO_IDENTITY=true`;
 invalid UUID yields 400. This preserves demo identity and does not introduce a new
 authentication scheme. Every replay query is scoped through `transaction(user)`.
 
@@ -169,7 +169,7 @@ Run from the repository root in the installed backend environment:
 python -m backend.decisions.jobs.expire --window-hours 24 --batch-size 100
 ```
 
-Provide `DATABASE_URL` and `PERK_ENCRYPTION_KEY` using deployment secrets and apply
+Provide `DATABASE_URL` and `LAPSE_ENCRYPTION_KEY` using deployment secrets and apply
 foundation migrations first. The command connects, runs once, prints JSON counts
 (`users`, `expired`, `alerts`), closes the pool, and exits nonzero on failure. Schedule
 it daily at 00:00 UTC, e.g. managed scheduler cron `0 0 * * *` with timezone UTC.
