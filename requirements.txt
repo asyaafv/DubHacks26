@@ -13,6 +13,20 @@ asyncpg>=0.29.0,<1.0.0
 ortools>=9.8,<10.0
 # sqlalchemy>=2.0.0  # Uncomment when adding ORM
 
+# Extraction parsing deps (light, no torch). Pins match the per-module files
+# under backend/extraction/requirements/ (installed by the Dockerfile); they
+# are repeated here so a bare `pip install -r requirements.txt` can import
+# backend.extraction and run the full test suite.
+# NOTE: selectolax must stay <1.0 — 1.0 removed the Modest backend
+# (`selectolax.parser`) that backend/extraction/clean.py imports.
+selectolax==0.3.21
+rapidfuzz>=3.6.0
+tldextract>=5.1.0
+dateparser>=1.2.0,<2.0.0
+price-parser>=0.3.0,<1.0.0
+extruct==0.17.0
+w3lib==2.2.1
+
 # Testing
 pytest>=8.0.0,<9.0.0
 pytest-asyncio>=0.23.0,<1.0.0
