@@ -56,6 +56,51 @@ docker run -d --name lapse -p 8000:8000 \
   -e PERK_ALLOW_DEMO_IDENTITY=true -e WARM_MODELS=1 lapse-api
 ```
 
+### A2. Bare laptop, no Docker (fresh clone → running backend)
+
+Verified on a clean Ubuntu box with Python 3.12. From the repo root:
+
+```bash
+# 1. All Python deps (core + ML + per-module files; ~5 min, pulls CPU torch).
+pip install -r requirements.txt -r requirements-ml.txt \
+  $(printf -- '-r %s ' backend/extraction/requirements/*.txt backend/intake/requirements/*.txt)
+pip install "presidio-analyzer>=2.2,<3" "presidio-anonymizer>=2.2,<3"
+python3 -m spacy download en_core_web_sm
+
+# 2. Train the SetFit email classifier (ONE command; ~4-6 min on laptop CPU,
+#    downloads the MiniLM base from HuggingFace on first run). Output lands in
+#    backend/extraction/models/email_classifier/ (gitignored).
+python3 scripts/train_classifier.py
+
+# 3. Pre-download GLiNER2 + MiniLM weights so first request is not a download:
+python3 scripts/warm_models.py
+
+# 4. Run (in-memory mode — no database needed for the demo flow):
+PERK_ALLOW_DEMO_IDENTITY=true WARM_MODELS=1 \
+  python3 -m uvicorn backend.app.main:app --port 8000
+# NOTE: WARM_MODELS is read by the Docker CMD, not by uvicorn itself — when
+# running uvicorn directly, warm the serving process manually:
+python3 scripts/warm_models.py --http --base-url http://localhost:8000
+```
+
+If step 2 is skipped, nothing breaks: `backend/extraction/classify.py` falls
+back to its rule-based keyword classifier automatically (lower confidence,
+same labels), and GLiNER2 extraction still runs. Train the model when you
+want the real classifier; the fallback keeps the demo alive without it.
+
+**Fresh local Postgres (optional, for `/wallet`/`/sync` persistence):** create
+a database with the pgvector extension, then migrations + seed are each one
+command (idempotent, safe to re-run). Without the seed step the DB has no
+demo cards/rewards and the wallet shows empty:
+
+```bash
+export DATABASE_URL="postgresql://USER:PASS@localhost:5432/lapse"
+export PERK_ENCRYPTION_KEY="$(openssl rand -hex 32)"   # >=32 chars, keep it
+psql "$DATABASE_URL" -c 'CREATE EXTENSION IF NOT EXISTS vector'
+python3 -m backend.decisions.storage migrate   # applies 001..003 in order
+python3 -m backend.decisions.storage seed      # demo cards/rewards/$103.51 ledger
+```
+
 ### B. Render (primary deployed path)
 
 Already described in docs/DEPLOY.md Option A. Short version: push to GitHub,
@@ -150,11 +195,10 @@ curl -s -X POST $BASE/stack -H 'Content-Type: application/json' \
        "cart_total": "120.00", "domain": "hollisterco.com"}'
 ```
 
-> **Status as of the deploy audit (2026-10-18):** `POST /rewards/{id}/redeem`
-> and `GET /savings` are not implemented in the backend yet (decisions area —
-> see docs/checklist/deploy.md). If they haven't landed by demo time, end the
-> flow at step 4's "You save $X" moment and show the savings number in the
-> dashboard UI instead of calling the endpoint live.
+> **Status (2026-10-18, post-merge E2E):** `POST /rewards/{id}/redeem` and
+> `GET /savings` are implemented and verified end-to-end (in-memory and
+> Postgres modes): redeem flips the reward to `used`, emits a `reward_used`
+> SSE event, and `/savings` grows from the $103.51 seed ledger.
 
 ---
 
