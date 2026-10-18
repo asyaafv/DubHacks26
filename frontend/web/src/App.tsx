@@ -8,6 +8,7 @@ import { Dashboard } from './pages/Dashboard'
 import { Landing } from './pages/Landing'
 import { Onboarding } from './pages/Onboarding'
 import { Savings } from './pages/Savings'
+import { MockupApp } from './mockups/MockupApp'
 
 function DemoRedirect() {
   const [params] = useSearchParams()
@@ -42,6 +43,7 @@ export default function App() {
               landing page is kept at /landing (not deleted). */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/landing" element={<Landing />} />
+          <Route path="/mockups/:page" element={<MockupApp />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route
             element={
