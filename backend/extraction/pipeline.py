@@ -464,11 +464,16 @@ def _fallback_normalize(c: FieldCandidates, email_date: datetime) -> dict:
 
 
 try:
-    from backend.extraction.normalize import merge_candidates, normalize
+    from backend.extraction.normalize import normalize
 except ImportError:
-    merge_candidates = _fallback_merge_candidates
     normalize = _fallback_normalize
     FALLBACKS_ACTIVE.append("normalize")
+
+try:
+    from backend.extraction.normalize import merge_candidates
+except ImportError:
+    merge_candidates = _fallback_merge_candidates
+    FALLBACKS_ACTIVE.append("merge")
 
 
 # =============================================================================
