@@ -10,6 +10,7 @@ module.exports = {
         lime: '#BCE740',
         sky: '#74C0FF',
         amber: '#F5A800',
+        muted: '#5a5a5a',
       },
       boxShadow: {
         card: '4px 4px 0 #141414',

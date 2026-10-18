@@ -1,10 +1,12 @@
 import { API_BASE, DEMO_USER_ID, USE_MOCKS } from './config';
-import { mockLookup, mockRedeem, mockRewardAddedEvent, mockStack, mockSync } from './mock';
+import { mockLookup, mockRedeem, mockRewardAddedEvent, mockSearch, mockSearchSuggestions, mockStack, mockSync } from './mock';
 import type { Event } from '../types';
 import type {
   LookupRequest,
   LookupResult,
   Reward,
+  SearchResponse,
+  SearchSuggestions,
   StackRequest,
   StackResult,
   SyncResponse,
@@ -76,6 +78,36 @@ export async function lookup(request: Omit<LookupRequest, 'user_id'>): Promise<L
       return { ...result, rewards: exact.slice(0, limit) };
     },
     () => mockLookup(payload),
+  );
+}
+
+/** POST /search — free-text reward search ("mexican food", "streetwear", "food"). */
+export async function searchRewards(query: string, limit = 8): Promise<SearchResponse> {
+  return liveOrMock(
+    'search',
+    async () => {
+      const response = await fetch(`${API_BASE}/search`, {
+        method: 'POST',
+        headers: headers(),
+        body: JSON.stringify({ query, limit, user_id: DEMO_USER_ID }),
+      });
+      if (!response.ok) throw new Error(await readError(response));
+      return response.json() as Promise<SearchResponse>;
+    },
+    () => mockSearch(query, limit),
+  );
+}
+
+/** GET /search/suggestions — quick-search chips for categories in the wallet. */
+export async function searchSuggestions(): Promise<SearchSuggestions> {
+  return liveOrMock(
+    'search suggestions',
+    async () => {
+      const response = await fetch(`${API_BASE}/search/suggestions`, { headers: headers() });
+      if (!response.ok) throw new Error(await readError(response));
+      return response.json() as Promise<SearchSuggestions>;
+    },
+    () => mockSearchSuggestions(),
   );
 }
 

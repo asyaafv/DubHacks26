@@ -1,0 +1,38 @@
+{
+  "description": "Free-text search over the user's own rewards (\"mexican food\", \"streetwear\").",
+  "properties": {
+    "user_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional; X-User-Id header wins",
+      "title": "User Id"
+    },
+    "query": {
+      "description": "Search phrase",
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Query",
+      "type": "string"
+    },
+    "limit": {
+      "default": 8,
+      "maximum": 20,
+      "minimum": 1,
+      "title": "Limit",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "query"
+  ],
+  "title": "SearchRequest",
+  "type": "object"
+}

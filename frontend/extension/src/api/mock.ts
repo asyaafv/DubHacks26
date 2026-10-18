@@ -6,6 +6,7 @@ import rewardsFile from '../../../../shared/seed/seed_rewards.json';
 import { DEMO_USER_ID } from './config';
 import { daysUntilExpiry, formatRewardValue, money, moneyString } from '../core/format';
 import { normalizeDomain } from '../core/page';
+import { chipsFor, searchSeed } from '../core/search';
 import {
   CardNetwork,
   EventType,
@@ -148,6 +149,30 @@ export function mockLookup(request: LookupRequest, now: Date = new Date()): Look
     rewards: scored.slice(0, Math.max(0, limit)),
     total_available: usable.length,
   };
+}
+
+/** Mock fallback for POST /search: same lexicon/ranking shape as the backend, over seed data. */
+export function mockSearch(query: string, limit = 8, now: Date = new Date()) {
+  const { results, totalMatched, totalActive, secondaryLabel } = searchSeed(
+    query,
+    allRewards(),
+    merchants,
+    allCards(),
+    now,
+    limit,
+  );
+  return {
+    query,
+    results,
+    total_matched: totalMatched,
+    total_active: totalActive,
+    secondary_label: secondaryLabel,
+  };
+}
+
+/** Mock fallback for GET /search/suggestions. */
+export function mockSearchSuggestions(now: Date = new Date()) {
+  return { chips: chipsFor(allRewards(), now) };
 }
 
 function rewardSavings(reward: Reward, cart: number): number {

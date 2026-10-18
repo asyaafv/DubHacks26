@@ -7,12 +7,15 @@ instantly in-process through the intake/extraction pipeline.
 """
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import inspect
 import logging
 import os
 import time
 from datetime import datetime, timezone
+from email import message_from_bytes
+from email.policy import default as _EMAIL_POLICY
 from pathlib import Path
 from typing import Any, Literal
 from uuid import UUID
@@ -40,6 +43,15 @@ class SendRequest(BaseModel):
     template_id: str
     overrides: dict[str, Any] = Field(default_factory=dict)
     mode: Literal["email", "instant"] = "instant"
+    user_id: UUID | None = None
+    force: bool = False  # bypass intake dedupe (demo replays)
+
+
+class PreviewRequest(BaseModel):
+    """POST /preview payload (same rendering inputs as /send)."""
+
+    template_id: str
+    overrides: dict[str, Any] = Field(default_factory=dict)
     user_id: UUID | None = None
 
 
@@ -77,6 +89,76 @@ def _default_recipient(user_id: UUID) -> str:
     except Exception:  # noqa: BLE001 - defensive cross-agent import
         pass
     return console_emails.DEFAULT_RECIPIENT
+
+
+# ---------------------------------------------------------------------------
+# Email preview: built strictly by RE-PARSING the exact .eml bytes that get
+# sent (email mode) or injected (instant mode). Nothing in the payload comes
+# from the template inputs directly, so the UI can never show content that
+# the real bytes don't contain. sha256 lets anyone verify byte identity.
+# ---------------------------------------------------------------------------
+
+def _email_payload(eml_bytes: bytes) -> dict[str, Any]:
+    msg = message_from_bytes(eml_bytes, policy=_EMAIL_POLICY)
+    text: str | None = None
+    html: str | None = None
+    for part in msg.walk():
+        if part.is_multipart():
+            continue
+        ctype = part.get_content_type()
+        try:
+            content = part.get_content()
+        except Exception:  # noqa: BLE001 - malformed part, skip it
+            continue
+        if ctype == "text/plain" and text is None:
+            text = content
+        elif ctype == "text/html" and html is None:
+            html = content
+    return {
+        "from": str(msg.get("From", "")),
+        "to": str(msg.get("To", "")),
+        "subject": str(msg.get("Subject", "")),
+        "date": str(msg.get("Date", "")),
+        "message_id": str(msg.get("Message-ID", "")).strip().strip("<>"),
+        "content_type": "multipart/alternative (text + html)" if html else "text/plain",
+        "text": text,
+        "html": html,
+        "raw": eml_bytes.decode("utf-8", errors="replace"),
+        "sha256": hashlib.sha256(eml_bytes).hexdigest(),
+        "size_bytes": len(eml_bytes),
+    }
+
+
+def _content_hash(email: InboundEmail) -> str | None:
+    """Intake's dedupe content hash for this email (defensive import)."""
+    try:
+        from backend.intake.dedupe import content_hash
+
+        return content_hash(email)
+    except Exception:  # noqa: BLE001 - dedupe module may be absent
+        return None
+
+
+def _redaction_info(email: InboundEmail) -> dict[str, Any] | None:
+    """What intake's PII redaction scrubs from this exact email.
+
+    Runs the same deterministic redact_email the intake service applies
+    before extraction, so the counts/markers reflect real scrubbing.
+    """
+    try:
+        from backend.intake.redact import TAGS, redact_email
+    except Exception:  # noqa: BLE001 - redact module may be absent
+        return None
+    try:
+        redacted, counts = redact_email(email)
+    except Exception:  # noqa: BLE001 - never break the console over this
+        return None
+    return {
+        "counts": counts,
+        "total": sum(counts.values()),
+        "tags": TAGS,
+        "redacted_text": redacted.TextBody,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -119,6 +201,7 @@ def _reward_card(reward: Reward) -> dict[str, Any]:
         "min_spend": str(reward.min_spend) if reward.min_spend is not None else None,
         "expires_at": reward.expires_at.isoformat() if reward.expires_at else None,
         "overall_confidence": reward.overall_confidence,
+        "field_confidence": reward.field_confidence.model_dump(mode="json"),
         "status": reward.status.value,
         "source": reward.source.value,
         "source_email_id": reward.source_email_id,
@@ -143,7 +226,9 @@ def _cards_for_ids(reward_ids: list[UUID]) -> list[dict[str, Any]]:
     return [_reward_card(r) for r in store if r.id in wanted]
 
 
-def _process_instant(email: InboundEmail, user_id: UUID) -> tuple[InboundResult, list[dict[str, Any]]]:
+def _process_instant(
+    email: InboundEmail, user_id: UUID, force: bool = False
+) -> tuple[InboundResult, list[dict[str, Any]]]:
     """Run intake in-process: intake service -> app inject path -> raw pipeline."""
     _ensure_pipeline_tolerates_missing_gliner()
 
@@ -155,7 +240,10 @@ def _process_instant(email: InboundEmail, user_id: UUID) -> tuple[InboundResult,
         process_inbound = None
     if process_inbound is not None:
         try:
-            result = process_inbound(email, user_id=user_id, source="console")
+            try:
+                result = process_inbound(email, user_id=user_id, source="console", force=force)
+            except TypeError:  # older service signature without `force`
+                result = process_inbound(email, user_id=user_id, source="console")
             if inspect.isawaitable(result):
                 import asyncio
 
@@ -255,6 +343,26 @@ def recent_rewards(user_id: UUID | None = None) -> dict[str, Any]:
     return {"rewards": cards[:25], "available": True}
 
 
+@router.post("/preview")
+def preview(req: PreviewRequest) -> dict[str, Any]:
+    """Render the chosen template and return the email exactly as it would be
+    sent, parsed back out of the .eml bytes (headers, bodies, raw source,
+    sha256). /send returns the same payload for the bytes it actually used."""
+    if req.template_id not in console_emails.TEMPLATES_BY_ID:
+        raise HTTPException(status_code=404, detail=f"Unknown template: {req.template_id}")
+    user_id = req.user_id or DEMO_USER_ID
+    recipient = (req.overrides.get("recipient") or "").strip() or _default_recipient(user_id)
+    try:
+        rendered = console_emails.render_email(req.template_id, req.overrides, recipient)
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(status_code=422, detail=f"Bad overrides: {exc}") from exc
+    return {
+        "template_id": req.template_id,
+        "merchant": rendered.merchant,
+        "email": _email_payload(rendered.eml_bytes),
+    }
+
+
 @router.post("/send")
 def send(req: SendRequest) -> dict[str, Any]:
     """Render the chosen template and send it (real email or instant inject)."""
@@ -278,6 +386,8 @@ def send(req: SendRequest) -> dict[str, Any]:
         "message_id": rendered.message_id,
         "user_id": str(user_id),
         "sent_at": datetime.now(timezone.utc).isoformat(),
+        # The email exactly as sent/injected, re-parsed from rendered.eml_bytes.
+        "email": _email_payload(rendered.eml_bytes),
     }
 
     if req.mode == "email":
@@ -306,8 +416,11 @@ def send(req: SendRequest) -> dict[str, Any]:
     from backend.extraction.pipeline import parse_eml
 
     email = parse_eml(rendered.eml_bytes)
-    result, cards = _process_instant(email, user_id)
+    result, cards = _process_instant(email, user_id, force=req.force)
     base["result"] = result.model_dump(mode="json")
     base["rewards"] = cards
+    base["duplicate"] = bool(getattr(result, "duplicate", False))
+    base["content_hash"] = _content_hash(email)
+    base["redaction"] = _redaction_info(email)
     base["elapsed_ms"] = int((time.perf_counter() - started) * 1000)
     return base

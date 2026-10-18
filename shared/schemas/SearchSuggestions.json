@@ -1,0 +1,44 @@
+{
+  "$defs": {
+    "SearchChip": {
+      "description": "Quick-search suggestion derived from categories present in the wallet.",
+      "properties": {
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "query": {
+          "title": "Query",
+          "type": "string"
+        },
+        "count": {
+          "description": "Eligible rewards this chip would match",
+          "title": "Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "label",
+        "query",
+        "count"
+      ],
+      "title": "SearchChip",
+      "type": "object"
+    }
+  },
+  "description": "Chips for categories the user actually has rewards in.",
+  "properties": {
+    "chips": {
+      "items": {
+        "$ref": "#/$defs/SearchChip"
+      },
+      "title": "Chips",
+      "type": "array"
+    }
+  },
+  "required": [
+    "chips"
+  ],
+  "title": "SearchSuggestions",
+  "type": "object"
+}

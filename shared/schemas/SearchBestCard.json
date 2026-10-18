@@ -1,0 +1,34 @@
+{
+  "description": "Best wallet card to pair with a reward, by MCC/category cashback rate.",
+  "properties": {
+    "card_id": {
+      "format": "uuid",
+      "title": "Card Id",
+      "type": "string"
+    },
+    "name": {
+      "description": "Issuer + product name",
+      "title": "Name",
+      "type": "string"
+    },
+    "rate": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "description": "Cashback percent at this reward's MCC",
+      "title": "Rate"
+    }
+  },
+  "required": [
+    "card_id",
+    "name",
+    "rate"
+  ],
+  "title": "SearchBestCard",
+  "type": "object"
+}

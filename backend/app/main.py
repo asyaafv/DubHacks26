@@ -62,6 +62,7 @@ from backend.decisions.common import resolve_user
 from backend.decisions.wallet.router import router as wallet_router
 from backend.decisions.wallet.service import wallet_snapshot
 from backend.decisions.savings import router as savings_router
+from backend.decisions.search import router as search_router
 from backend.decisions.stacking import solve_stack
 
 from backend.intake.service import (
@@ -397,6 +398,7 @@ if demo_console_router is not None:
 
 app.include_router(wallet_router)
 app.include_router(savings_router)
+app.include_router(search_router)
 
 
 async def get_wallet(x_user_id=None):
