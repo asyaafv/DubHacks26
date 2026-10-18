@@ -135,7 +135,7 @@ async def inject_demo_email(request: DemoInjectRequest) -> InboundResult:
 
 ### 5. Demo Merchant Console (Optional)
 
-Simple web UI that sends test reward emails to the user's perk.app address.
+Simple web UI that sends test reward emails to the user's lapse.app address.
 
 ## Test Emails
 
@@ -179,4 +179,4 @@ CREATE TABLE processed_emails (
 
 - **No SPF/DKIM check**: Intentionally skipped for hackathon
 - **No prompt injection scan**: Intentionally skipped for hackathon
-- Route to correct user via `MailboxHash` (e.g., `user123@perk.app` → hash = `user123`)
+- Route to correct user via `MailboxHash` (e.g., `user123@lapse.app` → hash = `user123`)

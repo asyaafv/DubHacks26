@@ -1,4 +1,4 @@
-# PerkSense Core Dependencies
+# Lapse Core Dependencies
 # Install with: pip install -r requirements.txt
 
 # Web Framework

@@ -1,7 +1,7 @@
--- PerkSense Database Schema
+-- Lapse Database Schema
 -- Postgres + pgvector + pgcrypto
 -- 
--- Run with: psql -d perksense -f docs/schema.sql
+-- Run with: psql -d lapse -f docs/schema.sql
 
 -- Enable extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -15,7 +15,7 @@ CREATE EXTENSION IF NOT EXISTS "vector";
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     email TEXT UNIQUE NOT NULL,
-    email_hash TEXT NOT NULL,  -- For routing inbound emails (e.g., "user123" part of user123@perk.app)
+    email_hash TEXT NOT NULL,  -- For routing inbound emails (e.g., "user123" part of user123@lapse.app)
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -278,7 +278,7 @@ $$ LANGUAGE plpgsql;
 
 -- Insert demo user
 INSERT INTO users (id, email, email_hash)
-VALUES ('00000000-0000-0000-0000-000000000001', 'demo@perk.app', 'demo')
+VALUES ('00000000-0000-0000-0000-000000000001', 'demo@lapse.app', 'demo')
 ON CONFLICT (id) DO NOTHING;
 
 -- Note: Seed merchants and rewards should be inserted via the seed JSON files

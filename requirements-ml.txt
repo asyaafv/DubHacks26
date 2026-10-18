@@ -1,4 +1,4 @@
-# PerkSense ML Dependencies
+# Lapse ML Dependencies
 # Heavy ML packages - install only when needed for real implementation
 # Install with: pip install -r requirements-ml.txt
 

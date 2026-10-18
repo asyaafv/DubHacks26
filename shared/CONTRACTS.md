@@ -1,4 +1,4 @@
-# PerkSense API Contracts
+# Lapse API Contracts
 
 Complete API documentation for frontend and backend integration.
 
@@ -74,7 +74,7 @@ POST /inbound
 {
   "MessageID": "msg-001",
   "FromFull": {"Email": "rewards@hollisterco.com", "Name": "Hollister Co."},
-  "ToFull": [{"Email": "demo@perk.app", "Name": ""}],
+  "ToFull": [{"Email": "demo@lapse.app", "Name": ""}],
   "Subject": "Your 10% Off Voucher",
   "TextBody": "...",
   "HtmlBody": "...",

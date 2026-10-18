@@ -1,4 +1,4 @@
-# PerkSense
+# Lapse
 
 **Find and stack your store rewards, card cashback, and memberships at checkout.**
 
