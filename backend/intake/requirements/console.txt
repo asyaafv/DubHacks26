@@ -1,0 +1,2 @@
+# Demo merchant console (Agent D). fastapi/pydantic come from root requirements.txt.
+httpx==0.28.1
