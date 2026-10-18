@@ -64,6 +64,8 @@ from backend.decisions.wallet.service import wallet_snapshot
 from backend.decisions.savings import router as savings_router
 from backend.decisions.search import router as search_router
 from backend.decisions.stacking import solve_stack
+from backend.decisions.stacking.engine import _resolve_merchant
+from backend.decisions.use_first import apply_use_first, stack_exclusions
 
 from backend.intake.service import (
     DemoInjectWithForce,
@@ -424,13 +426,34 @@ async def calculate_stack(
     card_rate, and a greedy fallback if the solver fails within 200 ms.
     """
     user_id = get_user_id(x_user_id)
-    return solve_stack(
+    rewards = get_rewards()
+
+    # "Use it before you lose it": withhold longer-lived same-merchant rewards
+    # that can't combine with one expiring this week, so the solver spends the
+    # expiring one now. prefer_expiring=False restores the old behavior.
+    exclusion_note = None
+    if request.prefer_expiring:
+        merchant = _resolve_merchant(request, get_merchants())
+        merchant_id = request.merchant_id or (merchant.id if merchant else None)
+        excluded_ids, exclusion_note = stack_exclusions(
+            [r for r in rewards if r.user_id == user_id],
+            merchant_id,
+            datetime.now(timezone.utc),
+        )
+        if excluded_ids:
+            rewards = [r for r in rewards if r.id not in excluded_ids]
+
+    result = solve_stack(
         request,
         user_id=user_id,
-        rewards=get_rewards(),
+        rewards=rewards,
         cards=get_cards(),
         merchants=get_merchants(),
     )
+    if exclusion_note:
+        result.explanations.append(exclusion_note)
+        result.explanation = f"{result.explanation} {exclusion_note}"
+    return result
 
 
 # =============================================================================
@@ -515,6 +538,11 @@ async def lookup_rewards(
 
     # Sort by score descending
     scored.sort(key=lambda x: x.score, reverse=True)
+
+    # "Use it before you lose it": within a resolved merchant, surface an
+    # expiring reward ahead of longer-lived ones it can't combine with.
+    if merchant is not None:
+        scored = apply_use_first(scored, now)
 
     return LookupResult(
         merchant=merchant,

@@ -95,6 +95,10 @@ def test_hollister_500_fixture(client):
 
 
 def test_target_100_fixture_one_code_and_exclusions(client):
+    # "Use it before you lose it": TARGET5 expires within 7 days while
+    # CIRCLE15 stays good 14+ days past it and both carry promo codes, so the
+    # default (prefer_expiring=True) now spends TARGET5 and saves CIRCLE15
+    # for later instead of maximizing immediate savings with CIRCLE15.
     fixture = json.loads((FIXTURES / 'target_100_cart.json').read_text())
     response = client.post('/stack', headers={'X-User-Id': DEMO}, json=fixture['request'])
     assert response.status_code == 200, response.text
@@ -102,20 +106,37 @@ def test_target_100_fixture_one_code_and_exclusions(client):
 
     codes = [c['reward']['code'] for c in data['chosen_rewards'] if c['reward']['code']]
     assert len(codes) <= 1, f'max one promo code violated: {codes}'
+    assert codes == ['TARGET5']
+    assert data['chosen_rewards'][0]['savings'] == '5.00'
+    assert data['final_price'] == '95.00'
+    assert data['recommended_card']['id'] == '33333333-3333-3333-3333-333333333305'
+    assert data['card_cashback'] == '4.75'
+    assert data['total_savings'] == '9.75'
+    assert data['solver_status'] == 'optimal'
+    assert any(line.startswith('Saved for later: 15% off (CIRCLE15)')
+               for line in data['explanations'])
+
+    # Opting out restores the old pure-savings behavior: CIRCLE15 wins at
+    # 15% of the $80 eligible base (the $20 Apple item is excluded).
+    response = client.post('/stack', headers={'X-User-Id': DEMO},
+                           json={**fixture['request'], 'prefer_expiring': False})
+    data = response.json()
+    codes = [c['reward']['code'] for c in data['chosen_rewards'] if c['reward']['code']]
     assert codes == ['CIRCLE15']
-    # 15% of the $80 eligible base (the $20 Apple item is excluded), not of $100.
     assert data['chosen_rewards'][0]['savings'] == '12.00'
     assert data['final_price'] == '88.00'
-    assert data['recommended_card']['id'] == '33333333-3333-3333-3333-333333333305'
     assert data['card_cashback'] == '4.40'
     assert data['total_savings'] == '16.40'
-    assert data['solver_status'] == 'optimal'
     assert any('TARGET5' in line and 'one promo code' in line for line in data['explanations'])
 
 
 def test_min_spend_not_met(client):
+    # prefer_expiring=False: the default use-before-you-lose-it rule now
+    # withholds CIRCLE15 before the solver ever evaluates its min spend, so
+    # opting out is required to exercise the min-spend exclusion explanation.
     response = client.post('/stack', headers={'X-User-Id': DEMO}, json={
         'user_id': DEMO, 'domain': 'target.com', 'cart_total': '50.00', 'items': [],
+        'prefer_expiring': False,
     })
     data = response.json()
     # CIRCLE15 needs $75 min spend; only TARGET5 ($5 off, min $25) applies.

@@ -7,6 +7,7 @@ import { DEMO_USER_ID } from './config';
 import { daysUntilExpiry, formatRewardValue, money, moneyString } from '../core/format';
 import { normalizeDomain } from '../core/page';
 import { chipsFor, searchSeed } from '../core/search';
+import { applyUseFirst } from '../core/useFirst';
 import {
   CardNetwork,
   EventType,
@@ -139,10 +140,13 @@ export function mockLookup(request: LookupRequest, now: Date = new Date()): Look
   const userId = request.user_id || DEMO_USER_ID;
   const merchant = findMerchant({ domain: request.domain, merchantId: request.merchant_id });
   const usable = allRewards().filter((reward) => reward.user_id === userId && isUsable(reward, now));
-  const scored = usable
-    .map((reward) => scoreReward(reward, merchant, now))
-    .filter((item) => (merchant ? item.match_component === 1 : false))
-    .sort((a, b) => b.score - a.score);
+  const scored = applyUseFirst(
+    usable
+      .map((reward) => scoreReward(reward, merchant, now))
+      .filter((item) => (merchant ? item.match_component === 1 : false))
+      .sort((a, b) => b.score - a.score),
+    now,
+  );
   const limit = request.limit ?? 3;
   return {
     merchant,

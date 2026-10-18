@@ -374,6 +374,8 @@ export interface StackRequest {
   cart_total: number | string;
   /** Cart items (for exclusion matching) */
   items?: CartItem[];
+  /** Use-it-before-you-lose-it: prefer a soon-expiring reward when an equivalent same-merchant reward stays usable later. Set false to opt out (backward compatible). */
+  prefer_expiring?: boolean;
 }
 
 /** A reward chosen by the stacking solver. */
@@ -435,6 +437,12 @@ export interface ScoredReward {
   /** Score from expiry urgency */
   urgency_component: number;
   days_until_expiry?: number | null;
+  /** Recommended now: expires soon while an equivalent same-merchant reward stays usable later */
+  use_first?: boolean;
+  /** Longer-lived same-merchant reward to redeem after the use-first one expires */
+  save_for_later?: boolean;
+  /** Why this ordering, e.g. "Use first: expires in 2 days. Your 25% off is good until Nov 17." */
+  recommendation?: string | null;
 }
 
 /** Top rewards for a merchant lookup. */

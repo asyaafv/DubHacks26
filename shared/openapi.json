@@ -3007,6 +3007,30 @@
               }
             ],
             "title": "Days Until Expiry"
+          },
+          "use_first": {
+            "type": "boolean",
+            "title": "Use First",
+            "description": "Recommended now: expires soon while an equivalent same-merchant reward stays usable later",
+            "default": false
+          },
+          "save_for_later": {
+            "type": "boolean",
+            "title": "Save For Later",
+            "description": "Longer-lived same-merchant reward to redeem after the use-first one expires",
+            "default": false
+          },
+          "recommendation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recommendation",
+            "description": "Why this ordering, e.g. \"Use first: expires in 2 days. Your 25% off is good until Nov 17.\""
           }
         },
         "type": "object",
@@ -3055,6 +3079,30 @@
               }
             ],
             "title": "Days Until Expiry"
+          },
+          "use_first": {
+            "type": "boolean",
+            "title": "Use First",
+            "description": "Recommended now: expires soon while an equivalent same-merchant reward stays usable later",
+            "default": false
+          },
+          "save_for_later": {
+            "type": "boolean",
+            "title": "Save For Later",
+            "description": "Longer-lived same-merchant reward to redeem after the use-first one expires",
+            "default": false
+          },
+          "recommendation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recommendation",
+            "description": "Why this ordering, e.g. \"Use first: expires in 2 days. Your 25% off is good until Nov 17.\""
           }
         },
         "type": "object",
@@ -3501,6 +3549,12 @@
             "type": "array",
             "title": "Items",
             "description": "Cart items (for exclusion matching)"
+          },
+          "prefer_expiring": {
+            "type": "boolean",
+            "title": "Prefer Expiring",
+            "description": "Use-it-before-you-lose-it: prefer a soon-expiring reward when an equivalent same-merchant reward stays usable later. Set false to opt out (backward compatible).",
+            "default": true
           }
         },
         "type": "object",
