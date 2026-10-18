@@ -10,21 +10,28 @@ published; no duplicate component or historical rename commits are added.
 All work uses new isolated `lapse-review-*` worktrees; owner branches/checkouts and
 the original `lapse-e2e` remain untouched.
 
+GitHub initially rejected publication under GH007 (protected private author
+email). Only new, unpublished review commit metadata was rewritten to the
+account's GitHub noreply address. Every rewritten commit's tree was verified
+identical to its pre-rewrite tree. Original owner branches, commit identities,
+remote history and account privacy settings were not changed. Revisions below
+are the public identities, with the combined suite rerun before publication.
+
 Merge order (each PR is based on the preceding branch; after its predecessor is
 merged, retarget the next PR to `main` before merging):
 
 1. `codex/person3-lookup-review`, tested head
-   **`39780c806e05a75cd3d0e0f00a90e1425f822be8`**: lookup plus its separate storage
+   **`c3e0545dca64cb7661a6bd4f442e02330d889748`**: lookup plus its separate storage
    additions, current lookup LAPSE names, and declared MiniLM dependency.
 2. `codex/person3-stacking-review`, tested head
-   **`9f969708f76c648fd5f381d7ea8d737f87ff8add`**: stacking plus core OR-Tools
+   **`735d71458ad0d9a32476d2d50da2d64c7d48022c`**: stacking plus core OR-Tools
    dependency. Based on the lookup head above.
 3. `codex/person3-savings-review`, tested head
-   **`c26c9b47284bedb854e67474d1625253a9723a8d`**: savings implementation from
+   **`10003bea3f78867f620f4e5b71777b98f27f7489`**: savings implementation from
    `codex/savings-tracking` (`704c145`), migration/contracts/startup history.
    Contract-doc conflict resolved preserving main and savings semantics.
 4. `codex/person3-e2e-review`, combined tested implementation
-   **`2c98a73c57d0aa002c505ec9d140f9fc0c26f6a8`**: E2E harness/tests/report and
+   **`a3200568c0b5db0335b1259576d427017c59c5bd`**: E2E harness/tests/report and
    remaining LAPSE config/documentation updates. Subsequent report commits change
    documentation only; this is the exact code and manifest snapshot tested.
 
