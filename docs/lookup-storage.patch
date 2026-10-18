@@ -1,0 +1,47 @@
+diff --git a/backend/decisions/storage/repository.py b/backend/decisions/storage/repository.py
+index adcd552..383cbb9 100644
+--- a/backend/decisions/storage/repository.py
++++ b/backend/decisions/storage/repository.py
+@@ -101,6 +101,42 @@ class Repository:
+             self.user_id, utc(now), vector_literal(embedding), limit)
+         return [self._reward(row) for row in rows]
+ 
++    async def lookup_merchants(self):
++        """Shared catalog, for exact name/domain/alias resolution (not classification)."""
++        rows = await self._conn.fetch('SELECT * FROM merchants ORDER BY id')
++        return [Merchant.model_validate(dict(row)) for row in rows]
++
++    async def count_lookup_rewards(self, now=None):
++        return await self._conn.fetchval(
++            f'SELECT count(*) FROM rewards WHERE user_id=$1 AND {ELIGIBLE}',
++            self.user_id, utc(now))
++
++    async def lookup_rewards(self, *, embedding=None, merchant_id=None, now=None,
++                             min_similarity=0.35):
++        """Exhaustive filtered cosine retrieval; never truncate before utility ranking.
++
++        MATERIALIZED fences eligibility/ownership from vector scoring and avoids
++        the baseline approximate indexes for this small curated catalog.
++        Exact merchant constraints intentionally work without stored embeddings.
++        """
++        if merchant_id is not None:
++            rows = await self._conn.fetch(
++                f'SELECT *, NULL::text AS code FROM rewards WHERE user_id=$1 AND {ELIGIBLE} AND merchant_id=$3 ORDER BY id',
++                self.user_id, utc(now), merchant_id)
++            return [(self._reward(row), 1.0) for row in rows]
++        vector = vector_literal(embedding)
++        rows = await self._conn.fetch(
++            f'''WITH eligible AS MATERIALIZED (
++                SELECT * FROM rewards WHERE user_id=$1 AND {ELIGIBLE}
++            ), scored AS MATERIALIZED (
++                SELECT r.*, NULL::text AS code,
++                    greatest(coalesce(1-(r.embedding <=> $3::vector), -1),
++                             coalesce(1-(m.embedding <=> $3::vector), -1)) AS similarity
++                FROM eligible r LEFT JOIN merchants m ON m.id=r.merchant_id
++            ) SELECT * FROM scored WHERE similarity >= $4 ORDER BY similarity DESC,id''',
++            self.user_id, utc(now), vector, min_similarity)
++        return [(self._reward(row), min(1.0, float(row['similarity']))) for row in rows]
++
+     async def set_reward_status(self, reward_id, status):
+         status = RewardStatus(status)
+         row = await self._conn.fetchrow(

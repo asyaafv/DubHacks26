@@ -291,6 +291,10 @@ class StackResult(BaseModel):
     total_savings: Decimal = Field(..., description="Total savings (rewards + cashback)")
     savings_percent: Decimal = Field(..., description="Savings as percentage")
     explanation: str = Field(..., description="Human-readable explanation of stacking")
+    explanations: list[str] = Field(
+        default_factory=list,
+        description="Why each reward/card was chosen, skipped, or excluded (additive field; safe for older clients to ignore)"
+    )
     alternatives: list[ChosenReward] = Field(
         default_factory=list,
         description="Other rewards that could be used but weren't optimal"

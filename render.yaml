@@ -1,0 +1,48 @@
+# Render Blueprint for the Lapse API.
+#
+# IMPORTANT — plan sizing: the image bundles torch (CPU) + GLiNER2
+# (fastino/gliner2-base-v1, ~834MB) + MiniLM + SetFit + presidio/spaCy.
+# Measured RSS is ~1.3-1.6GB once GLiNER has run an extraction, so the
+# free/starter 512MB plans WILL be OOM-killed. "standard" (2GB RAM / 1 CPU)
+# is the cheapest Render plan that fits. See docs/DEPLOY.md for a cheaper
+# Linode/Akamai path.
+#
+# Deploy: push this repo to GitHub, then Render Dashboard -> New -> Blueprint,
+# or `render blueprint launch` with the Render CLI. Set the secret env vars
+# in the dashboard when prompted (sync: false below).
+
+services:
+  - type: web
+    name: lapse-api
+    runtime: docker
+    plan: standard # 2GB RAM — do NOT use free/starter (512MB, OOM with GLiNER)
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    # First deploy builds the image (trains SetFit + downloads ~1.5GB of
+    # weights) — expect 15-25 min. Subsequent code-only deploys reuse the
+    # cached dependency layers and are much faster.
+    envVars:
+      # Render injects PORT automatically; the image honors it.
+      - key: DATABASE_URL # optional — intake/extraction run in-memory without
+        sync: false #       it, but /wallet and /sync return 503 (see DEPLOY.md)
+      - key: PERK_ENCRYPTION_KEY # REQUIRED if DATABASE_URL is set (>=32 chars);
+        sync: false #            the app refuses to start without it
+      - key: POSTMARK_SERVER_TOKEN # Postmark server API token (secret)
+        sync: false
+      - key: POSTMARK_INBOUND_ADDRESS # e.g. <hash>@inbound.postmarkapp.com
+        sync: false
+      - key: DEMO_FROM_EMAIL # verified sender for demo console emails
+        sync: false
+      # Warm SetFit + GLiNER2 + MiniLM into the serving process at startup so
+      # the first demo email is ~0.4s instead of ~5s (adds ~1.4GB RSS — fine
+      # on the 2GB standard plan).
+      - key: WARM_MODELS
+        value: "1"
+      # Headerless /wallet and /savings calls resolve to the demo user (safe
+      # for the hackathon demo; remove for anything real).
+      - key: PERK_ALLOW_DEMO_IDENTITY
+        value: "true"
+      # CORS note: chrome-extension://* and localhost origins are allowed in
+      # code (backend/app/main.py); no env var needed.

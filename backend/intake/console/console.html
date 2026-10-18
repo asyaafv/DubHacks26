@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lapse · Merchant Studio</title>
+<style>
+  :root {
+    --bg: #0e1116;
+    --panel: #161b22;
+    --panel-2: #1c232d;
+    --border: #2a3340;
+    --text: #e8edf3;
+    --muted: #8b97a5;
+    --accent: #5b8cff;
+    --accent-2: #7affc1;
+    --danger: #ff6b6b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+  }
+  header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 24px; border-bottom: 1px solid var(--border);
+    background: var(--panel);
+  }
+  .logo {
+    font-weight: 800; font-size: 18px; letter-spacing: 0.5px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .logo-sub { color: var(--muted); font-weight: 500; }
+  .badge {
+    margin-left: auto; font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    color: var(--accent-2); border: 1px solid var(--accent-2);
+    border-radius: 99px; padding: 3px 10px;
+  }
+  main {
+    display: grid; grid-template-columns: 290px 1fr 380px;
+    gap: 18px; padding: 18px 24px; max-width: 1400px; margin: 0 auto;
+  }
+  @media (max-width: 1100px) { main { grid-template-columns: 1fr; } }
+  .panel {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px;
+  }
+  .panel h2 {
+    margin: 0 0 12px; font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted);
+  }
+  .tpl {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; margin-bottom: 8px; cursor: pointer;
+    border: 1px solid var(--border); border-radius: 10px;
+    background: var(--panel-2); transition: border-color .15s;
+  }
+  .tpl:hover { border-color: var(--accent); }
+  .tpl.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .tpl .dot { width: 12px; height: 12px; border-radius: 4px; flex: none; }
+  .tpl .name { font-weight: 600; }
+  .tpl .sub { color: var(--muted); font-size: 12px; }
+  .tag {
+    margin-left: auto; font-size: 10px; color: var(--muted);
+    border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px;
+  }
+  label { display: block; font-size: 12px; color: var(--muted); margin: 12px 0 4px; }
+  input {
+    width: 100%; padding: 9px 11px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--panel-2);
+    color: var(--text); font-size: 14px; outline: none;
+  }
+  input:focus { border-color: var(--accent); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .actions { display: flex; gap: 10px; margin-top: 20px; }
+  button {
+    flex: 1; padding: 11px 14px; border-radius: 9px; border: none;
+    font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity .15s;
+  }
+  button:hover:not(:disabled) { opacity: .88; }
+  #btn-email { background: var(--accent); color: #fff; }
+  #btn-instant { background: var(--accent-2); color: #09251a; }
+  button:disabled { opacity: .35; cursor: not-allowed; }
+  .hint { font-size: 11px; color: var(--muted); margin-top: 8px; }
+  .steps { margin: 4px 0 14px; padding: 0; list-style: none; }
+  .steps li {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 0; color: var(--muted); font-size: 13px;
+  }
+  .steps .ic {
+    width: 18px; height: 18px; border-radius: 50%; flex: none;
+    border: 2px solid var(--border); display: inline-block;
+  }
+  .steps li.done { color: var(--text); }
+  .steps li.done .ic { border-color: var(--accent-2); background: var(--accent-2); }
+  .steps li.busy .ic { border-color: var(--accent); animation: pulse 1s infinite; }
+  @keyframes pulse { 50% { opacity: .3; } }
+  #card {
+    display: none; border-radius: 12px; border: 1px solid var(--border);
+    background: linear-gradient(145deg, var(--panel-2), #11161d);
+    padding: 16px; margin-top: 8px;
+  }
+  #card .merchant { font-size: 16px; font-weight: 800; }
+  #card .value { font-size: 26px; font-weight: 800; color: var(--accent-2); margin: 4px 0; }
+  #card .code {
+    display: inline-block; font-family: ui-monospace, monospace; font-weight: 700;
+    letter-spacing: 1.5px; background: #0c1117; border: 1px dashed var(--accent);
+    border-radius: 7px; padding: 4px 10px; margin: 6px 0;
+  }
+  #card .meta { color: var(--muted); font-size: 12px; margin-top: 6px; }
+  .confbar { height: 6px; border-radius: 4px; background: var(--border); margin-top: 8px; overflow: hidden; }
+  .confbar > div { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+  #timer { font-size: 13px; color: var(--muted); margin-top: 12px; }
+  #timer b { color: var(--accent-2); font-size: 15px; }
+  #log { font-size: 12px; color: var(--muted); margin-top: 10px; white-space: pre-wrap; }
+  .err { color: var(--danger) !important; }
+  .preview { font-size: 12px; color: var(--muted); margin-top: 14px; border-top: 1px solid var(--border); padding-top: 10px; }
+</style>
+</head>
+<body>
+<header>
+  <span class="logo">Lapse</span>
+  <span class="logo-sub">Merchant Studio — campaign sender</span>
+  <span class="badge">LIVE DEMO</span>
+</header>
+<main>
+  <section class="panel">
+    <h2>Store templates</h2>
+    <div id="tpl-list"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Campaign editor</h2>
+    <div class="row">
+      <div>
+        <label id="value-label" for="f-value">Discount value</label>
+        <input id="f-value" type="number" step="any" min="0">
+      </div>
+      <div>
+        <label for="f-code">Promo code</label>
+        <input id="f-code" type="text" placeholder="(none)">
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label for="f-expiry">Expires in (days)</label>
+        <input id="f-expiry" type="number" min="0" step="1">
+      </div>
+      <div>
+        <label for="f-minspend">Min spend ($)</label>
+        <input id="f-minspend" type="number" step="any" min="0" placeholder="(none)">
+      </div>
+    </div>
+    <div id="item-row">
+      <label for="f-item">Featured item</label>
+      <input id="f-item" type="text">
+    </div>
+    <label for="f-recipient">Recipient (Lapse inbox)</label>
+    <input id="f-recipient" type="email">
+    <div class="actions">
+      <button id="btn-email">Send real email</button>
+      <button id="btn-instant">Instant inject</button>
+    </div>
+    <div class="hint" id="mode-hint">
+      Real email travels merchant &rarr; Postmark &rarr; Lapse inbound. Instant inject
+      runs the same email through intake in-process (for when email is slow).
+    </div>
+    <div class="preview" id="subject-preview"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Delivery monitor</h2>
+    <ul class="steps">
+      <li id="st-sent"><span class="ic"></span><span>Email sent</span></li>
+      <li id="st-recv"><span class="ic"></span><span>Received by Lapse intake</span></li>
+      <li id="st-card"><span class="ic"></span><span>Reward card extracted</span></li>
+    </ul>
+    <div id="card">
+      <div class="merchant"></div>
+      <div class="value"></div>
+      <span class="code"></span>
+      <div class="meta"></div>
+      <div class="confbar"><div style="width:0%"></div></div>
+    </div>
+    <div id="timer"></div>
+    <div id="log"></div>
+  </section>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var base = location.pathname.replace(/\/+$/, "");
+  var state = { templates: [], config: {}, selected: null, pollHandle: null, t0: 0 };
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  function kindValueLabel(kind) {
+    return { percent_off: "Discount (%)", amount_off: "Discount ($)", points: "Points",
+             free_item: "Discount value (n/a)", bogo: "Discount value (n/a)" }[kind] || "Discount value";
+  }
+
+  function cardValueText(c) {
+    var v = parseFloat(c.value);
+    switch (c.kind) {
+      case "percent_off": return v + "% off";
+      case "amount_off": return "$" + v + " off";
+      case "points": return v + " points";
+      case "free_item": return "Free item";
+      case "bogo": return "Buy one, get one";
+      default: return c.value;
+    }
+  }
+
+  function renderTemplates() {
+    var list = $("tpl-list");
+    list.innerHTML = "";
+    state.templates.forEach(function (t) {
+      var el = document.createElement("div");
+      el.className = "tpl" + (state.selected && state.selected.id === t.id ? " active" : "");
+      el.innerHTML =
+        '<span class="dot" style="background:' + t.brand + '"></span>' +
+        '<span><div class="name">' + t.merchant + '</div><div class="sub">' + t.summary + "</div></span>" +
+        '<span class="tag">' + (t.jsonld ? "JSON-LD" : "plain") + "</span>";
+      el.onclick = function () { selectTemplate(t); };
+      list.appendChild(el);
+    });
+  }
+
+  function selectTemplate(t) {
+    state.selected = t;
+    var d = t.defaults;
+    $("value-label").textContent = kindValueLabel(t.kind);
+    $("f-value").value = d.value != null ? d.value : "";
+    $("f-value").disabled = (t.kind === "free_item" || t.kind === "bogo");
+    $("f-code").value = d.code || "";
+    $("f-expiry").value = d.expiry_days != null ? d.expiry_days : "";
+    $("f-minspend").value = d.min_spend != null ? d.min_spend : "";
+    $("f-item").value = d.item || "";
+    $("item-row").style.display = d.item ? "block" : "none";
+    $("subject-preview").textContent = "From: " + t.from_email;
+    renderTemplates();
+  }
+
+  function overrides() {
+    var o = {};
+    var v = $("f-value").value;
+    if (v !== "" && !$("f-value").disabled) o.value = parseFloat(v);
+    var code = $("f-code").value.trim();
+    if (code) o.code = code;
+    var exp = $("f-expiry").value;
+    if (exp !== "") o.expiry_days = parseInt(exp, 10);
+    var ms = $("f-minspend").value;
+    if (ms !== "") o.min_spend = parseFloat(ms);
+    var item = $("f-item").value.trim();
+    if (item && $("item-row").style.display !== "none") o.item = item;
+    var rcpt = $("f-recipient").value.trim();
+    if (rcpt) o.recipient = rcpt;
+    return o;
+  }
+
+  function setStep(id, cls) {
+    var el = $(id);
+    el.className = cls || "";
+  }
+
+  function resetMonitor() {
+    ["st-sent", "st-recv", "st-card"].forEach(function (id) { setStep(id, ""); });
+    $("card").style.display = "none";
+    $("timer").textContent = "";
+    $("log").textContent = "";
+    $("log").className = "";
+    if (state.pollHandle) { clearInterval(state.pollHandle); state.pollHandle = null; }
+  }
+
+  function log(msg, isErr) {
+    $("log").textContent = msg;
+    $("log").className = isErr ? "err" : "";
+  }
+
+  function showCard(c, elapsedMs) {
+    var card = $("card");
+    card.style.display = "block";
+    card.querySelector(".merchant").textContent = c.merchant_name;
+    card.querySelector(".value").textContent = cardValueText(c);
+    var codeEl = card.querySelector(".code");
+    codeEl.style.display = c.code ? "inline-block" : "none";
+    codeEl.textContent = c.code || "";
+    var bits = [];
+    if (c.expires_at) bits.push("Expires " + new Date(c.expires_at).toLocaleDateString());
+    if (c.min_spend) bits.push("Min spend $" + parseFloat(c.min_spend));
+    bits.push("Status: " + c.status);
+    bits.push("Confidence: " + Math.round(c.overall_confidence * 100) + "%");
+    card.querySelector(".meta").textContent = bits.join(" · ");
+    card.querySelector(".confbar > div").style.width = Math.round(c.overall_confidence * 100) + "%";
+    setStep("st-card", "done");
+    if (elapsedMs != null) {
+      $("timer").innerHTML = "Send &rarr; card: <b>" + (elapsedMs / 1000).toFixed(2) + "s</b>";
+    }
+  }
+
+  function fetchRewards(userId) {
+    // Poll the app-level /sync first; fall back to the console's own
+    // rewards endpoint when /sync is unavailable (e.g. no database).
+    return fetch("/sync", { headers: { "X-User-Id": userId } })
+      .then(function (r) { if (!r.ok) throw new Error("sync " + r.status); return r.json(); })
+      .then(function (d) { return d.rewards || []; })
+      .catch(function () {
+        return fetch(base + "/rewards?user_id=" + encodeURIComponent(userId))
+          .then(function (r) { return r.json(); })
+          .then(function (d) { return d.rewards || []; });
+      });
+  }
+
+  function normalizeCard(r) {
+    return {
+      merchant_name: r.merchant_name,
+      kind: r.kind,
+      value: r.value,
+      code: r.code,
+      min_spend: r.min_spend,
+      expires_at: r.expires_at,
+      status: r.status,
+      overall_confidence: r.overall_confidence != null ? r.overall_confidence : 1,
+      id: r.id
+    };
+  }
+
+  function pollForCard(userId, baselineIds) {
+    var deadline = Date.now() + 120000;
+    setStep("st-recv", "busy");
+    state.pollHandle = setInterval(function () {
+      if (Date.now() > deadline) {
+        clearInterval(state.pollHandle);
+        state.pollHandle = null;
+        log("Timed out waiting for the email to arrive (120s). Try instant inject.", true);
+        return;
+      }
+      fetchRewards(userId).then(function (rewards) {
+        var fresh = rewards.filter(function (r) { return !baselineIds[r.id]; });
+        if (fresh.length) {
+          clearInterval(state.pollHandle);
+          state.pollHandle = null;
+          setStep("st-recv", "done");
+          showCard(normalizeCard(fresh[fresh.length - 1]), Date.now() - state.t0);
+        }
+      }).catch(function () { /* keep polling */ });
+    }, 1500);
+  }
+
+  function send(mode) {
+    if (!state.selected) return;
+    resetMonitor();
+    var userId = state.config.demo_user_id;
+    setStep("st-sent", "busy");
+    state.t0 = Date.now();
+
+    var doSend = function (baselineIds) {
+      fetch(base + "/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          template_id: state.selected.id,
+          overrides: overrides(),
+          mode: mode
+        })
+      })
+      .then(function (r) {
+        return r.json().then(function (d) { return { ok: r.ok, status: r.status, data: d }; });
+      })
+      .then(function (res) {
+        if (!res.ok) {
+          setStep("st-sent", "");
+          var detail = (res.data && (res.data.message || res.data.detail)) || ("HTTP " + res.status);
+          log("Send failed: " + detail, true);
+          return;
+        }
+        setStep("st-sent", "done");
+        var d = res.data;
+        if (mode === "instant") {
+          setStep("st-recv", "done");
+          if (d.rewards && d.rewards.length) {
+            showCard(normalizeCard(d.rewards[0]), d.elapsed_ms);
+          } else {
+            log("Processed, but no reward extracted (classified as " +
+                (d.result ? d.result.classification : "?") + ").", true);
+          }
+          log('Sent "' + d.subject + '" to ' + d.to + " · processed in " + d.elapsed_ms + "ms");
+        } else {
+          log('Sent "' + d.subject + '" to ' + d.to + " via Postmark (" +
+              (d.postmark && d.postmark.message_id ? d.postmark.message_id : "queued") +
+              "). Waiting for inbound...");
+          pollForCard(userId, baselineIds);
+        }
+      })
+      .catch(function (e) {
+        setStep("st-sent", "");
+        log("Send failed: " + e, true);
+      });
+    };
+
+    if (mode === "email") {
+      // Snapshot existing reward ids so we can spot the new card.
+      fetchRewards(userId).then(function (rewards) {
+        var ids = {};
+        rewards.forEach(function (r) { ids[r.id] = true; });
+        doSend(ids);
+      }).catch(function () { doSend({}); });
+    } else {
+      doSend({});
+    }
+  }
+
+  $("btn-email").onclick = function () { send("email"); };
+  $("btn-instant").onclick = function () { send("instant"); };
+
+  fetch(base + "/templates")
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      state.templates = d.templates;
+      state.config = d.config;
+      $("f-recipient").value = d.config.default_recipient || "aamir@lapse.app";
+      if (!d.config.email_enabled) {
+        var btn = $("btn-email");
+        btn.disabled = true;
+        btn.title = "Email mode disabled: " + (d.config.email_disabled_reason ||
+          "POSTMARK_SERVER_TOKEN is not set");
+      }
+      if (d.templates.length) selectTemplate(d.templates[0]);
+    })
+    .catch(function (e) { log("Failed to load templates: " + e, true); });
+})();
+</script>
+</body>
+</html>

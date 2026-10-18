@@ -38,7 +38,10 @@ _MCC_CODES_PATH = _DATA_DIR / "mcc_codes.json"
 DOMAIN_MATCH_CONFIDENCE = 0.99
 FUZZY_MIN_CONFIDENCE = 0.80
 FUZZY_MAX_CONFIDENCE = 0.95
-EMBEDDING_MIN_CONFIDENCE = 0.50
+# 0.50 was too permissive: unrelated names like "Some Random Store" matched
+# seed merchants at ~0.55 cosine. 0.60 keeps genuine paraphrases while
+# rejecting noise (see TestUnknownMerchant::test_unknown_name_and_domain).
+EMBEDDING_MIN_CONFIDENCE = 0.60
 
 # Lazy-loaded model and embeddings cache
 _model: "SentenceTransformer | None" = None

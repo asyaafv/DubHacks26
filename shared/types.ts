@@ -404,6 +404,8 @@ export interface StackResult {
   savings_percent: number | string;
   /** Human-readable explanation of stacking */
   explanation: string;
+  /** Why each reward/card was chosen, skipped, or excluded (additive field; safe for older clients to ignore) */
+  explanations?: string[];
   /** Other rewards that could be used but weren't optimal */
   alternatives?: ChosenReward[];
   /** CP-SAT solver status */

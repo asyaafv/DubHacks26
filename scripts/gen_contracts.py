@@ -18,10 +18,10 @@ import re
 import sys
 from pathlib import Path
 
-# Add backend to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
+# Import every component through the canonical backend package
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from app.schemas import (
+from backend.app.schemas import (
     Card,
     CardBase,
     CartItem,
@@ -219,7 +219,8 @@ def json_schema_to_typescript(schema: dict, name: str, all_schemas: dict) -> str
     # Handle enum types specially
     if "enum" in schema:
         values = schema["enum"]
-        return f"export type {name} = {' | '.join(f'\"{v}\"' for v in values)};\n"
+        union = " | ".join(json.dumps(v) for v in values)
+        return f"export type {name} = {union};\n"
 
     # Regular object type
     ts_type = schema_to_ts(schema)
@@ -312,7 +313,7 @@ def generate_typescript_types(all_schemas: dict):
 
 def generate_openapi_spec():
     """Generate OpenAPI specification from FastAPI app."""
-    from app.main import app
+    from backend.app.main import app
 
     openapi = app.openapi()
 

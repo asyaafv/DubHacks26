@@ -471,3 +471,44 @@ class TestMissingFields:
         assert "value" not in result
         assert result["code"] == "SAVE10"
         assert "code" in result["field_confidence"]
+
+
+class TestAuditRegressions:
+    """Regressions found by the extraction audit (Ulta/Sephora points emails)."""
+
+    @pytest.fixture
+    def email_date(self) -> datetime:
+        return datetime(2026, 10, 18, 12, 0, 0, tzinfo=timezone.utc)
+
+    def test_bonus_points_phrase_parses(self, email_date: datetime) -> None:
+        # GLiNER returns the full phrase "500 bonus points"; it must still
+        # normalize to a points reward.
+        candidates = FieldCandidates(
+            discount_value=FieldValue(value="500 bonus points", confidence=0.51, source="gliner")
+        )
+        result = normalize(candidates, email_date)
+        assert result["kind"] == "points"
+        assert result["value"] == Decimal("500")
+
+    def test_extra_points_phrase_parses(self, email_date: datetime) -> None:
+        candidates = FieldCandidates(
+            discount_value=FieldValue(value="250 extra points", confidence=0.6, source="gliner")
+        )
+        result = normalize(candidates, email_date)
+        assert result["kind"] == "points"
+        assert result["value"] == Decimal("250")
+
+    def test_merge_skips_bare_year_expiry(self) -> None:
+        # A bare year from GLiNER must not out-prioritize a real regex date.
+        from backend.extraction.normalize import merge_candidates
+
+        gliner = FieldCandidates(
+            expiry=FieldValue(value="2026", confidence=0.75, source="gliner")
+        )
+        regex = FieldCandidates(
+            expiry=FieldValue(value="November 1", confidence=0.8, source="regex")
+        )
+        merged = merge_candidates(gliner, regex)
+        assert merged.expiry is not None
+        assert merged.expiry.value == "November 1"
+        assert merged.expiry.source == "regex"

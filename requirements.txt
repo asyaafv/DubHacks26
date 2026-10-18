@@ -7,7 +7,10 @@ uvicorn[standard]>=0.27.0,<0.40.0
 pydantic>=2.5.0,<3.0.0
 
 # Database (stubs work without these, but needed for real impl)
-# asyncpg>=0.29.0  # Uncomment when adding Postgres
+asyncpg>=0.29.0,<1.0.0
+
+# Stacking engine (CP-SAT solver for POST /stack)
+ortools>=9.8,<10.0
 # sqlalchemy>=2.0.0  # Uncomment when adding ORM
 
 # Testing

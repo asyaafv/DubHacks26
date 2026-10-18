@@ -585,6 +585,14 @@
       "title": "Explanation",
       "type": "string"
     },
+    "explanations": {
+      "description": "Why each reward/card was chosen, skipped, or excluded (additive field; safe for older clients to ignore)",
+      "items": {
+        "type": "string"
+      },
+      "title": "Explanations",
+      "type": "array"
+    },
     "alternatives": {
       "description": "Other rewards that could be used but weren't optimal",
       "items": {
