@@ -67,9 +67,21 @@ def test_savings_seeded_and_redeem_idempotent_without_postgres(client):
     assert after['items'][0]['saved'] == '5.00'
     assert after['series'][-1]['cumulative'] == '108.51'
 
-    # The redeemed reward leaves the active sync snapshot.
+    # The redeemed reward stays in the full snapshot as a used tombstone
+    # (CONTRACTS.md: clients filter used/expired locally).
     synced = client.get('/sync', headers={'X-User-Id': DEMO}).json()
-    assert reward_id not in [r['id'] for r in synced['rewards']]
+    statuses = {r['id']: r['status'] for r in synced['rewards']}
+    assert statuses[reward_id] == 'used'
+
+
+def test_sync_returns_full_snapshot_with_all_statuses(client):
+    body = client.get('/sync', headers={'X-User-Id': DEMO}).json()
+    statuses = {r['status'] for r in body['rewards']}
+    # Seed data includes active, used and needs_review rewards; the snapshot
+    # must carry all of them so the dashboard's review UI and tombstone
+    # handling work (CONTRACTS.md "With no since, replace the local reward
+    # set using this full snapshot (all statuses)").
+    assert {'active', 'used', 'needs_review'} <= statuses
 
 
 def test_memory_mode_isolation_and_id_guessing(client):

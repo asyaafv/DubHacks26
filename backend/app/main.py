@@ -529,12 +529,13 @@ async def sync_rewards(
     """
     Polling endpoint for reward sync.
 
-    STUB: Returns all active rewards.
+    STUB: Returns the full reward snapshot (all statuses, per CONTRACTS.md —
+    clients filter used/expired locally and need needs_review for the review UI).
     REAL: Returns only rewards changed since `since` timestamp.
     """
     user_id = get_user_id(x_user_id)
 
-    rewards = [r for r in get_rewards() if r.user_id == user_id and r.status == RewardStatus.active]
+    rewards = [r for r in get_rewards() if r.user_id == user_id]
     wallet = await get_wallet(x_user_id)
 
     return SyncResponse(
