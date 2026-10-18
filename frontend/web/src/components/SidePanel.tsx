@@ -26,7 +26,7 @@ export function SidePanel({
     <div className="fixed inset-0 z-50">
       <button
         type="button"
-        className="absolute inset-0 bg-ink/30"
+        className="absolute inset-0 bg-ink/40"
         aria-label="Close details"
         onClick={onClose}
       />
@@ -34,13 +34,17 @@ export function SidePanel({
         role="dialog"
         aria-modal="true"
         aria-labelledby="details-title"
-        className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col bg-white shadow-2xl"
+        className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col border-l-2 border-line bg-paper"
       >
-        <div className="flex items-center justify-between border-b border-line px-6 py-4">
-          <h2 id="details-title" className="text-sm font-semibold uppercase tracking-[0.14em] text-muted">
+        <div className="flex items-center justify-between border-b-2 border-line bg-amber px-6 py-4">
+          <h2 id="details-title" className="font-display text-sm font-black uppercase tracking-[0.14em] text-ink">
             {title}
           </h2>
-          <button type="button" onClick={onClose} className="text-sm font-medium text-ink">
+          <button
+            type="button"
+            onClick={onClose}
+            className="border-2 border-line bg-white px-2 py-1 text-xs font-black uppercase text-ink shadow-card"
+          >
             Close
           </button>
         </div>
