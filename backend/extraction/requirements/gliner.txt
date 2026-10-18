@@ -1,0 +1,4 @@
+# GLiNER2 NER extraction (backend/extraction/gliner_extract.py), CPU-only.
+# The extra index lets pip resolve CPU-only torch wheels (much smaller than CUDA).
+--extra-index-url https://download.pytorch.org/whl/cpu
+gliner2[local]==2.1.0
