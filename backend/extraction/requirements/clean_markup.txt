@@ -1,0 +1,4 @@
+# Dependencies for clean.py and markup.py
+selectolax==0.3.21
+extruct==0.17.0
+w3lib==2.1.2
