@@ -1,5 +1,6 @@
 import { detectFromUrl } from '../core/page';
 import { daysUntilExpiry, formatExpiry, formatMoney, formatRewardValue } from '../core/format';
+import { saveForLaterLabel } from '../core/useFirst';
 import { expiryFraction, urgencyFromDays, URGENCY_COLORS, RING_TRACK_COLOR } from '../components/ExpiryRing';
 import type { RpcResult } from '../core/messages';
 import type { LookupResult, StackResult } from '../types';
@@ -144,6 +145,29 @@ const CSS = `
     padding: 4px 8px;
     white-space: nowrap;
   }
+  .usefirst {
+    display: inline-block;
+    background: #FF5C1C;
+    color: #fff;
+    border: 2px solid #141414;
+    font-weight: 900;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 1px 6px;
+    margin-bottom: 3px;
+    transform: rotate(-1deg);
+  }
+  .reco { margin-top: 4px; font-size: 11px; font-weight: 700; line-height: 1.35; color: #FF5C1C; }
+  .later {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-top: 2px dashed #141414;
+    padding: 7px 12px;
+    font-size: 11px;
+    font-weight: 700;
+  }
   .pill {
     display: none;
     align-items: center;
@@ -232,6 +256,13 @@ function showLapseSenseToast(lookup: LookupResult, domain: string, stack: StackR
   main.appendChild(ringbox);
   const text = document.createElement('div');
   text.className = 'text';
+  if (top.use_first) {
+    const badge = document.createElement('span');
+    badge.className = 'usefirst';
+    badge.setAttribute('data-part', 'use-first');
+    badge.textContent = 'Use first';
+    text.appendChild(badge);
+  }
   const merchantEl = document.createElement('div');
   merchantEl.className = 'merchant';
   merchantEl.textContent = rewardCount > 1 ? `${merchant} · top reward` : merchant;
@@ -239,6 +270,13 @@ function showLapseSenseToast(lookup: LookupResult, domain: string, stack: StackR
   value.className = 'value';
   value.textContent = valueLabel;
   text.append(merchantEl, value);
+  if (top.use_first && top.recommendation) {
+    const reco = document.createElement('div');
+    reco.className = 'reco';
+    reco.setAttribute('data-part', 'recommendation');
+    reco.textContent = top.recommendation;
+    text.appendChild(reco);
+  }
   main.appendChild(text);
   card.appendChild(main);
 
@@ -277,6 +315,16 @@ function showLapseSenseToast(lookup: LookupResult, domain: string, stack: StackR
     });
     codes.append(barcode, code, copy);
     card.appendChild(codes);
+  }
+
+  /* save-for-later rows: longer-lived same-merchant rewards to keep for after the hero expires */
+  for (const scored of lookup.rewards) {
+    if (!scored.save_for_later) continue;
+    const later = document.createElement('div');
+    later.className = 'later';
+    later.setAttribute('data-part', 'save-for-later');
+    later.textContent = `⏳ ${saveForLaterLabel(scored)}`;
+    card.appendChild(later);
   }
 
   /* stack preview: best card + savings, only when a cart total was found */

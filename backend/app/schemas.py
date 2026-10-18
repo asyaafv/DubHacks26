@@ -271,6 +271,11 @@ class StackRequest(BaseModel):
     domain: str | None = Field(None, description="Merchant domain if ID unknown")
     cart_total: Decimal = Field(..., description="Total cart value", examples=["150.00"])
     items: list[CartItem] = Field(default_factory=list, description="Cart items (for exclusion matching)")
+    prefer_expiring: bool = Field(
+        default=True,
+        description="Use-it-before-you-lose-it: prefer a soon-expiring reward "
+                    "when an equivalent same-merchant reward stays usable later. "
+                    "Set false to opt out (backward compatible).")
 
 
 class ChosenReward(BaseModel):
@@ -324,6 +329,18 @@ class ScoredReward(BaseModel):
     match_component: float = Field(..., description="Score from merchant/category match")
     urgency_component: float = Field(..., description="Score from expiry urgency")
     days_until_expiry: int | None = None
+    # "Use it before you lose it": additive fields, safe for older clients.
+    use_first: bool = Field(
+        default=False,
+        description="Recommended now: expires soon while an equivalent "
+                    "same-merchant reward stays usable later")
+    save_for_later: bool = Field(
+        default=False,
+        description="Longer-lived same-merchant reward to redeem after the "
+                    "use-first one expires")
+    recommendation: str | None = Field(
+        None, description='Why this ordering, e.g. "Use first: expires in 2 '
+                          'days. Your 25% off is good until Nov 17."')
 
 
 class LookupResult(BaseModel):

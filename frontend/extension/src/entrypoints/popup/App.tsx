@@ -1,5 +1,5 @@
 import { DEMO_USER_EMAIL } from '../../api/config';
-import { RewardCard } from '../../components/RewardCard';
+import { RewardCard, SaveForLaterRow } from '../../components/RewardCard';
 import { SearchPanel } from '../../components/SearchPanel';
 import { StackResultView } from '../../components/StackResult';
 import { StoreLogo } from '../../components/StoreLogo';
@@ -23,6 +23,9 @@ export default function App() {
   const name = storeName(page.lookup, page.domain);
   const logoDomain = page.lookup?.merchant?.domain || page.domain;
   const rewards = page.lookup?.rewards.slice(0, 3) ?? [];
+  // use_first rewards are already first; save_for_later ones render as compact rows below.
+  const cardRewards = rewards.filter((scored) => !scored.save_for_later);
+  const saveForLater = rewards.filter((scored) => scored.save_for_later);
 
   return (
     <div className="flex flex-col gap-3 bg-cream p-4 font-sans text-ink">
@@ -79,7 +82,14 @@ export default function App() {
 
           <section className="flex flex-col gap-3">
             {rewards.length > 0 ? (
-              rewards.map((scored) => <RewardCard key={scored.reward.id} scored={scored} domain={logoDomain} />)
+              <>
+                {cardRewards.map((scored) => (
+                  <RewardCard key={scored.reward.id} scored={scored} domain={logoDomain} />
+                ))}
+                {saveForLater.map((scored) => (
+                  <SaveForLaterRow key={scored.reward.id} scored={scored} />
+                ))}
+              </>
             ) : (
               <p className="border-2 border-ink bg-white px-3 py-4 text-sm font-semibold shadow-card">
                 No rewards for this store yet.

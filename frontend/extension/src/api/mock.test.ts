@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { DEMO_USER_ID } from './config';
 import { mockLookup, mockStack, mockSync } from './mock';
-import { EventType } from '../types';
+import { applyUseFirst } from '../core/useFirst';
+import { EventType, RewardKind, RewardSource, RewardStatus, type ScoredReward } from '../types';
 
 const NOW = new Date('2026-10-18T12:00:00Z');
 
@@ -18,6 +19,44 @@ describe('mock lookup', () => {
     expect(result.rewards[0]?.reward.kind).toBe('percent_off');
     expect(Number(result.rewards[0]?.reward.value)).toBe(10);
     expect(result.rewards[0]?.days_until_expiry).toBe(2);
+  });
+
+  it('puts HCOFALL10 first with use_first when a longer-lived 25% code joins the list', () => {
+    // mockLookup reads the static seed JSON (one active Hollister reward), so
+    // test the applyUseFirst composition directly with an injected
+    // HCOWINTER25-style reward on top of the real scored lookup output.
+    const lookup = mockLookup({ user_id: DEMO_USER_ID, domain: 'www.hollisterco.com', limit: 3 }, NOW);
+    const fall = lookup.rewards.find((scored) => scored.reward.code === 'HCOFALL10');
+    expect(fall).toBeDefined();
+
+    const winter: ScoredReward = {
+      reward: {
+        ...fall!.reward,
+        id: '22222222-2222-2222-2222-222222222299',
+        kind: RewardKind.percent_off,
+        value: '25.00',
+        code: 'HCOWINTER25',
+        stackable: false,
+        expires_at: '2026-11-17T23:59:59Z',
+        source: RewardSource.seed,
+        status: RewardStatus.active,
+      },
+      score: 0.99,
+      value_component: 0.5,
+      match_component: 1,
+      urgency_component: 1,
+      days_until_expiry: 30,
+    };
+
+    // Winter scores higher, so it leads the pre-rule ranking.
+    const ranked = applyUseFirst([winter, fall!], NOW);
+    expect(ranked.map((scored) => scored.reward.code)).toEqual(['HCOFALL10', 'HCOWINTER25']);
+    expect(ranked[0]?.use_first).toBe(true);
+    expect(ranked[0]?.recommendation).toBe(
+      'Use first: expires in 2 days. Your 25% off is good until Nov 17.',
+    );
+    expect(ranked[1]?.save_for_later).toBe(true);
+    expect(ranked[1]?.recommendation).toBe('Save for later — good until Nov 17');
   });
 
   it('returns no rewards for an unknown domain', () => {

@@ -104,6 +104,12 @@
       },
       "title": "Items",
       "type": "array"
+    },
+    "prefer_expiring": {
+      "default": true,
+      "description": "Use-it-before-you-lose-it: prefer a soon-expiring reward when an equivalent same-merchant reward stays usable later. Set false to opt out (backward compatible).",
+      "title": "Prefer Expiring",
+      "type": "boolean"
     }
   },
   "required": [

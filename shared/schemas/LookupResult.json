@@ -419,6 +419,31 @@
           ],
           "default": null,
           "title": "Days Until Expiry"
+        },
+        "use_first": {
+          "default": false,
+          "description": "Recommended now: expires soon while an equivalent same-merchant reward stays usable later",
+          "title": "Use First",
+          "type": "boolean"
+        },
+        "save_for_later": {
+          "default": false,
+          "description": "Longer-lived same-merchant reward to redeem after the use-first one expires",
+          "title": "Save For Later",
+          "type": "boolean"
+        },
+        "recommendation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Why this ordering, e.g. \"Use first: expires in 2 days. Your 25% off is good until Nov 17.\"",
+          "title": "Recommendation"
         }
       },
       "required": [

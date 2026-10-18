@@ -1,4 +1,5 @@
 import { formatExpiry, formatRewardValue, isExpiringSoon, money } from '../core/format';
+import { saveForLaterLabel } from '../core/useFirst';
 import type { ScoredReward } from '../types';
 import { CopyCode } from './CopyCode';
 import { ExpiryRing, expiryFraction, urgencyFromDays } from './ExpiryRing';
@@ -24,9 +25,22 @@ export function RewardCard({ scored, domain = '' }: { scored: ScoredReward; doma
         <ExpiryRing fraction={expiryFraction(reward.created_at, reward.expires_at)} urgency={urgencyFromDays(days)} />
       </div>
       <div className="px-3 py-2">
+        {scored.use_first ? (
+          <span
+            className="inline-block -rotate-1 border-2 border-ink bg-lapse px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-white"
+            data-testid="use-first-pill"
+          >
+            Use first
+          </span>
+        ) : null}
         <div className="font-display text-2xl font-black leading-tight" data-testid="reward-value">
           {formatRewardValue(reward)}
         </div>
+        {scored.use_first && scored.recommendation ? (
+          <p className="mt-1 text-[11px] font-bold leading-4 text-lapse" data-testid="use-first-recommendation">
+            {scored.recommendation}
+          </p>
+        ) : null}
         <p className="mt-0.5 text-[11px] font-semibold text-[#5a5a5a]">
           {expiry ? (
             <span data-testid="expiry" className={soon ? 'font-bold text-lapse' : ''}>
@@ -46,5 +60,19 @@ export function RewardCard({ scored, domain = '' }: { scored: ScoredReward; doma
         </div>
       ) : null}
     </article>
+  );
+}
+
+/** Compact one-line row for a reward flagged save_for_later. */
+export function SaveForLaterRow({ scored }: { scored: ScoredReward }) {
+  const reward = scored.reward;
+  return (
+    <div
+      className="flex items-center justify-between gap-2 border-2 border-dashed border-ink bg-white px-3 py-1.5"
+      data-testid="save-for-later-row"
+    >
+      <span className="min-w-0 flex-1 truncate text-[11px] font-bold">{saveForLaterLabel(scored)}</span>
+      {reward.code ? <CopyCode code={reward.code} /> : null}
+    </div>
   );
 }
