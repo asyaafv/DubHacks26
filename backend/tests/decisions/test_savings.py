@@ -99,17 +99,17 @@ async def test_redeem_face_value_fallback_and_validation(db, client):
     owner = uuid4()
     percent = reward(owner, kind='percent_off', value='20.00', min_spend='50.00')
     flat = reward(owner, kind='amount_off', value='7.25')
-    freebie = reward(owner, kind='free_item', value='0.00')
+    freebie = reward(owner, kind='free_item', value='1.00')  # team convention: free_item/bogo value is 1.00
     async with db.transaction(owner) as repo:
         for r in (percent, flat, freebie):
             await repo.save_reward(r)
     assert face_value(percent) == Decimal('10.00')
     headers = {'X-User-Id': str(owner)}
-    for r, expected in ((percent, '10.00'), (flat, '7.25'), (freebie, '0.00')):
+    for r, expected in ((percent, '10.00'), (flat, '7.25'), (freebie, '1.00')):
         assert (await client.post(f'/rewards/{r.id}/redeem', headers=headers)).status_code == 200
     async with db.transaction(owner) as repo:
         saved = {row.reward_id: str(row.saved) for row in await repo.list_redemptions()}
-    assert saved == {percent.id: '10.00', flat.id: '7.25', freebie.id: '0.00'}
+    assert saved == {percent.id: '10.00', flat.id: '7.25', freebie.id: '1.00'}
     bad = reward(owner)
     async with db.transaction(owner) as repo:
         await repo.save_reward(bad)

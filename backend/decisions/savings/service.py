@@ -17,6 +17,9 @@ def face_value(reward: Reward) -> Decimal:
         return Decimal(reward.value).quantize(CENTS, rounding=ROUND_HALF_UP)
     if reward.kind == RewardKind.percent_off and reward.min_spend:
         return (Decimal(reward.value) * Decimal(reward.min_spend) / 100).quantize(CENTS, rounding=ROUND_HALF_UP)
+    if reward.kind in (RewardKind.free_item, RewardKind.bogo):
+        # Team convention: free_item/bogo carry value 1.00 (extraction standard).
+        return Decimal(reward.value).quantize(CENTS, rounding=ROUND_HALF_UP)
     return Decimal('0.00')
 
 
