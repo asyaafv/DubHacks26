@@ -3,6 +3,7 @@ import type { Reward } from '../types'
 import { copyText } from '../util/copy'
 import { domainFor } from '../util/merchants'
 import {
+  expiryUrgency,
   fieldNeedsReview,
   formatExpiry,
   formatMoneyOrNone,
@@ -11,6 +12,7 @@ import {
   rewardTerms,
   suggestedSaved,
 } from '../util/rewards'
+import { ExpiryRing, expiryFraction } from './ExpiryRing'
 import { MerchantLogo } from './MerchantLogo'
 import { ReviewBadge } from './ReviewBadge'
 import { SidePanel } from './SidePanel'
@@ -64,46 +66,67 @@ export function RewardDrawer({
 
   return (
     <SidePanel title="More details" onClose={onClose}>
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-3 border-2 border-line bg-white p-4 shadow-card">
         <MerchantLogo name={reward.merchant_name} domain={domain} size={48} />
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-xl font-semibold text-ink">{reward.merchant_name}</h3>
+            <h3 className="font-display text-xl font-black uppercase text-ink">{reward.merchant_name}</h3>
             {needsReview(reward) ? <ReviewBadge /> : null}
           </div>
-          <p className="mt-1 text-lg font-medium text-accent">{formatRewardValue(reward)}</p>
-          <p className="mt-1 text-sm text-muted">{formatExpiry(reward.expires_at)}</p>
+          <p className="mt-1 font-display text-2xl font-black leading-none text-ink">
+            {formatRewardValue(reward)}
+          </p>
+          <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-muted">
+            <ExpiryRing
+              fraction={expiryFraction(reward.created_at, reward.expires_at)}
+              urgency={expiryUrgency(reward.expires_at)}
+              size={18}
+              stroke={3}
+            />
+            {formatExpiry(reward.expires_at)}
+          </p>
         </div>
       </div>
 
       <dl className="mt-6 space-y-4 text-sm">
         <div>
-          <dt className="font-medium text-ink">Code</dt>
+          <dt className="font-black uppercase tracking-wide text-ink">Code</dt>
           <dd className="mt-1 flex items-center gap-2">
-            <code className="rounded-lg bg-paper px-2 py-1 text-ink">{reward.code || 'No code'}</code>
             {reward.code ? (
-              <button type="button" onClick={() => void copyCode()} className="text-sm font-medium text-accent">
-                {copied ? 'Copied' : 'Copy'}
-              </button>
-            ) : null}
+              <>
+                <span className="flex min-w-0 flex-1 items-center justify-between gap-2 border-2 border-line bg-white px-3 py-1.5">
+                  <span aria-hidden className="barcode h-5 w-16 shrink-0" />
+                  <code className="truncate font-black tracking-widest text-ink">{reward.code}</code>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => void copyCode()}
+                  className="shrink-0 border-2 border-line bg-lime px-2 py-1 text-xs font-black uppercase text-ink"
+                >
+                  {copied ? 'Copied' : 'Copy'}
+                </button>
+              </>
+            ) : (
+              <code className="border-2 border-dashed border-line bg-white px-2 py-1 text-ink">No code</code>
+            )}
           </dd>
         </div>
         <div>
-          <dt className="font-medium text-ink">Terms</dt>
+          <dt className="font-black uppercase tracking-wide text-ink">Terms</dt>
           <dd className="mt-1 leading-relaxed text-muted">{rewardTerms(reward)}</dd>
         </div>
         <div>
-          <dt className="font-medium text-ink">Minimum spend</dt>
+          <dt className="font-black uppercase tracking-wide text-ink">Minimum spend</dt>
           <dd className="mt-1 text-muted">{formatMoneyOrNone(reward.min_spend)}</dd>
         </div>
         <div>
-          <dt className="font-medium text-ink">Exclusions</dt>
+          <dt className="font-black uppercase tracking-wide text-ink">Exclusions</dt>
           <dd className="mt-1 text-muted">
             {reward.exclusions && reward.exclusions.length > 0 ? reward.exclusions.join(', ') : 'None'}
           </dd>
         </div>
         <div>
-          <dt className="font-medium text-ink">Confidence</dt>
+          <dt className="font-black uppercase tracking-wide text-ink">Confidence</dt>
           <dd className="mt-1 text-muted">
             {confidence == null ? 'Not scored' : `${Math.round(confidence * 100)}% overall`}
           </dd>
@@ -128,36 +151,36 @@ export function RewardDrawer({
 
       {needsReview(reward) || reward.status === 'active' || reward.status == null ? (
         <form
-          className="mt-8 border-t border-line pt-5"
+          className="mt-8 border-t-2 border-dashed border-line pt-5"
           onSubmit={(event) => {
             event.preventDefault()
             void submit()
           }}
         >
-          <label htmlFor="saved-amount" className="text-sm font-medium text-ink">
+          <label htmlFor="saved-amount" className="text-sm font-black uppercase tracking-wide text-ink">
             Amount saved
           </label>
           <div className="mt-2 flex items-center gap-2">
-            <span className="text-muted">$</span>
+            <span className="font-bold text-muted">$</span>
             <input
               id="saved-amount"
               inputMode="decimal"
               value={saved}
               onChange={(event) => setSaved(event.target.value)}
-              className="w-full rounded-xl border border-line px-3 py-2 outline-none focus:border-accent"
+              className="w-full border-2 border-line bg-white px-3 py-2 font-semibold outline-none focus:border-tangerine"
             />
           </div>
-          {formError ? <p className="mt-2 text-sm text-rose-700">{formError}</p> : null}
+          {formError ? <p className="mt-2 text-sm font-bold text-tangerine">{formError}</p> : null}
           <button
             type="submit"
             disabled={busy}
-            className="mt-4 w-full rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+            className="mt-4 w-full border-2 border-line bg-tangerine px-4 py-2.5 text-sm font-black uppercase text-white shadow-card disabled:opacity-60"
           >
             {busy ? 'Saving…' : 'Mark as used'}
           </button>
         </form>
       ) : (
-        <p className="mt-8 text-sm text-muted">This reward is already used.</p>
+        <p className="mt-8 text-sm font-semibold text-muted">This reward is already used.</p>
       )}
     </SidePanel>
   )

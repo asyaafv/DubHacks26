@@ -40,14 +40,14 @@ export function CopyCode({ code, tone = 'default', testId = 'reward-code' }: Cop
           window.setTimeout(() => setCopied(false), 1200);
         });
       }}
-      className={`mt-2 inline-flex items-center gap-2 rounded-lg px-2 py-1 font-mono text-xs ${
-        light ? 'bg-white/15 text-white hover:bg-white/25' : 'bg-stone-100 text-lapse hover:bg-stone-200'
+      className={`inline-flex items-center gap-2 border-2 px-2 py-1 text-xs font-black uppercase transition-transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-none ${
+        light
+          ? 'border-lime bg-ink text-lime shadow-[2px_2px_0_#BCE740]'
+          : 'border-ink bg-lime text-ink shadow-[2px_2px_0_#141414]'
       }`}
     >
-      <span>{code}</span>
-      <span className={`text-[10px] uppercase tracking-wide ${light ? 'text-white/80' : 'text-stone-500'}`}>
-        {copied ? 'Copied' : 'Copy'}
-      </span>
+      <span className="tracking-[0.15em]">{code}</span>
+      <span className="text-[9px] opacity-70">{copied ? 'Copied' : 'Copy'}</span>
     </button>
   );
 }

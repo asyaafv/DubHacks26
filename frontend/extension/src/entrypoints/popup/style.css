@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,15 +9,20 @@ body,
 #root {
   margin: 0;
   width: 380px;
-  background: #f6f4ef;
-  color: #14261e;
+  background: #FFF6E9;
+  color: #141414;
 }
 
 body {
-  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: 'Space Grotesk', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
 button,
 input {
   font: inherit;
+}
+
+/* Coupon barcode strip (Direction B). */
+.barcode {
+  background: repeating-linear-gradient(90deg, #141414 0 2px, transparent 2px 4px, #141414 4px 7px, transparent 7px 9px);
 }

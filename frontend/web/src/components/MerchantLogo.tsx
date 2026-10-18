@@ -20,7 +20,7 @@ export function MerchantLogo({
     return (
       <div
         aria-hidden
-        className="grid shrink-0 place-items-center rounded-xl bg-accent-soft text-sm font-semibold text-accent"
+        className="grid shrink-0 place-items-center border-2 border-line bg-white font-display text-sm font-black text-ink"
         style={frame}
       >
         {letter}
@@ -35,7 +35,7 @@ export function MerchantLogo({
       width={size}
       height={size}
       referrerPolicy="no-referrer"
-      className="shrink-0 rounded-xl bg-white object-contain"
+      className="shrink-0 border-2 border-line bg-white object-contain"
       style={frame}
       onError={() => setFailed(true)}
     />
