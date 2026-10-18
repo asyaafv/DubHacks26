@@ -34,6 +34,36 @@ There are no implicit commits or external notifications inside repository method
 Exceptions roll back reward writes, email claims and events together. Do not log
 normalized models containing codes. The transaction user scopes every owned query.
 
+## NEW: Savings tracking (Person 3)
+
+Why: the dashboard shows total savings, an itemized table, and a burn-up chart. Nothing records redemptions yet. The frontend is building against exactly this contract (mocked until this lands).
+
+1. Table (add to docs/schema.sql):
+   redemptions(id uuid pk, user_id uuid not null, reward_id uuid not null references rewards(id),
+               merchant_name text, description text, saved numeric(10,2) not null,
+               redeemed_at timestamptz not null default now())
+   index on (user_id, redeemed_at). Filter every query by user_id.
+
+2. POST /rewards/{id}/redeem   body: { "saved": "12.50" }   -> Reward
+   - Mark the reward status = "used", insert a redemptions row, emit the reward_used event on /events.
+   - If saved is omitted, compute it with calculate_savings(reward, cart_total) when a cart is known, otherwise use the reward's face value.
+   - When the extension applies a /stack result, call this for each chosen reward with its savings.
+
+3. GET /savings -> {
+     "total": "103.51",
+     "items":  [{ "reward_id", "merchant_name", "description", "saved": "10.00", "redeemed_at" }],   // newest first
+     "series": [{ "date": "2026-09-08", "cumulative": "10.00" }]                                     // one point per day with a redemption, running total
+   }
+   Money is a decimal string, matching the rest of the contract.
+
+4. Demo data: seed about 8 redemptions for the demo user (00000000-0000-0000-0000-000000000001) over the past 6 weeks, totaling exactly $103.51 (e.g. Hollister, Taco Bell, Ulta, H&M, PacSun, McDonald's, Aéropostale, Target). Put them in shared/seed/seed_redemptions.json and load them at startup.
+
+5. Contracts: add RedeemRequest, Redemption, SavingsPoint, and SavingsSummary to backend/app/schemas.py, then run scripts/gen_contracts.py so shared/types.ts and openapi.json update.
+
+6. Calendar: no endpoint needed. The frontend builds it from /wallet rewards' expires_at, so just make sure every reward with an expiry has one set.
+
+Tests: redeem marks used + creates row; /savings totals match the sum of items; series is cumulative and sorted; another user's redemptions never show up.
+
 ---
 
 ## Original implementation guidance (other feature owners)
@@ -385,6 +415,7 @@ FROM rewards WHERE id = $1;
 - [ ] SSE events sent on reward changes
 - [ ] Expired rewards marked daily
 - [ ] Sync endpoint returns changes since timestamp
+- [ ] POST /rewards/{id}/redeem and GET /savings implemented with seeded demo redemptions totaling $103.51
 
 ## Dependencies
 
