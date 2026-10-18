@@ -84,3 +84,9 @@ real PostgreSQL cluster (one existing TestClient/AnyIO deprecation warning).
 
 `Repository.event_watermark() -> int` additionally provides the locked owner
 maximum sequence (0 empty) for snapshot-to-SSE handoff without history retrieval.
+
+Shared API documentation now describes delivery's full/all-status snapshots,
+inclusive incremental upserts, replacement wallets, database-clock watermark,
+outbox hydration, X-Event-Cursor handoff and fetch-based header-bearing SSE client.
+These semantics require the integration owner to replace the remaining route stubs;
+this documentation update changes no public models, generated schemas or wiring.
