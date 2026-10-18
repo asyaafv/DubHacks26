@@ -1,0 +1,3 @@
+# Pipeline orchestrator deps (Agent 6). Everything else is stdlib or already
+# in root requirements.txt (pydantic). No heavy ML deps here by design.
+python-dateutil==2.9.0.post0
