@@ -19,13 +19,66 @@ from backend.extraction.types import FieldCandidates, FieldValue
 
 _PERCENT_PATTERN = re.compile(r"(\d+(?:\.\d+)?)\s*%", re.IGNORECASE)
 _DOLLAR_PATTERN = re.compile(r"\$\s*(\d+(?:\.\d+)?)", re.IGNORECASE)
-_POINTS_PATTERN = re.compile(r"(\d+)\s*(?:x\s*)?points?", re.IGNORECASE)
+# Allow qualifiers between the number and "points" ("500 bonus points",
+# "250 extra points") — GLiNER returns the full phrase.
+_POINTS_PATTERN = re.compile(
+    r"(\d+)\s*(?:x\s*)?(?:bonus|extra|reward|loyalty)?\s*points?", re.IGNORECASE
+)
 _POINTS_MULTIPLIER_PATTERN = re.compile(r"(\d+)x\s*points?", re.IGNORECASE)
 _FREE_ITEM_PATTERN = re.compile(r"free\s+\w+", re.IGNORECASE)
 _BOGO_PATTERN = re.compile(r"(?:buy\s+one\s+get\s+one|bogo)", re.IGNORECASE)
 
 _TONIGHT_PATTERN = re.compile(r"tonight", re.IGNORECASE)
 _TODAY_PATTERN = re.compile(r"today", re.IGNORECASE)
+
+# Source priority for merging candidates: structured markup beats NER beats regex.
+_SOURCE_PRIORITY = {"email_jsonld": 3, "gliner": 2, "regex": 1}
+_MERGE_FIELDS = (
+    "merchant",
+    "discount_value",
+    "min_spend",
+    "max_discount",
+    "expiry",
+    "starts",
+    "code",
+    "stackable",
+)
+
+# A bare 4-digit year ("2026") is never a usable expiry/start phrase; GLiNER
+# sometimes emits one and it would out-prioritize a correct regex date.
+_BARE_YEAR = re.compile(r"^\s*(19|20)\d{2}\s*$")
+_DATE_FIELDS = {"expiry", "starts"}
+
+
+def merge_candidates(*candidates: FieldCandidates | None) -> FieldCandidates:
+    """
+    Merge FieldCandidates from multiple extractors into one.
+
+    Per field, the candidate from the highest-priority source wins
+    (email_jsonld > gliner > regex); ties are broken by confidence.
+    Exclusions are taken from the first candidate that has any.
+    """
+    merged = FieldCandidates()
+    present = [c for c in candidates if c is not None]
+    for name in _MERGE_FIELDS:
+        best: FieldValue | None = None
+        for cand in present:
+            fv: FieldValue | None = getattr(cand, name)
+            if fv is None or not str(fv.value).strip():
+                continue
+            if name in _DATE_FIELDS and _BARE_YEAR.match(str(fv.value)):
+                continue
+            if best is None or (
+                _SOURCE_PRIORITY.get(fv.source, 0),
+                fv.confidence,
+            ) > (_SOURCE_PRIORITY.get(best.source, 0), best.confidence):
+                best = fv
+        setattr(merged, name, best)
+    for cand in present:
+        if cand.exclusions:
+            merged.exclusions = list(cand.exclusions)
+            break
+    return merged
 
 
 def _parse_discount_value(
@@ -59,7 +112,9 @@ def _parse_discount_value(
         except InvalidOperation:
             return "amount_off", None, "USD", 0.5
 
-    if "reward" in text:
+    # Only try price-parser when there is an actual number; otherwise texts
+    # like "FREE Guacamole reward" get misparsed as amount_off 0.
+    if "reward" in text and any(ch.isdigit() for ch in text):
         price = Price.fromstring(field.value)
         if price.amount is not None:
             return "amount_off", Decimal(str(price.amount)), price.currency or "USD", 1.0

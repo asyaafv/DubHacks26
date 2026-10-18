@@ -1,0 +1,7 @@
+# backend.intake.routing and backend.intake.dedupe use only the Python
+# standard library (plus pydantic from the core requirements.txt).
+#
+# Optional: Postgres-backed dedupe is activated only when DATABASE_URL is
+# set and is lazily imported; install one of these drivers if you want it:
+#   psycopg[binary]==3.2.9
+#   asyncpg==0.30.0

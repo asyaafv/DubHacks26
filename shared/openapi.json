@@ -34,7 +34,7 @@
           "Intake"
         ],
         "summary": "Process Inbound Email",
-        "description": "Process inbound email from Postmark webhook.\n\nSTUB: Returns mock extraction result.\nREAL: Presidio PII redaction -> dedupe -> SetFit classify -> extraction cascade",
+        "description": "Process inbound email from Postmark webhook.\n\nAccepts the raw Postmark inbound JSON (extra/missing fields tolerated) and\nruns the intake flow: routing -> dedupe -> redaction -> extraction ->\npersist -> reward_added events.\n\nAlways returns 200 for a parseable JSON object so Postmark never retries\nforever; an unroutable recipient yields rewards_extracted=0 with\nnote=\"unknown_recipient\". Only a non-JSON body gets a 400.",
         "operationId": "process_inbound_email_inbound_post",
         "parameters": [
           {
@@ -54,23 +54,13 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/InboundEmail"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InboundResult"
+                  "$ref": "#/components/schemas/IntakeInboundResult"
                 }
               }
             }
@@ -94,7 +84,7 @@
           "Intake"
         ],
         "summary": "Inject Demo Email",
-        "description": "Replay a stored .eml file through the intake pipeline.\n\nSTUB: Returns mock result based on filename.\nREAL: Loads .eml, parses, runs through full pipeline.",
+        "description": "Replay a stored .eml file through the intake flow.\n\nPass `\"force\": true` to bypass the dedupe check so demos can replay the\nsame email repeatedly.",
         "operationId": "inject_demo_email_demo_inject_post",
         "parameters": [
           {
@@ -119,7 +109,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DemoInjectRequest"
+                "$ref": "#/components/schemas/DemoInjectWithForce"
               }
             }
           }
@@ -130,7 +120,152 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InboundResult"
+                  "$ref": "#/components/schemas/IntakeInboundResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/demo/emails": {
+      "get": {
+        "tags": [
+          "Intake"
+        ],
+        "summary": "List Demo Emails",
+        "description": "List the seed .eml files available for /demo/inject.",
+        "operationId": "list_demo_emails_demo_emails_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response List Demo Emails Demo Emails Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/demo/console/templates": {
+      "get": {
+        "tags": [
+          "Demo Console"
+        ],
+        "summary": "List Templates",
+        "description": "Store templates plus console config for the UI.",
+        "operationId": "list_templates_demo_console_templates_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response List Templates Demo Console Templates Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/demo/console/rewards": {
+      "get": {
+        "tags": [
+          "Demo Console"
+        ],
+        "summary": "Recent Rewards",
+        "description": "Recent reward cards for the result panel (fallback when /sync is\nunavailable, e.g. no database configured).",
+        "operationId": "recent_rewards_demo_console_rewards_get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Recent Rewards Demo Console Rewards Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/demo/console/send": {
+      "post": {
+        "tags": [
+          "Demo Console"
+        ],
+        "summary": "Send",
+        "description": "Render the chosen template and send it (real email or instant inject).",
+        "operationId": "send_demo_console_send_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Send Demo Console Send Post"
                 }
               }
             }
@@ -154,7 +289,7 @@
           "Wallet"
         ],
         "summary": "Get Wallet",
-        "description": "Get user's complete wallet (cards + memberships + reward counts).\n\nSTUB: Returns seed data for demo user.",
+        "description": "Wallet with eligible reward counts; in-memory fallback when DATABASE_URL is unset.",
         "operationId": "get_wallet_wallet_get",
         "parameters": [
           {
@@ -202,7 +337,7 @@
           "Wallet"
         ],
         "summary": "Update Wallet",
-        "description": "Update user's wallet (add/remove cards and memberships).\n\nSTUB: Returns current wallet unchanged.\nREAL: Persists changes to database.",
+        "description": "Atomically add/remove card products and encrypted memberships.",
         "operationId": "update_wallet_wallet_post",
         "parameters": [
           {
@@ -256,13 +391,140 @@
         }
       }
     },
+    "/rewards/{reward_id}/redeem": {
+      "post": {
+        "tags": [
+          "Savings"
+        ],
+        "summary": "Redeem Reward",
+        "description": "Mark the reward used, record a redemption and emit reward_used; idempotent.",
+        "operationId": "redeem_reward_rewards__reward_id__redeem_post",
+        "parameters": [
+          {
+            "name": "reward_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Reward Id"
+            }
+          },
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-User-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/RedeemRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reward-Output"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/savings": {
+      "get": {
+        "tags": [
+          "Savings"
+        ],
+        "summary": "Get Savings",
+        "description": "Total savings, itemized redemptions (newest first), cumulative daily series.",
+        "operationId": "get_savings_savings_get",
+        "parameters": [
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-User-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavingsSummary"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/stack": {
       "post": {
         "tags": [
           "Stacking"
         ],
         "summary": "Calculate Stack",
-        "description": "Calculate optimal reward stacking for a purchase.\n\nSTUB: Returns hardcoded stacking result.\nREAL: CP-SAT solver with constraints for non-combinable rewards,\n      min spend, max one promo code, etc.",
+        "description": "Calculate optimal reward stacking for a purchase.\n\nCP-SAT solver (backend/decisions/stacking/) with max-one-promo-code,\nmin-spend, exclusions and non-combinable constraints, best card via\ncard_rate, and a greedy fallback if the solver fails within 200 ms.",
         "operationId": "calculate_stack_stack_post",
         "parameters": [
           {
@@ -1076,7 +1338,7 @@
         "title": "ClassifyMerchantResult",
         "description": "Merchant classification result."
       },
-      "DemoInjectRequest": {
+      "DemoInjectWithForce": {
         "properties": {
           "eml_filename": {
             "type": "string",
@@ -1095,14 +1357,19 @@
             ],
             "title": "User Id",
             "description": "Override user ID"
+          },
+          "force": {
+            "type": "boolean",
+            "title": "Force",
+            "default": false
           }
         },
         "type": "object",
         "required": [
           "eml_filename"
         ],
-        "title": "DemoInjectRequest",
-        "description": "Request to inject a demo/test email."
+        "title": "DemoInjectWithForce",
+        "description": "DemoInjectRequest plus `force` to bypass dedupe for demo replays."
       },
       "EmailClassification": {
         "type": "string",
@@ -1252,125 +1519,7 @@
         "title": "HealthCheck",
         "description": "Health check response."
       },
-      "InboundEmail": {
-        "properties": {
-          "MessageID": {
-            "type": "string",
-            "title": "Messageid",
-            "description": "Unique message ID"
-          },
-          "FromFull": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Fromfull",
-            "description": "Sender info with Email and Name"
-          },
-          "ToFull": {
-            "items": {
-              "additionalProperties": true,
-              "type": "object"
-            },
-            "type": "array",
-            "title": "Tofull",
-            "description": "Recipients"
-          },
-          "Subject": {
-            "type": "string",
-            "title": "Subject"
-          },
-          "TextBody": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Textbody"
-          },
-          "HtmlBody": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Htmlbody"
-          },
-          "Date": {
-            "type": "string",
-            "title": "Date",
-            "description": "Email date string"
-          },
-          "MailboxHash": {
-            "type": "string",
-            "title": "Mailboxhash",
-            "description": "Hash for user routing",
-            "default": ""
-          },
-          "Attachments": {
-            "items": {
-              "$ref": "#/components/schemas/InboundEmailAttachment"
-            },
-            "type": "array",
-            "title": "Attachments"
-          },
-          "Headers": {
-            "items": {
-              "additionalProperties": {
-                "type": "string"
-              },
-              "type": "object"
-            },
-            "type": "array",
-            "title": "Headers"
-          }
-        },
-        "type": "object",
-        "required": [
-          "MessageID",
-          "FromFull",
-          "ToFull",
-          "Subject",
-          "Date"
-        ],
-        "title": "InboundEmail",
-        "description": "Postmark inbound webhook payload (subset of fields we use)."
-      },
-      "InboundEmailAttachment": {
-        "properties": {
-          "Name": {
-            "type": "string",
-            "title": "Name"
-          },
-          "Content": {
-            "type": "string",
-            "title": "Content",
-            "description": "Base64-encoded content"
-          },
-          "ContentType": {
-            "type": "string",
-            "title": "Contenttype"
-          },
-          "ContentLength": {
-            "type": "integer",
-            "title": "Contentlength"
-          }
-        },
-        "type": "object",
-        "required": [
-          "Name",
-          "Content",
-          "ContentType",
-          "ContentLength"
-        ],
-        "title": "InboundEmailAttachment",
-        "description": "Email attachment metadata (Postmark-compatible)."
-      },
-      "InboundResult": {
+      "IntakeInboundResult": {
         "properties": {
           "message_id": {
             "type": "string",
@@ -1401,6 +1550,22 @@
             "type": "integer",
             "title": "Processing Time Ms",
             "default": 0
+          },
+          "duplicate": {
+            "type": "boolean",
+            "title": "Duplicate",
+            "default": false
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
           }
         },
         "type": "object",
@@ -1408,8 +1573,8 @@
           "message_id",
           "classification"
         ],
-        "title": "InboundResult",
-        "description": "Result of processing an inbound email."
+        "title": "IntakeInboundResult",
+        "description": "InboundResult plus intake-only metadata (superset stays contract-valid)."
       },
       "LookupRequest": {
         "properties": {
@@ -1935,6 +2100,155 @@
         "title": "Merchant",
         "description": "Full merchant record with ID."
       },
+      "RedeemRequest": {
+        "properties": {
+          "saved": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Saved",
+            "description": "Realized savings in USD"
+          }
+        },
+        "type": "object",
+        "title": "RedeemRequest",
+        "description": "Body for POST /rewards/{id}/redeem; saved falls back to face value."
+      },
+      "Redemption-Input": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "reward_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Reward Id"
+          },
+          "merchant_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Merchant Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "saved": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Saved"
+          },
+          "redeemed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Redeemed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "reward_id",
+          "saved",
+          "redeemed_at"
+        ],
+        "title": "Redemption",
+        "description": "One recorded redemption; money is a 2-decimal string in JSON."
+      },
+      "Redemption-Output": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "reward_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Reward Id"
+          },
+          "merchant_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Merchant Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "saved": {
+            "type": "string",
+            "title": "Saved"
+          },
+          "redeemed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Redeemed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "reward_id",
+          "saved",
+          "redeemed_at"
+        ],
+        "title": "Redemption",
+        "description": "One recorded redemption; money is a 2-decimal string in JSON."
+      },
       "Reward-Input": {
         "properties": {
           "merchant_id": {
@@ -2396,6 +2710,83 @@
         "title": "RewardStatus",
         "description": "Current status of the reward."
       },
+      "SavingsPoint-Input": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "cumulative": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Cumulative"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date",
+          "cumulative"
+        ],
+        "title": "SavingsPoint",
+        "description": "Cumulative savings as of one day that had a redemption."
+      },
+      "SavingsPoint-Output": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "cumulative": {
+            "type": "string",
+            "title": "Cumulative"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date",
+          "cumulative"
+        ],
+        "title": "SavingsPoint",
+        "description": "Cumulative savings as of one day that had a redemption."
+      },
+      "SavingsSummary": {
+        "properties": {
+          "total": {
+            "type": "string",
+            "title": "Total"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Redemption-Output"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/SavingsPoint-Output"
+            },
+            "type": "array",
+            "title": "Series"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "items",
+          "series"
+        ],
+        "title": "SavingsSummary",
+        "description": "GET /savings: total, itemized (newest first), cumulative daily series."
+      },
       "ScoredReward-Input": {
         "properties": {
           "reward": {
@@ -2491,6 +2882,46 @@
         ],
         "title": "ScoredReward",
         "description": "Reward with relevance score breakdown."
+      },
+      "SendRequest": {
+        "properties": {
+          "template_id": {
+            "type": "string",
+            "title": "Template Id"
+          },
+          "overrides": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Overrides"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "email",
+              "instant"
+            ],
+            "title": "Mode",
+            "default": "instant"
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "template_id"
+        ],
+        "title": "SendRequest",
+        "description": "POST /send payload."
       },
       "StackRequest": {
         "properties": {
@@ -2608,6 +3039,14 @@
             "type": "string",
             "title": "Explanation",
             "description": "Human-readable explanation of stacking"
+          },
+          "explanations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Explanations",
+            "description": "Why each reward/card was chosen, skipped, or excluded (additive field; safe for older clients to ignore)"
           },
           "alternatives": {
             "items": {

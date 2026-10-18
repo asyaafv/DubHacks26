@@ -9,7 +9,7 @@
 # Classification & NER
 # setfit>=1.0.0  # Few-shot email classification
 # gliner>=0.2.0  # GLiNER2 for NER extraction
-# sentence-transformers>=2.3.0  # MiniLM embeddings (all-MiniLM-L6-v2)
+sentence-transformers>=3,<4  # MiniLM query encoder; compatible with merchants' >=2.3.0
 
 # Extraction
 # extruct>=0.16.0  # schema.org JSON-LD extraction
@@ -24,5 +24,4 @@
 # pgvector>=0.2.0  # pgvector Python client
 # sqlalchemy[asyncio]>=2.0.0  # Async SQLAlchemy
 
-# Note: These are commented out to allow fast stub installation.
-# Uncomment as you implement each feature.
+# Other optional features remain commented until their implementations need them.

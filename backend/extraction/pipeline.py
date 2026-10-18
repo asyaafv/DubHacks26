@@ -269,10 +269,27 @@ def _fallback_extract_fields(text: str) -> FieldCandidates:
 
 
 try:
-    from backend.extraction.gliner_extract import extract_fields
+    from backend.extraction.gliner_extract import ExtractionUnavailable, extract_fields
 except ImportError:
     extract_fields = _fallback_extract_fields
     FALLBACKS_ACTIVE.append("gliner")
+
+    class ExtractionUnavailable(Exception):  # type: ignore[no-redef]
+        """Stand-in when gliner_extract itself is missing (never raised then)."""
+
+
+# gliner_extract imports fine without the gliner2 package but raises
+# ExtractionUnavailable at CALL time; warn only on the first occurrence.
+_gliner_unavailable_logged = False
+
+
+def _log_gliner_unavailable(exc: Exception) -> None:
+    global _gliner_unavailable_logged
+    if not _gliner_unavailable_logged:
+        _gliner_unavailable_logged = True
+        logger.warning(
+            "GLiNER2 unavailable, degrading to regex candidates only: %s", exc
+        )
 
 
 # =============================================================================
@@ -427,12 +444,14 @@ def _fallback_normalize(c: FieldCandidates, email_date: datetime) -> dict:
         elif m := re.search(r"\$\s*(\d+(?:\.\d{2})?)", raw):
             out["kind"] = "amount_off"
             out["value"] = Decimal(m.group(1))
+        # Convention: bogo/free_item carry value=1 (matches normalize.py; the
+        # decisions savings math treats these kinds specially, not via value).
         elif "bogo" in raw or "buy one" in raw:
             out["kind"] = "bogo"
-            out["value"] = Decimal("0")
+            out["value"] = Decimal("1")
         elif raw.startswith("free"):
             out["kind"] = "free_item"
-            out["value"] = Decimal("0")
+            out["value"] = Decimal("1")
         elif "cashback" in raw or "cash back" in raw:
             out["kind"] = "cashback"
             out["value"] = _parse_decimal(raw) or Decimal("0")
@@ -464,11 +483,16 @@ def _fallback_normalize(c: FieldCandidates, email_date: datetime) -> dict:
 
 
 try:
-    from backend.extraction.normalize import merge_candidates, normalize
+    from backend.extraction.normalize import normalize
 except ImportError:
-    merge_candidates = _fallback_merge_candidates
     normalize = _fallback_normalize
     FALLBACKS_ACTIVE.append("normalize")
+
+try:
+    from backend.extraction.normalize import merge_candidates
+except ImportError:
+    merge_candidates = _fallback_merge_candidates
+    FALLBACKS_ACTIVE.append("merge")
 
 
 # =============================================================================
@@ -611,7 +635,10 @@ def run_pipeline(email: InboundEmail, user_id: UUID | str) -> PipelineResult:
 
     candidates: list[FieldCandidates] = [markup_fc] if markup_fc else []
     if _markup_incomplete(markup_fc):
-        candidates.append(timed("gliner_ms", extract_fields, cleaned.text))
+        try:
+            candidates.append(timed("gliner_ms", extract_fields, cleaned.text))
+        except ExtractionUnavailable as exc:
+            _log_gliner_unavailable(exc)
         candidates.append(timed("regex_ms", extract_fields_regex, cleaned.text))
 
     merged: FieldCandidates = timed("merge_ms", _call_merge, candidates)

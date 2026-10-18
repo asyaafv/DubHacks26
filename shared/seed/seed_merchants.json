@@ -50,6 +50,8 @@
     {"id": "11111111-1111-1111-1111-111111111147", "name": "Papa John's", "domain": "papajohns.com", "mcc": "5812", "category": "Eating Places & Restaurants", "aliases": ["papajohns.com", "www.papajohns.com"]},
     {"id": "11111111-1111-1111-1111-111111111148", "name": "H&M", "domain": "hm.com", "mcc": "5651", "category": "Family Clothing Stores", "aliases": ["hm.com", "www.hm.com", "www2.hm.com"]},
     {"id": "11111111-1111-1111-1111-111111111149", "name": "Zara", "domain": "zara.com", "mcc": "5651", "category": "Family Clothing Stores", "aliases": ["zara.com", "www.zara.com"]},
-    {"id": "11111111-1111-1111-1111-111111111150", "name": "Uniqlo", "domain": "uniqlo.com", "mcc": "5651", "category": "Family Clothing Stores", "aliases": ["uniqlo.com", "www.uniqlo.com"]}
+    {"id": "11111111-1111-1111-1111-111111111150", "name": "Uniqlo", "domain": "uniqlo.com", "mcc": "5651", "category": "Family Clothing Stores", "aliases": ["uniqlo.com", "www.uniqlo.com"]},
+    {"id": "11111111-1111-1111-1111-111111111151", "name": "PacSun", "domain": "pacsun.com", "mcc": "5651", "category": "Family Clothing Stores", "aliases": ["pacsun.com", "www.pacsun.com", "email.pacsun.com"]},
+    {"id": "11111111-1111-1111-1111-111111111152", "name": "Aéropostale", "domain": "aeropostale.com", "mcc": "5651", "category": "Family Clothing Stores", "aliases": ["aeropostale.com", "www.aeropostale.com", "email.aeropostale.com"]}
   ]
 }
