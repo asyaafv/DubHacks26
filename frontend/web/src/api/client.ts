@@ -3,8 +3,11 @@ import type { Reward, SyncResponse } from '../types'
 
 export const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
 
-/** Mock mode is the default so the UI works with no backend. */
-export const USE_MOCKS = import.meta.env.VITE_USE_MOCKS !== 'false'
+/**
+ * Live backend is the default; set VITE_USE_MOCKS=true to force demo data.
+ * When the backend is unreachable the api layer falls back to mocks automatically.
+ */
+export const USE_MOCKS = import.meta.env.VITE_USE_MOCKS === 'true'
 
 function headers(userId: string): HeadersInit {
   return {

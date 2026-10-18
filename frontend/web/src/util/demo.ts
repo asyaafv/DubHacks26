@@ -33,5 +33,7 @@ export function initialUser(): SessionUser | null {
     storeUser(DEMO_USER)
     return DEMO_USER
   }
-  return readStoredUser()
+  // Demo path: default to the demo user so / opens straight into the
+  // dashboard. The landing/onboarding pages remain at /landing and /onboarding.
+  return readStoredUser() ?? DEMO_USER
 }

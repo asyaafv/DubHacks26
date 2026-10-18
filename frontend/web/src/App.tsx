@@ -38,7 +38,10 @@ export default function App() {
       <BrowserRouter>
         <DemoRedirect />
         <Routes>
-          <Route path="/" element={<Landing />} />
+          {/* Demo path: / goes straight to the demo user's dashboard. The
+              landing page is kept at /landing (not deleted). */}
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/landing" element={<Landing />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route
             element={

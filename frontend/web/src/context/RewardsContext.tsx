@@ -1,5 +1,6 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { api } from '../api'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { api, API_BASE, getDataSource } from '../api'
+import { connectEvents, type ServerEvent } from '../api/events'
 import type { SavingsResponse } from '../api/savings'
 import type { Reward, Wallet } from '../types'
 import { useSession } from './SessionContext'
@@ -15,6 +16,9 @@ type RewardsValue = {
 
 const RewardsContext = createContext<RewardsValue | null>(null)
 
+/** Backend events that mean the reward set or savings ledger changed. */
+const REFRESH_EVENTS = new Set(['reward_added', 'reward_updated', 'reward_used', 'reward_expiring'])
+
 export function RewardsProvider({ children }: { children: ReactNode }) {
   const { user } = useSession()
   const [rewards, setRewards] = useState<Reward[]>([])
@@ -22,18 +26,49 @@ export function RewardsProvider({ children }: { children: ReactNode }) {
   const [savings, setSavings] = useState<SavingsResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const refreshTimer = useRef<number | null>(null)
+
+  const load = useCallback(async (userId: string) => {
+    const [sync, nextSavings] = await Promise.all([api.getSync(userId), api.getSavings(userId)])
+    setRewards(sync.rewards ?? [])
+    setWallet(sync.wallet)
+    setSavings(nextSavings)
+    setError(null)
+  }, [])
 
   useEffect(() => {
     if (!user) return
     let cancelled = false
+    const controller = new AbortController()
     setLoading(true)
-    Promise.all([api.getSync(user.id), api.getSavings(user.id)])
-      .then(([sync, nextSavings]) => {
-        if (cancelled) return
-        setRewards(sync.rewards ?? [])
-        setWallet(sync.wallet)
-        setSavings(nextSavings)
-        setError(null)
+
+    const scheduleRefresh = () => {
+      if (cancelled) return
+      if (refreshTimer.current !== null) window.clearTimeout(refreshTimer.current)
+      refreshTimer.current = window.setTimeout(() => {
+        refreshTimer.current = null
+        void load(user.id).catch(() => {
+          // A refresh that fails keeps the last good state; initial-load errors
+          // are surfaced below instead.
+        })
+      }, 250)
+    }
+
+    load(user.id)
+      .then(() => {
+        if (cancelled || getDataSource() !== 'live') return
+        // Live mode: stream backend events so injected emails and redemptions
+        // show up without a manual reload.
+        void connectEvents({
+          url: `${API_BASE}/events`,
+          userId: user.id,
+          signal: controller.signal,
+          apply: (event: ServerEvent) => {
+            // The stub emits a periodic reward_expiring heartbeat with no
+            // reward_id; only real reward mutations trigger a refetch.
+            if (REFRESH_EVENTS.has(event.event_type) && event.reward_id) scheduleRefresh()
+          },
+        })
       })
       .catch((err: unknown) => {
         if (cancelled) return
@@ -42,10 +77,13 @@ export function RewardsProvider({ children }: { children: ReactNode }) {
       .finally(() => {
         if (!cancelled) setLoading(false)
       })
+
     return () => {
       cancelled = true
+      controller.abort()
+      if (refreshTimer.current !== null) window.clearTimeout(refreshTimer.current)
     }
-  }, [user])
+  }, [user, load])
 
   const redeem = useCallback(
     async (rewardId: string, saved: string) => {
