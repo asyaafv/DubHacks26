@@ -478,6 +478,8 @@ export interface SearchHit {
   /** Human-readable why-it-matched */
   reason: string;
   best_card?: SearchBestCard | null;
+  /** Generic same-category match shown below the specific hits */
+  secondary?: boolean;
 }
 
 /** Ranked search results for a query. */
@@ -488,6 +490,8 @@ export interface SearchResponse {
   total_matched: number;
   /** User's eligible rewards searched */
   total_active: number;
+  /** Divider label for secondary results, e.g. "Also in Food" */
+  secondary_label?: string | null;
 }
 
 /** Quick-search suggestion derived from categories present in the wallet. */

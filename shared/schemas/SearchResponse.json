@@ -394,6 +394,12 @@
             }
           ],
           "default": null
+        },
+        "secondary": {
+          "default": false,
+          "description": "Generic same-category match shown below the specific hits",
+          "title": "Secondary",
+          "type": "boolean"
         }
       },
       "required": [
@@ -430,6 +436,19 @@
       "description": "User's eligible rewards searched",
       "title": "Total Active",
       "type": "integer"
+    },
+    "secondary_label": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Divider label for secondary results, e.g. \"Also in Food\"",
+      "title": "Secondary Label"
     }
   },
   "required": [

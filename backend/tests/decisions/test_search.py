@@ -47,23 +47,39 @@ def _names(body):
 # Endpoint behavior (in-memory mode, seeded demo user)
 # ---------------------------------------------------------------------------
 
-def test_mexican_food_maps_to_restaurant_mccs(client):
+def test_mexican_food_puts_tagged_merchants_first(client):
     body = _search(client, 'mexican food').json()
     names = _names(body)
     assert 'Taco Bell' in names and 'Chipotle' in names
     # Only food merchants: no clothing/electronics leak in.
     assert not {'Gap', 'Hollister', 'Best Buy', 'Sephora'} & set(names)
     assert body['total_active'] > body['total_matched'] > 0
+    # Specific cuisine tags dominate: the true Mexican spots lead the list.
+    assert set(names[:2]) == {'Chipotle', 'Taco Bell'}
+    specific = [h for h in body['results'] if not h['secondary']]
+    assert {h['reward']['merchant_name'] for h in specific} == {'Chipotle', 'Taco Bell'}
+    assert all('tagged "mexican"' in h['reason'] for h in specific)
+    # Generic restaurant matches trail under the divider.
+    secondary = [h for h in body['results'] if h['secondary']]
+    assert {'McDonald\'s', 'Domino\'s Pizza'} <= {h['reward']['merchant_name'] for h in secondary}
+    assert body['secondary_label'] == 'Also in Food'
+    # Every secondary hit sorts after every specific hit.
+    flags = [h['secondary'] for h in body['results']]
+    assert flags == sorted(flags)
     for hit in body['results']:
         assert hit['reason']
         assert hit['score'] == pytest.approx(
             hit['value_component'] * hit['match_component'] * hit['urgency_component'])
 
 
-def test_streetwear_maps_to_clothing_and_shoes(client):
-    names = _names(_search(client, 'streetwear').json())
-    assert 'Nike' in names  # shoes included
-    assert {'Gap', 'Hollister'} & set(names)  # family clothing included
+def test_streetwear_puts_tagged_merchants_first(client):
+    body = _search(client, 'streetwear').json()
+    names = _names(body)
+    assert set(names[:2]) == {'Nike', 'Hollister'}  # tagged streetwear/athletic
+    specific = [h for h in body['results'] if not h['secondary']]
+    assert all(h['match_component'] == 0.95 for h in specific)
+    assert {'Gap', 'H&M'} <= {h['reward']['merchant_name'] for h in body['results'] if h['secondary']}
+    assert body['secondary_label'] == 'Also in Clothing'
 
 
 def test_broad_terms_food_and_clothing(client):
@@ -73,6 +89,10 @@ def test_broad_terms_food_and_clothing(client):
     assert len(food['results']) >= 5
     clothing = _search(client, 'clothing').json()
     assert {'Gap', 'Hollister', 'Abercrombie & Fitch', 'H&M', 'Old Navy'} == set(_names(clothing))
+    # Broad queries keep a flat ranking: no divider, nothing secondary.
+    for body in (food, clothing):
+        assert body['secondary_label'] is None
+        assert all(not h['secondary'] for h in body['results'])
 
 
 def test_merchant_name_outranks_category_matches(client):
@@ -154,7 +174,7 @@ def _reward(**overrides):
 def test_urgency_breaks_value_ties():
     soon = _reward(expires_at=NOW + timedelta(days=1))
     later = _reward(expires_at=NOW + timedelta(days=30))
-    hits, matched, active = search_rewards(
+    hits, matched, active, _ = search_rewards(
         'food', rewards=[later, soon], merchants=[], cards=[], now=NOW)
     assert matched == active == 2
     assert [h.reward.id for h in hits] == [soon.id, later.id]
@@ -164,7 +184,7 @@ def test_urgency_breaks_value_ties():
 def test_value_outranks_within_same_match_and_urgency():
     big = _reward(value='40', expires_at=NOW + timedelta(days=10))
     small = _reward(value='5', expires_at=NOW + timedelta(days=10))
-    hits, _, _ = search_rewards('food', rewards=[small, big], merchants=[], cards=[], now=NOW)
+    hits, _, _, _ = search_rewards('food', rewards=[small, big], merchants=[], cards=[], now=NOW)
     assert hits[0].reward.id == big.id
 
 
@@ -174,7 +194,7 @@ def test_expired_and_future_rewards_never_match():
         _reward(starts_at=NOW + timedelta(days=1)),
         _reward(status=RewardStatus.expired),
     ]
-    hits, matched, active = search_rewards(
+    hits, matched, active, _ = search_rewards(
         'food', rewards=rewards, merchants=[], cards=[], now=NOW)
     assert hits == [] and matched == 0 and active == 0
 
@@ -184,7 +204,7 @@ def test_merchant_alias_matches_via_catalog():
                         category='Family Clothing Stores', mcc='5651', aliases=['A&F'])
     reward = _reward(merchant_id=merchant.id, merchant_name='Abercrombie & Fitch',
                      category='Family Clothing Stores', mcc='5651')
-    hits, _, _ = search_rewards("a&f", rewards=[reward], merchants=[merchant],
+    hits, _, _, _ = search_rewards("a&f", rewards=[reward], merchants=[merchant],
                                 cards=[], now=NOW)
     assert hits and hits[0].match_component == 1.0
 
@@ -196,7 +216,7 @@ def test_best_card_uses_mcc_rate_over_base():
                   created_at=NOW)
     flat = Card(id=uuid4(), user_id=DEMO, issuer='Citi', network=CardNetwork.mastercard,
                 name='Double', base_rate='2.0', category_rates=[], created_at=NOW)
-    hits, _, _ = search_rewards('food', rewards=[_reward()], merchants=[],
+    hits, _, _, _ = search_rewards('food', rewards=[_reward()], merchants=[],
                                 cards=[dining, flat], now=NOW)
     assert hits[0].best_card.name == 'Chase Sapphire'
     assert float(hits[0].best_card.rate) == 3.0
@@ -204,14 +224,42 @@ def test_best_card_uses_mcc_rate_over_base():
 
 def test_semantic_similarities_rescue_unmatched_rewards():
     exotic = _reward(merchant_name='Blue Bottle', category='Coffee Houses', mcc='5499')
-    hits, _, _ = search_rewards('artisanal pour over', rewards=[exotic], merchants=[],
+    hits, _, _, _ = search_rewards('artisanal pour over', rewards=[exotic], merchants=[],
                                 cards=[], now=NOW, similarities={exotic.id: 0.8})
     assert hits and hits[0].match_component == pytest.approx(0.8)
     assert 'similar' in hits[0].reason.casefold()
     # Below the floor, the semantic layer stays silent.
-    hits, _, _ = search_rewards('artisanal pour over', rewards=[exotic], merchants=[],
+    hits, _, _, _ = search_rewards('artisanal pour over', rewards=[exotic], merchants=[],
                                 cards=[], now=NOW, similarities={exotic.id: 0.2})
     assert hits == []
+
+
+def test_tag_match_dominates_regardless_of_value_and_urgency():
+    """A high-value, urgent generic match must never outrank a tagged merchant."""
+    chipotle = Merchant(id=uuid4(), name='Chipotle', domain='chipotle.com',
+                        category='Eating Places & Restaurants', mcc='5812')
+    tagged = _reward(merchant_id=chipotle.id, merchant_name='Chipotle',
+                     kind=RewardKind.free_item, value='1',
+                     expires_at=NOW + timedelta(days=30))
+    generic = _reward(merchant_name='Golden Fork', kind=RewardKind.percent_off,
+                      value='50', expires_at=NOW + timedelta(hours=12))
+    hits, _, _, label = search_rewards('mexican food', rewards=[generic, tagged],
+                                       merchants=[chipotle], cards=[], now=NOW)
+    assert [h.reward.id for h in hits] == [tagged.id, generic.id]
+    assert not hits[0].secondary and hits[1].secondary
+    assert label == 'Also in Food'
+
+
+def test_weak_generic_matches_dropped_when_specifics_exist():
+    chipotle = Merchant(id=uuid4(), name='Chipotle', domain='chipotle.com',
+                        category='Eating Places & Restaurants', mcc='5812')
+    tagged = _reward(merchant_id=chipotle.id, merchant_name='Chipotle')
+    # Fuzzy-tier (0.6) match only: "mexican" ~ name token "mexicali".
+    weak = _reward(merchant_name='Mexicali Grill', category='Catering', mcc='7299')
+    hits, matched, _, _ = search_rewards('mexican', rewards=[tagged, weak],
+                                         merchants=[chipotle], cards=[], now=NOW)
+    assert [h.reward.id for h in hits] == [tagged.id]
+    assert matched == 1
 
 
 def test_suggest_chips_counts_only_eligible():

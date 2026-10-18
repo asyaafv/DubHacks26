@@ -77,7 +77,7 @@ async def search(body: SearchRequest, request: Request,
     if in_memory_mode(app):
         rewards, merchants, cards = _memory_data(user_id)
         similarities = _memory_similarities(app, query, rewards, merchants)
-        hits, matched, active = search_rewards(
+        hits, matched, active, divider = search_rewards(
             query, rewards=rewards, merchants=merchants, cards=cards,
             now=now, limit=body.limit, similarities=similarities)
     else:
@@ -89,7 +89,7 @@ async def search(body: SearchRequest, request: Request,
             merchants = await repo.lookup_merchants()
             cards = (await repo.get_wallet(now=now)).cards
             similarities = await _db_similarities(app, repo, query, now)
-            hits, matched, active = search_rewards(
+            hits, matched, active, divider = search_rewards(
                 query, rewards=rewards, merchants=merchants, cards=cards,
                 now=now, limit=body.limit, similarities=similarities)
             # Codes are encrypted at rest and NULL in list queries; reveal them
@@ -97,7 +97,7 @@ async def search(body: SearchRequest, request: Request,
             for hit in hits:
                 hit.reward = await repo.get_reward(hit.reward.id, reveal_code=True)
     return SearchResponse(query=query, results=hits, total_matched=matched,
-                          total_active=active)
+                          total_active=active, secondary_label=divider)
 
 
 @router.get('/search/suggestions', response_model=SearchSuggestions)

@@ -3132,6 +3132,12 @@
                 "type": "null"
               }
             ]
+          },
+          "secondary": {
+            "type": "boolean",
+            "title": "Secondary",
+            "description": "Generic same-category match shown below the specific hits",
+            "default": false
           }
         },
         "type": "object",
@@ -3199,6 +3205,12 @@
                 "type": "null"
               }
             ]
+          },
+          "secondary": {
+            "type": "boolean",
+            "title": "Secondary",
+            "description": "Generic same-category match shown below the specific hits",
+            "default": false
           }
         },
         "type": "object",
@@ -3272,6 +3284,18 @@
             "type": "integer",
             "title": "Total Active",
             "description": "User's eligible rewards searched"
+          },
+          "secondary_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Secondary Label",
+            "description": "Divider label for secondary results, e.g. \"Also in Food\""
           }
         },
         "type": "object",

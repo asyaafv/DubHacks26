@@ -363,6 +363,9 @@ class SearchHit(BaseModel):
     expiring_soon: bool = Field(default=False, description="Expires within 3 days")
     reason: str = Field(..., description="Human-readable why-it-matched")
     best_card: SearchBestCard | None = None
+    secondary: bool = Field(
+        default=False,
+        description="Generic same-category match shown below the specific hits")
 
 
 class SearchResponse(BaseModel):
@@ -371,6 +374,8 @@ class SearchResponse(BaseModel):
     results: list[SearchHit]
     total_matched: int = Field(..., description="Matches before the limit cut")
     total_active: int = Field(..., description="User's eligible rewards searched")
+    secondary_label: str | None = Field(
+        None, description='Divider label for secondary results, e.g. "Also in Food"')
 
 
 class SearchChip(BaseModel):

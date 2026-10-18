@@ -76,6 +76,51 @@ KEYWORD_MCCS: dict[str, tuple[str, frozenset[str]]] = {
     **_expand('online marketplaces', MARKETPLACE, 'marketplace', 'thrift', 'resale'),
 }
 
+# Cuisine/style tags per merchant, keyed by seed domain. A tag hit is a
+# *specific* match that must outrank generic same-category matches.
+MERCHANT_TAGS: dict[str, frozenset[str]] = {
+    'chipotle.com': frozenset({'mexican', 'fast casual'}),
+    'tacobell.com': frozenset({'mexican', 'fast food'}),
+    'hollisterco.com': frozenset({'streetwear', 'casual'}),
+    'pacsun.com': frozenset({'streetwear', 'casual'}),
+    'aeropostale.com': frozenset({'streetwear', 'casual'}),
+    'nike.com': frozenset({'athletic', 'streetwear', 'sneakers'}),
+    'abercrombie.com': frozenset({'casual'}),
+    'gap.com': frozenset({'casual'}),
+    'oldnavy.com': frozenset({'casual'}),
+    'hm.com': frozenset({'fast fashion', 'casual'}),
+    'zara.com': frozenset({'fast fashion'}),
+    'uniqlo.com': frozenset({'fast fashion', 'casual'}),
+    'starbucks.com': frozenset({'coffee'}),
+    'dunkindonuts.com': frozenset({'coffee', 'donuts'}),
+    'dominos.com': frozenset({'pizza', 'italian'}),
+    'pizzahut.com': frozenset({'pizza', 'italian'}),
+    'papajohns.com': frozenset({'pizza', 'italian'}),
+    'mcdonalds.com': frozenset({'burgers', 'fast food'}),
+    'bk.com': frozenset({'burgers', 'fast food'}),
+    'wendys.com': frozenset({'burgers', 'fast food'}),
+    'subway.com': frozenset({'sandwiches', 'fast food'}),
+    'panerabread.com': frozenset({'sandwiches', 'cafe'}),
+}
+
+# Query term -> merchant tag. Terms may also appear in KEYWORD_MCCS; the tag
+# tier is evaluated first and wins for merchants carrying the tag.
+TAG_TERMS: dict[str, str] = {
+    'mexican': 'mexican', 'taco': 'mexican', 'tacos': 'mexican',
+    'burrito': 'mexican', 'burritos': 'mexican', 'quesadilla': 'mexican',
+    'guac': 'mexican', 'guacamole': 'mexican',
+    'streetwear': 'streetwear', 'street wear': 'streetwear',
+    'athletic': 'athletic', 'athleisure': 'athletic', 'sporty': 'athletic',
+    'sneaker': 'sneakers', 'sneakers': 'sneakers', 'kicks': 'sneakers',
+    'casual': 'casual',
+    'coffee': 'coffee', 'latte': 'coffee', 'espresso': 'coffee',
+    'donut': 'donuts', 'donuts': 'donuts',
+    'pizza': 'pizza', 'italian': 'italian',
+    'burger': 'burgers', 'burgers': 'burgers',
+    'sandwich': 'sandwiches', 'sandwiches': 'sandwiches',
+    'fast food': 'fast food', 'fast fashion': 'fast fashion',
+}
+
 # Quick-search chips, in display order. Only chips that match at least one of
 # the user's eligible rewards are shown (see service.suggest_chips).
 CHIP_DEFINITIONS: list[tuple[str, str, frozenset[str]]] = [

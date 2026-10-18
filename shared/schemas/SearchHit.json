@@ -394,6 +394,12 @@
         }
       ],
       "default": null
+    },
+    "secondary": {
+      "default": false,
+      "description": "Generic same-category match shown below the specific hits",
+      "title": "Secondary",
+      "type": "boolean"
     }
   },
   "required": [

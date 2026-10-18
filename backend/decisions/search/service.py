@@ -21,9 +21,10 @@ from backend.app.schemas import (
     Reward, RewardKind, RewardStatus, SearchBestCard, SearchChip, SearchHit,
 )
 from backend.decisions.common import card_rate, utc
-from .lexicon import CHIP_DEFINITIONS, KEYWORD_MCCS
+from .lexicon import CHIP_DEFINITIONS, KEYWORD_MCCS, MERCHANT_TAGS, TAG_TERMS
 
 MATCH_MERCHANT = 1.0
+MATCH_TAG = 0.95
 MATCH_NAME_TOKEN = 0.9
 MATCH_CATEGORY_WORD = 0.85
 MATCH_MCC = 0.75
@@ -32,6 +33,10 @@ SEMANTIC_FLOOR = 0.35
 SEMANTIC_CAP = 0.9
 FUZZY_CUTOFF = 0.8
 EXPIRING_SOON_DAYS = 3
+# Hits at or above this tier are *specific* (merchant name or cuisine/style
+# tag); anything weaker is a generic same-category match that must rank below
+# every specific hit when specifics exist.
+SPECIFIC_THRESHOLD = MATCH_NAME_TOKEN
 
 # Filler words never carry intent; "stores" alone must not match every store.
 STOPWORDS = frozenset({
@@ -88,8 +93,19 @@ def value_component(reward: Reward) -> float:
     return 0.25
 
 
+def _query_tags(terms: list[str]) -> list[tuple[str, str]]:
+    """(term, tag) pairs the query expresses, most specific term first."""
+    tags = []
+    for term in terms:
+        tag = TAG_TERMS.get(term)
+        if tag and (term, tag) not in tags:
+            tags.append((term, tag))
+    return tags
+
+
 def _match(reward: Reward, merchant, query: str, tokens: list[str],
-           mccs: dict[str, tuple[str, str]]) -> tuple[float, str] | None:
+           mccs: dict[str, tuple[str, str]],
+           query_tags: list[tuple[str, str]]) -> tuple[float, str] | None:
     """Best (match_component, reason) for one reward, or None."""
     names = [reward.merchant_name]
     if merchant is not None:
@@ -101,6 +117,12 @@ def _match(reward: Reward, merchant, query: str, tokens: list[str],
     for name in names:
         if re.search(r'(?<![\w-])' + re.escape(name.casefold()) + r'(?![\w-])', text):
             return MATCH_MERCHANT, f'Matches your {reward.merchant_name} reward'
+
+    merchant_tags = MERCHANT_TAGS.get(merchant.domain, frozenset()) if merchant else frozenset()
+    for term, tag in query_tags:
+        if tag in merchant_tags:
+            return MATCH_TAG, f'{reward.merchant_name} is tagged "{tag}" — matches "{term}"'
+
     name_tokens = {t for n in names for t in tokenize(n) if len(t) > 2 and t not in STOPWORDS}
     for token in tokens:
         if token in name_tokens:
@@ -144,25 +166,33 @@ def best_card(reward: Reward, cards) -> SearchBestCard | None:
 
 
 def search_rewards(query: str, *, rewards, merchants, cards, now=None, limit=8,
-                   similarities: dict | None = None) -> tuple[list[SearchHit], int, int]:
+                   similarities: dict | None = None,
+                   ) -> tuple[list[SearchHit], int, int, str | None]:
     """Rank the user's eligible rewards against a query.
 
     `similarities` optionally maps reward.id -> cosine similarity from a
     semantic encoder (e.g. MiniLM via the lookup embeddings adapter); it is
     used only when no lexical rule matched a reward.
 
-    Returns (top hits, total matched before limit, total eligible searched).
+    Specific hits (merchant name or cuisine/style tag) always rank above
+    generic same-category matches; when both exist the generic hits are marked
+    `secondary` and a divider label ("Also in Food") is returned. Weak generic
+    hits (below the MCC tier) are dropped entirely in that case. Broad queries
+    with no specific hit keep a single flat ranking.
+
+    Returns (top hits, total matched, total eligible searched, divider label).
     """
     now = utc(now)
     tokens, terms = _query_terms(query)
     mccs = _lexicon_mccs(terms)
+    query_tags = _query_tags(terms)
     by_id = {m.id: m for m in merchants}
 
     active = [r for r in rewards if eligible(r, now)]
     hits: list[SearchHit] = []
     for reward in active:
         merchant = by_id.get(reward.merchant_id)
-        found = _match(reward, merchant, query, tokens, mccs)
+        found = _match(reward, merchant, query, tokens, mccs, query_tags)
         if found is None and similarities:
             found = _semantic_match(reward, merchant, similarities.get(reward.id))
         if found is None:
@@ -183,10 +213,28 @@ def search_rewards(query: str, *, rewards, merchants, cards, now=None, limit=8,
             reason=reason,
             best_card=best_card(reward, cards),
         ))
-    hits.sort(key=lambda h: (-h.score, -h.match_component,
+
+    secondary_label = None
+    if any(h.match_component >= SPECIFIC_THRESHOLD for h in hits):
+        # Weak generic matches would only dilute a specific answer.
+        hits = [h for h in hits
+                if h.match_component >= SPECIFIC_THRESHOLD or h.match_component >= MATCH_MCC]
+        for hit in hits:
+            hit.secondary = hit.match_component < SPECIFIC_THRESHOLD
+        secondary_mccs = {h.reward.mcc for h in hits if h.secondary}
+        for label, _, group in CHIP_DEFINITIONS:
+            if secondary_mccs & group:
+                secondary_label = f'Also in {label}'
+                break
+
+    hits.sort(key=lambda h: (h.secondary, -h.score, -h.match_component,
         utc(h.reward.expires_at) if h.reward.expires_at else datetime.max.replace(tzinfo=timezone.utc),
         str(h.reward.id)))
-    return hits[:limit], len(hits), len(active)
+    matched = len(hits)
+    hits = hits[:limit]
+    if not any(h.secondary for h in hits):
+        secondary_label = None
+    return hits, matched, len(active), secondary_label
 
 
 def suggest_chips(rewards, now=None) -> list[SearchChip]:
