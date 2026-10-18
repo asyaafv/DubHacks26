@@ -17,3 +17,6 @@ httpx>=0.26.0,<1.0.0  # For testing FastAPI
 
 # Utilities
 python-dateutil>=2.8.0  # Date parsing
+
+# Reward stacking (real CP-SAT implementation)
+ortools==9.15.6755
