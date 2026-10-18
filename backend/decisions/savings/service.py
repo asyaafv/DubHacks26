@@ -25,7 +25,8 @@ def face_value(reward: Reward) -> Decimal:
 
 def describe(reward: Reward) -> str:
     if reward.kind == RewardKind.percent_off:
-        return f"{Decimal(reward.value).normalize()}% off"
+        # :f keeps normalize() from rendering 10.00 as "1E+1".
+        return f"{Decimal(reward.value).normalize():f}% off"
     if reward.kind in (RewardKind.amount_off, RewardKind.cashback):
         return f"${Decimal(reward.value).quantize(CENTS)} {reward.kind.value.replace('_', ' ')}"
     return reward.kind.value.replace('_', ' ')
