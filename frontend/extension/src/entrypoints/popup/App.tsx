@@ -22,67 +22,74 @@ export default function App() {
   const rewards = page.lookup?.rewards.slice(0, 3) ?? [];
 
   return (
-    <div className="flex flex-col gap-3 p-4">
-      <header className="flex items-center gap-2">
-        <img src="/icon/32.png" alt="" className="h-8 w-8" />
-        <div>
-          <div className="text-base font-semibold leading-none text-lapse">Lapse</div>
-          <div className="mt-1 text-[11px] text-stone-500">{DEMO_USER_EMAIL}</div>
-        </div>
+    <div className="flex flex-col gap-3 bg-cream p-4 font-sans text-ink">
+      <header className="flex items-center justify-between gap-2 border-2 border-ink bg-lapse px-3 py-2 shadow-card">
+        <span className="font-display text-xl font-black uppercase leading-none tracking-tight text-white">Lapse</span>
+        <span className="max-w-[200px] truncate bg-ink px-2 py-0.5 text-[9px] font-bold uppercase text-lime">
+          {page.domain ? `on ${page.domain}` : DEMO_USER_EMAIL}
+        </span>
       </header>
 
       {events.toasts.map((toast) => (
         <ToastBanner key={toast.id} toast={toast} onDismiss={() => events.dismiss(toast.id)} />
       ))}
 
-      {page.loading ? <p className="text-sm text-stone-500">Checking this store…</p> : null}
+      {page.loading ? (
+        <p className="border-2 border-ink bg-white px-3 py-2 text-xs font-bold uppercase shadow-card">Checking this store…</p>
+      ) : null}
 
-      {!page.loading && page.error ? <p className="text-sm text-red-700">{page.error}</p> : null}
+      {!page.loading && page.error ? (
+        <p className="border-2 border-ink bg-white px-3 py-2 text-xs font-bold text-lapse shadow-card">{page.error}</p>
+      ) : null}
 
       {!page.loading && !page.domain ? (
-        <p className="rounded-xl bg-white px-3 py-4 text-sm text-stone-600">Open a store to see rewards.</p>
+        <p className="border-2 border-ink bg-white px-3 py-4 text-sm font-semibold shadow-card">
+          Open a store to see rewards.
+        </p>
       ) : null}
 
       {!page.loading && page.domain ? (
         <>
-          <section className="flex items-center gap-3 rounded-xl bg-white px-3 py-3 shadow-sm ring-1 ring-black/5">
+          <section className="flex items-center gap-3 border-2 border-ink bg-white px-3 py-2.5 shadow-card">
             <StoreLogo domain={logoDomain} name={name} />
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <h2 className="truncate text-sm font-semibold" data-testid="store-name">
+                <h2 className="truncate font-display text-sm font-black uppercase" data-testid="store-name">
                   {name}
                 </h2>
                 {page.isCheckout ? (
                   <span
-                    className="rounded-full bg-lapse/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-lapse"
+                    className="rotate-2 border-2 border-ink bg-amber px-1.5 py-0.5 text-[9px] font-black uppercase"
                     data-testid="checkout-pill"
                   >
                     Cart
                   </span>
                 ) : null}
               </div>
-              <p className="truncate text-xs text-stone-500" data-testid="store-domain">
+              <p className="truncate text-xs font-semibold text-[#5a5a5a]" data-testid="store-domain">
                 {logoDomain}
               </p>
             </div>
           </section>
 
-          <section className="flex flex-col gap-2">
+          <section className="flex flex-col gap-3">
             {rewards.length > 0 ? (
-              rewards.map((scored) => <RewardCard key={scored.reward.id} scored={scored} />)
+              rewards.map((scored) => <RewardCard key={scored.reward.id} scored={scored} domain={logoDomain} />)
             ) : (
-              <p className="rounded-xl bg-white px-3 py-4 text-sm text-stone-600">No rewards for this store yet.</p>
+              <p className="border-2 border-ink bg-white px-3 py-4 text-sm font-semibold shadow-card">
+                No rewards for this store yet.
+              </p>
             )}
           </section>
 
           <form
-            className="rounded-xl bg-white p-3 shadow-sm ring-1 ring-black/5"
+            className="border-2 border-ink bg-white p-3 shadow-card"
             onSubmit={(event) => {
               event.preventDefault();
               void stack.calculate();
             }}
           >
-            <label htmlFor="cart-total" className="text-xs font-medium text-stone-600">
+            <label htmlFor="cart-total" className="text-[10px] font-black uppercase tracking-widest">
               Cart total
             </label>
             <input
@@ -92,17 +99,17 @@ export default function App() {
               placeholder="0.00"
               value={stack.cartTotal}
               onChange={(event) => stack.setCartTotal(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-stone-200 px-2 py-1.5 text-sm outline-none focus:border-lapse"
+              className="mt-1 w-full border-2 border-ink bg-cream px-2 py-1.5 text-sm font-semibold outline-none focus:bg-white"
             />
             <button
               type="submit"
               data-testid="stack-button"
               disabled={stack.stacking}
-              className="mt-2 w-full rounded-lg bg-lapse px-3 py-2 text-sm font-medium text-white disabled:opacity-60"
+              className="mt-2 w-full border-2 border-ink bg-lapse px-3 py-2 text-sm font-black uppercase text-white shadow-card disabled:opacity-60"
             >
               {stack.stacking ? 'Calculating…' : 'Find best stack'}
             </button>
-            {stack.error ? <p className="mt-2 text-xs text-red-700">{stack.error}</p> : null}
+            {stack.error ? <p className="mt-2 text-xs font-bold text-lapse">{stack.error}</p> : null}
           </form>
 
           {stack.stack ? <StackResultView stack={stack.stack} onMarkUsed={stack.markUsed} /> : null}
@@ -113,9 +120,9 @@ export default function App() {
         type="button"
         data-testid="open-dashboard"
         onClick={openDashboard}
-        className="rounded-lg border border-lapse/30 bg-white px-3 py-2 text-sm font-medium text-lapse"
+        className="py-1 text-center text-[10px] font-bold uppercase tracking-widest text-[#5a5a5a] hover:text-ink"
       >
-        Open dashboard
+        {DEMO_USER_EMAIL} · Open dashboard
       </button>
     </div>
   );
