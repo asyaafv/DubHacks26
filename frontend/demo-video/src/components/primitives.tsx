@@ -133,10 +133,20 @@ export const Stamp: React.FC<{
 export const formatNumber = (n: number, decimals = 0) =>
   n.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 
-export const useCount = (from: number, to: number, start: number, end: number) => {
-  const frame = useCurrentFrame();
-  return interpolate(frame, [start, end], [from, to], { ...clamp, easing: Easing.bezier(0.16, 1, 0.3, 1) });
+const countEasing = Easing.bezier(0.16, 1, 0.3, 1);
+
+export const countAt = (frame: number, from: number, to: number, start: number, end: number) =>
+  interpolate(frame, [start, end], [from, to], { ...clamp, easing: countEasing });
+
+// First frame at which a count from `start` to `end` reaches `value`.
+export const frameWhenCountReaches = (value: number, from: number, to: number, start: number, end: number) => {
+  for (let f = start; f <= end; f += 0.25) {
+    if (countAt(f, from, to, start, end) >= value) return f;
+  }
+  return end;
 };
+
+export const useCount = (from: number, to: number, start: number, end: number) => countAt(useCurrentFrame(), from, to, start, end);
 
 // The three spark ticks from the Lapse icon, drawn outward from a point.
 export const Sparks: React.FC<{
@@ -189,6 +199,7 @@ export const Headline: React.FC<{ children: React.ReactNode; size?: number; styl
       fontSize: size,
       lineHeight: 1.02,
       letterSpacing: '-0.03em',
+      wordSpacing: '0.1em',
       color: C.ink,
       ...style,
     }}

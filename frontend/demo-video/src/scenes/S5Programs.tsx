@@ -1,6 +1,6 @@
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
-import { Backdrop, PopWord, clamp, ease, useCount, useSpring } from '../components/primitives';
+import { Backdrop, PopWord, clamp, ease, frameWhenCountReaches, useCount, useSpring } from '../components/primitives';
 import { C, FONT, hardShadow } from '../theme';
 import { cue } from '../timeline';
 
@@ -84,9 +84,9 @@ const LoyaltyCard: React.FC<{ i: number; at: number; dimAt: number }> = ({ i, at
   );
 };
 
-const Stat: React.FC<{ at: number; value: number; label: string; color: string; top: number }> = ({ at, value, label, color, top }) => {
+const Stat: React.FC<{ at: number; until: number; value: number; label: string; color: string; top: number }> = ({ at, until, value, label, color, top }) => {
   const frame = useCurrentFrame();
-  const n = useCount(0, value, at - 2, at + 22);
+  const n = useCount(0, value, at - 2, until);
   const p = useSpring(at - 2, { damping: 11, stiffness: 170 });
   return (
     <div
@@ -135,14 +135,14 @@ export const S5Programs: React.FC = () => {
   return (
     <Backdrop>
       <AbsoluteFill>
-        <div style={{ position: 'absolute', left: 130, top: 110, fontFamily: FONT.display, fontWeight: 900, fontSize: 76, color: C.ink }}>
+        <div style={{ position: 'absolute', left: 130, top: 110, fontFamily: FONT.display, fontWeight: 900, fontSize: 76, color: C.ink, wordSpacing: '0.1em' }}>
           <PopWord at={0}>The</PopWord> <PopWord at={cue('s5', 'average')}>average</PopWord>{' '}
           <PopWord at={cue('s5', 'american')} style={{ color: C.tangerine, WebkitTextStroke: `3px ${C.ink}` }}>
             American
           </PopWord>
         </div>
-        <Stat at={seventeen} value={ENROLLED} label="loyalty programs joined" color={C.ink} top={300} />
-        <Stat at={eight} value={ACTIVE} label="actively used" color={C.tangerine} top={600} />
+        <Stat at={seventeen} until={programs + 6} value={ENROLLED} label="loyalty programs joined" color={C.ink} top={300} />
+        <Stat at={eight} until={eight + 14} value={ACTIVE} label="actively used" color={C.tangerine} top={600} />
         <div
           style={{
             position: 'absolute',
@@ -157,7 +157,7 @@ export const S5Programs: React.FC = () => {
           }}
         />
         {new Array(cards).fill(0).map((_, i) => (
-          <LoyaltyCard key={i} i={i} at={seventeen + (i / (cards - 1)) * (programs - seventeen)} dimAt={actively} />
+          <LoyaltyCard key={i} i={i} at={frameWhenCountReaches(i + 0.5, 0, ENROLLED, seventeen - 2, programs + 6) - 1} dimAt={actively} />
         ))}
         <div
           style={{

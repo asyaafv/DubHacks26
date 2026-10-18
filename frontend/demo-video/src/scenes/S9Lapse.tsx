@@ -62,6 +62,7 @@ export const S9Lapse: React.FC = () => {
             textAlign: 'center',
             fontFamily: FONT.display,
             fontWeight: 800,
+            wordSpacing: '0.1em',
             fontSize: interpolate(intro, [0, 1], [120, 72]),
             color: interpolate(intro, [0, 1], [0, 1]) > 0.5 ? C.muted : C.ink,
           }}

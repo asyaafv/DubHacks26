@@ -89,7 +89,7 @@ export const S6Restaurants: React.FC = () => {
           <div style={{ transform: `scale(${plate}) rotate(${(1 - plate) * -90}deg)` }}>
             <PlateIcon size={150} />
           </div>
-          <div style={{ fontFamily: FONT.display, fontWeight: 900, fontSize: 92, color: C.ink, lineHeight: 1 }}>
+          <div style={{ fontFamily: FONT.display, fontWeight: 900, fontSize: 92, color: C.ink, lineHeight: 1, wordSpacing: '0.1em' }}>
             <PopWord at={0}>For</PopWord> <PopWord at={cue('s6', 'restaurants')}>restaurants</PopWord>
           </div>
         </div>

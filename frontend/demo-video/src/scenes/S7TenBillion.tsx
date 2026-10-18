@@ -93,7 +93,7 @@ export const S7TenBillion: React.FC = () => {
           </Stamp>
         </div>
         <AbsoluteFill style={{ alignItems: 'center', top: 250, fontFamily: FONT.display, color: C.ink }}>
-          <div style={{ fontSize: 74, fontWeight: 800 }}>
+          <div style={{ fontSize: 74, fontWeight: 800, wordSpacing: '0.1em' }}>
             <PopWord at={americans}>Americans</PopWord> <PopWord at={miss}>miss out</PopWord>{' '}
             <PopWord at={cue('s7', 'up')}>on up to</PopWord>
           </div>

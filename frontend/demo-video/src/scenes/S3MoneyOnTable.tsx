@@ -66,7 +66,7 @@ const FlyingBill: React.FC<{ b: Throw; i: number }> = ({ b, i }) => {
     const landed = b.t0 + b.dur;
     const s = spring({ frame: frame - landed, fps, config: { damping: 10, stiffness: 140, mass: 0.6 } });
     const atLand = flight(1, landed);
-    rz = interpolate(s, [0, 1], [atLand.rz, b.spin + b.rest]);
+    rz = interpolate(s, [0, 1], [atLand.rz, Math.round(b.spin / 180) * 180 + b.rest]);
     rx = interpolate(s, [0, 1], [atLand.rx, 64]);
     ry = interpolate(s, [0, 1], [atLand.ry, 0]);
     dy = -Math.sin(Math.min(1, (frame - landed) / 10) * Math.PI) * 18 * (1 - Math.min(1, (frame - landed) / 18));
@@ -77,7 +77,7 @@ const FlyingBill: React.FC<{ b: Throw; i: number }> = ({ b, i }) => {
         position: 'absolute',
         left: x,
         top: y + dy,
-        transform: `translate(-50%, -50%) scale(${b.scale}) rotateZ(${rz}deg) rotateX(${rx}deg) rotateY(${ry}deg)`,
+        transform: `translate(-50%, -50%) scale(${b.scale}) rotateX(${rx}deg) rotateZ(${rz}deg) rotateY(${ry}deg)`,
         transformStyle: 'preserve-3d',
         filter: 'drop-shadow(5px 5px 0 rgba(20,20,20,0.9))',
       }}
