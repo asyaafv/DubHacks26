@@ -34,7 +34,7 @@
           "Intake"
         ],
         "summary": "Process Inbound Email",
-        "description": "Process inbound email from Postmark webhook.\n\nRuns the real extraction pipeline (clean -> classify -> markup ->\nGLiNER/regex -> normalize -> merchant) and stores extracted rewards.",
+        "description": "Process inbound email from Postmark webhook.\n\nAccepts the raw Postmark inbound JSON (extra/missing fields tolerated) and\nruns the intake flow: routing -> dedupe -> redaction -> extraction ->\npersist -> reward_added events.\n\nAlways returns 200 for a parseable JSON object so Postmark never retries\nforever; an unroutable recipient yields rewards_extracted=0 with\nnote=\"unknown_recipient\". Only a non-JSON body gets a 400.",
         "operationId": "process_inbound_email_inbound_post",
         "parameters": [
           {
@@ -54,23 +54,13 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/InboundEmail"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InboundResult"
+                  "$ref": "#/components/schemas/IntakeInboundResult"
                 }
               }
             }
@@ -94,7 +84,7 @@
           "Intake"
         ],
         "summary": "Inject Demo Email",
-        "description": "Replay a stored .eml file through the real extraction pipeline.",
+        "description": "Replay a stored .eml file through the intake flow.\n\nPass `\"force\": true` to bypass the dedupe check so demos can replay the\nsame email repeatedly.",
         "operationId": "inject_demo_email_demo_inject_post",
         "parameters": [
           {
@@ -119,7 +109,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DemoInjectRequest"
+                "$ref": "#/components/schemas/DemoInjectWithForce"
               }
             }
           }
@@ -130,7 +120,152 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InboundResult"
+                  "$ref": "#/components/schemas/IntakeInboundResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/demo/emails": {
+      "get": {
+        "tags": [
+          "Intake"
+        ],
+        "summary": "List Demo Emails",
+        "description": "List the seed .eml files available for /demo/inject.",
+        "operationId": "list_demo_emails_demo_emails_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response List Demo Emails Demo Emails Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/demo/console/templates": {
+      "get": {
+        "tags": [
+          "Demo Console"
+        ],
+        "summary": "List Templates",
+        "description": "Store templates plus console config for the UI.",
+        "operationId": "list_templates_demo_console_templates_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response List Templates Demo Console Templates Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/demo/console/rewards": {
+      "get": {
+        "tags": [
+          "Demo Console"
+        ],
+        "summary": "Recent Rewards",
+        "description": "Recent reward cards for the result panel (fallback when /sync is\nunavailable, e.g. no database configured).",
+        "operationId": "recent_rewards_demo_console_rewards_get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Recent Rewards Demo Console Rewards Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/demo/console/send": {
+      "post": {
+        "tags": [
+          "Demo Console"
+        ],
+        "summary": "Send",
+        "description": "Render the chosen template and send it (real email or instant inject).",
+        "operationId": "send_demo_console_send_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Send Demo Console Send Post"
                 }
               }
             }
@@ -1196,7 +1331,7 @@
         "title": "ClassifyMerchantResult",
         "description": "Merchant classification result."
       },
-      "DemoInjectRequest": {
+      "DemoInjectWithForce": {
         "properties": {
           "eml_filename": {
             "type": "string",
@@ -1215,14 +1350,19 @@
             ],
             "title": "User Id",
             "description": "Override user ID"
+          },
+          "force": {
+            "type": "boolean",
+            "title": "Force",
+            "default": false
           }
         },
         "type": "object",
         "required": [
           "eml_filename"
         ],
-        "title": "DemoInjectRequest",
-        "description": "Request to inject a demo/test email."
+        "title": "DemoInjectWithForce",
+        "description": "DemoInjectRequest plus `force` to bypass dedupe for demo replays."
       },
       "EmailClassification": {
         "type": "string",
@@ -1372,125 +1512,7 @@
         "title": "HealthCheck",
         "description": "Health check response."
       },
-      "InboundEmail": {
-        "properties": {
-          "MessageID": {
-            "type": "string",
-            "title": "Messageid",
-            "description": "Unique message ID"
-          },
-          "FromFull": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Fromfull",
-            "description": "Sender info with Email and Name"
-          },
-          "ToFull": {
-            "items": {
-              "additionalProperties": true,
-              "type": "object"
-            },
-            "type": "array",
-            "title": "Tofull",
-            "description": "Recipients"
-          },
-          "Subject": {
-            "type": "string",
-            "title": "Subject"
-          },
-          "TextBody": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Textbody"
-          },
-          "HtmlBody": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Htmlbody"
-          },
-          "Date": {
-            "type": "string",
-            "title": "Date",
-            "description": "Email date string"
-          },
-          "MailboxHash": {
-            "type": "string",
-            "title": "Mailboxhash",
-            "description": "Hash for user routing",
-            "default": ""
-          },
-          "Attachments": {
-            "items": {
-              "$ref": "#/components/schemas/InboundEmailAttachment"
-            },
-            "type": "array",
-            "title": "Attachments"
-          },
-          "Headers": {
-            "items": {
-              "additionalProperties": {
-                "type": "string"
-              },
-              "type": "object"
-            },
-            "type": "array",
-            "title": "Headers"
-          }
-        },
-        "type": "object",
-        "required": [
-          "MessageID",
-          "FromFull",
-          "ToFull",
-          "Subject",
-          "Date"
-        ],
-        "title": "InboundEmail",
-        "description": "Postmark inbound webhook payload (subset of fields we use)."
-      },
-      "InboundEmailAttachment": {
-        "properties": {
-          "Name": {
-            "type": "string",
-            "title": "Name"
-          },
-          "Content": {
-            "type": "string",
-            "title": "Content",
-            "description": "Base64-encoded content"
-          },
-          "ContentType": {
-            "type": "string",
-            "title": "Contenttype"
-          },
-          "ContentLength": {
-            "type": "integer",
-            "title": "Contentlength"
-          }
-        },
-        "type": "object",
-        "required": [
-          "Name",
-          "Content",
-          "ContentType",
-          "ContentLength"
-        ],
-        "title": "InboundEmailAttachment",
-        "description": "Email attachment metadata (Postmark-compatible)."
-      },
-      "InboundResult": {
+      "IntakeInboundResult": {
         "properties": {
           "message_id": {
             "type": "string",
@@ -1521,6 +1543,22 @@
             "type": "integer",
             "title": "Processing Time Ms",
             "default": 0
+          },
+          "duplicate": {
+            "type": "boolean",
+            "title": "Duplicate",
+            "default": false
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
           }
         },
         "type": "object",
@@ -1528,8 +1566,8 @@
           "message_id",
           "classification"
         ],
-        "title": "InboundResult",
-        "description": "Result of processing an inbound email."
+        "title": "IntakeInboundResult",
+        "description": "InboundResult plus intake-only metadata (superset stays contract-valid)."
       },
       "LookupRequest": {
         "properties": {
@@ -2748,6 +2786,46 @@
         ],
         "title": "ScoredReward",
         "description": "Reward with relevance score breakdown."
+      },
+      "SendRequest": {
+        "properties": {
+          "template_id": {
+            "type": "string",
+            "title": "Template Id"
+          },
+          "overrides": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Overrides"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "email",
+              "instant"
+            ],
+            "title": "Mode",
+            "default": "instant"
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "template_id"
+        ],
+        "title": "SendRequest",
+        "description": "POST /send payload."
       },
       "StackRequest": {
         "properties": {
