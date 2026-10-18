@@ -63,7 +63,16 @@ export async function lookup(request: Omit<LookupRequest, 'user_id'>): Promise<L
       });
       if (!response.ok) throw new Error(await readError(response));
       const result = (await response.json()) as LookupResult;
-      const exact = result.rewards.filter((scored) => scored.match_component === 1);
+      // Also drop visual duplicates (same merchant+code+kind+value, e.g. a demo
+      // email re-injected over the seed reward); keep the first (highest-ranked).
+      const seen = new Set<string>();
+      const exact = result.rewards.filter((scored) => {
+        if (scored.match_component !== 1) return false;
+        const key = [scored.reward.merchant_id, scored.reward.code, scored.reward.kind, scored.reward.value].join('|');
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
       return { ...result, rewards: exact.slice(0, limit) };
     },
     () => mockLookup(payload),
