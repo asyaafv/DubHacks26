@@ -68,3 +68,16 @@ assumption by the stacking owner. Membership text alone never creates cash offer
 Run explicit migration/seed commands from database-setup.md before starting the API.
 Keep encryption keys outside source and DB. X-User-Id is demo identification, not
 authentication. No external team messages or notifications were sent.
+
+## Delivery storage additions
+
+Foundation also provides bounded `Database.list_user_ids(...)` for trusted scheduler
+registry enumeration, plus user-locked `Repository.list_expiration_candidates(...)`,
+`snapshot_time()` and `list_events_since(...)`. Exact signatures and the admin-only
+registry boundary are documented in person3-contract.md. They add no HTTP endpoints,
+public models or global reward/event reads. New real-Postgres tests cover keyset
+pagination through status mutations, overdue backlog, cross-user exclusion, UTC DB
+watermarks and replay of events whose reward timestamps predate the watermark.
+
+Additive-interface verification: **13 storage/wallet tests passed** against the same
+real PostgreSQL cluster (one existing TestClient/AnyIO deprecation warning).

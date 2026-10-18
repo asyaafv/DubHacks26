@@ -1,6 +1,6 @@
 """User-scoped persistence. Construct only through Database.transaction()."""
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import datetime, timedelta
 import json
 from uuid import UUID
 
@@ -93,6 +93,27 @@ class Repository:
         rows = await self._conn.fetch(f'SELECT *, NULL::text AS code FROM rewards WHERE {predicate} ORDER BY updated_at,id', *args)
         return [self._reward(row) for row in rows]
 
+    async def snapshot_time(self) -> datetime:
+        """Database UTC watermark; this repository already holds the user lock."""
+        return utc(await self._conn.fetchval('SELECT clock_timestamp()'))
+
+    async def list_expiration_candidates(self, now: datetime, window_end: datetime,
+                                         after: UUID | None = None, limit: int = 100) -> list[Reward]:
+        """Page active expiring/expired rewards, including the overdue backlog.
+
+        The job owns alert policy and transitions; this method never mutates data
+        and never reveals codes. UUID order remains stable as statuses change.
+        """
+        if not 1 <= limit <= 1000:
+            raise ValueError('Invalid expiration page size')
+        if utc(window_end) < utc(now):
+            raise ValueError('Expiration window must not end before now')
+        rows = await self._conn.fetch(
+            "SELECT *, NULL::text AS code FROM rewards WHERE user_id=$1 AND status='active' "
+            "AND expires_at <= $2 AND ($3::uuid IS NULL OR id > $3) ORDER BY id LIMIT $4",
+            self.user_id, utc(window_end), after, limit)
+        return [self._reward(row) for row in rows]
+
     async def search_rewards(self, embedding, limit=10, now=None):
         if not 1 <= limit <= 100:
             raise ValueError('Invalid limit')
@@ -136,6 +157,19 @@ class Repository:
         if after < 0 or not 1 <= limit <= 1000:
             raise ValueError('Invalid replay window')
         rows = await self._conn.fetch('SELECT * FROM events WHERE user_id=$1 AND sequence>$2 ORDER BY sequence LIMIT $3', self.user_id, after, limit)
+        return self._stored_events(rows)
+
+    async def list_events_since(self, since: datetime, after: int = 0,
+                                limit: int = 100) -> list[StoredEvent]:
+        """Replay by durable insertion time, independent of reward timestamps."""
+        if after < 0 or not 1 <= limit <= 1000:
+            raise ValueError('Invalid replay window')
+        rows = await self._conn.fetch(
+            'SELECT * FROM events WHERE user_id=$1 AND created_at >= $2 AND sequence > $3 ORDER BY sequence LIMIT $4',
+            self.user_id, utc(since), after, limit)
+        return self._stored_events(rows)
+
+    def _stored_events(self, rows):
         return [StoredEvent(row['id'], row['sequence'], Event(event_type=row['event_type'],
                     user_id=self.user_id, reward_id=row['reward_id'], data=json.loads(row['data']),
                     timestamp=row['created_at'])) for row in rows]

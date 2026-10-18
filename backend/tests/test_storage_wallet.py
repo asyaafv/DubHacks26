@@ -309,3 +309,78 @@ def test_missing_database_is_explicit():
     app.include_router(router)
     with TestClient(app) as client:
         assert client.get('/wallet', headers={'X-User-Id': str(uuid4())}).status_code == 503
+
+
+@pytest.mark.asyncio
+async def test_bounded_scheduler_registry_and_expiration_candidates(db):
+    owners = [uuid4(), uuid4(), uuid4()]
+    for owner in owners:
+        async with db.transaction(owner):
+            pass
+    all_users, cursor = [], None
+    while True:
+        page = await db.list_user_ids(after=cursor, limit=2)
+        if not page:
+            break
+        all_users.extend(page)
+        cursor = page[-1]
+    assert set(owners).issubset(all_users)
+    assert all_users == sorted(set(all_users))
+    assert not await db.list_user_ids(after=UUID(int=2**128 - 1))
+    with pytest.raises(ValueError):
+        await db.list_user_ids(limit=1001)
+    owner, other = owners[:2]
+    expected = [reward(owner, expires_at=NOW - timedelta(days=10)),
+                reward(owner, expires_at=NOW),
+                reward(owner, expires_at=NOW + timedelta(hours=24))]
+    async with db.transaction(owner) as repo:
+        for r in expected + [reward(owner), reward(owner, status='used', expires_at=NOW),
+                              reward(owner, status='needs_review', expires_at=NOW),
+                              reward(owner, expires_at=NOW + timedelta(hours=25))]:
+            await repo.save_reward(r)
+    async with db.transaction(other) as repo:
+        await repo.save_reward(reward(other, expires_at=NOW))
+    async with db.transaction(owner) as repo:
+        collected, cursor = [], None
+        while True:
+            page = await repo.list_expiration_candidates(NOW, NOW + timedelta(hours=24), after=cursor, limit=1)
+            if not page:
+                break
+            collected.extend(page)
+            cursor = page[-1].id
+            # Expiration jobs may mutate earlier pages without skipping later UUIDs.
+            await repo.set_reward_status(cursor, 'expired')
+        assert [r.id for r in collected] == sorted(r.id for r in expected)
+        assert all(r.code is None for r in collected)
+        with pytest.raises(ValueError):
+            await repo.list_expiration_candidates(NOW, NOW - timedelta(seconds=1))
+        with pytest.raises(ValueError):
+            await repo.list_expiration_candidates(NOW, NOW, limit=0)
+
+
+@pytest.mark.asyncio
+async def test_database_snapshot_and_timestamp_event_replay(db):
+    owner, other = uuid4(), uuid4()
+    async with db.transaction(owner) as repo:
+        await repo.save_reward(reward(owner))
+    async with db.transaction(owner) as repo:
+        watermark = await repo.snapshot_time()
+        assert watermark.tzinfo is not None and watermark.utcoffset() == timedelta(0)
+        old_rewards = [reward(owner, updated_at=NOW - timedelta(days=365)) for _ in range(3)]
+        for r in old_rewards:
+            await repo.save_reward(r)
+        # Caller timestamps cannot make newly inserted durable events disappear.
+        assert await repo.list_rewards(eligible_only=False, since=watermark) == []
+        first = await repo.list_events_since(watermark, limit=2)
+        second = await repo.list_events_since(watermark, after=first[-1].sequence, limit=2)
+        events = first + second
+        assert [e.event.reward_id for e in events] == [r.id for r in old_rewards]
+        assert all(e.event.timestamp >= watermark for e in events)
+        assert len(await repo.list_events_since(events[0].event.timestamp)) == 3
+        assert not await repo.list_events_since(watermark, after=events[-1].sequence)
+        with pytest.raises(ValueError):
+            await repo.list_events_since(watermark, after=-1)
+        with pytest.raises(ValueError):
+            await repo.list_events_since(watermark, limit=0)
+    async with db.transaction(other) as repo:
+        assert not await repo.list_events_since(watermark)

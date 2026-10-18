@@ -129,3 +129,30 @@ fallback, 400 identity conflicts, 422 invalid rates/number-data fields, accurate
 query-time counts, and last_four remains null. This is the team-facing notification;
 no external messages are sent. Other endpoints retain their original behavior
 until their owners adopt the documented shared helpers.
+
+## Delivery scan and watermark additions
+
+`await database.list_user_ids(after: UUID | None = None, limit=100) -> list[UUID]`
+is a trusted background scheduler registry operation, never a user-facing route.
+It returns only registered IDs in ascending UUID keyset pages, at most 1000/page.
+Do not expose this administrative enumeration through demo identity endpoints.
+Every owned-data operation following enumeration still requires
+`database.transaction(user_id)`; there are no global reward/event scans.
+
+Inside that locked transaction:
+
+- `await repo.snapshot_time() -> datetime`: aware UTC `clock_timestamp()` from
+  Postgres, sampled after acquiring the per-user lock; independent of host skew.
+- `await repo.list_expiration_candidates(now, window_end, after=None, limit=100)
+  -> list[Reward]`: owner-scoped, status active, expiration <= window_end, including
+  expiration <= now. Null expiry, used/review/expired statuses and foreign users
+  are excluded. Codes are redacted. UUID keyset order and a maximum of 1000/page
+  allow status mutations while scanning; window_end must be >= now. Delivery owns
+  start-time alert eligibility, expiry transitions and durable dedupe keys.
+- `await repo.list_events_since(since, after=0, limit=100) -> list[StoredEvent]`:
+  owner-scoped created_at >= since AND sequence > after, ordered by sequence, at
+  most 1000/page. Uses durable insertion time even when callers supplied old reward
+  timestamps. Pass the last sequence as after on every following page. Inclusive
+  timestamp overlap requires deduplication by StoredEvent.id or sequence.
+
+No public schema/router changes or new migrations are required for these additions.

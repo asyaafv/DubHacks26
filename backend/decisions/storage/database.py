@@ -27,6 +27,20 @@ class Database:
     async def close(self):
         await self.pool.close()
 
+    async def list_user_ids(self, after: UUID | None = None, limit: int = 100) -> list[UUID]:
+        """Trusted scheduler registry enumeration; never expose as a user endpoint.
+
+        Returns identifiers only. Every subsequent owned-data read or mutation must
+        run in transaction(user_id), which acquires the user's serialization lock.
+        """
+        if not 1 <= limit <= 1000:
+            raise ValueError("Invalid user page size")
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch(
+                "SELECT id FROM users WHERE ($1::uuid IS NULL OR id > $1) ORDER BY id LIMIT $2",
+                after, limit)
+        return [row["id"] for row in rows]
+
     async def migrate(self):
         """Explicit CLI operation, never run DDL or seeds on application startup."""
         async with self.pool.acquire() as conn, conn.transaction():
