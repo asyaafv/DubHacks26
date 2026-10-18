@@ -1,0 +1,15 @@
+# PII redaction deps (backend/intake/redact.py). These are LAZY-loaded: if
+# they are missing, redact.py automatically falls back to pure-regex
+# recognizers for the same entity types, so nothing here is strictly required
+# to boot the app.
+#
+# Install:
+#   pip install -r backend/intake/requirements/redact.txt
+#   python -m spacy download en_core_web_sm
+#
+# The small English spaCy model (en_core_web_sm, ~12 MB) is NOT on PyPI; it
+# must be downloaded with the `spacy download` command above (or:
+#   pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
+# ).
+presidio-analyzer==2.2.364
+spacy>=3.7.0,<4.0.0

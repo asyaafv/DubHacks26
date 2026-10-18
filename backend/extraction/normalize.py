@@ -27,6 +27,48 @@ _BOGO_PATTERN = re.compile(r"(?:buy\s+one\s+get\s+one|bogo)", re.IGNORECASE)
 _TONIGHT_PATTERN = re.compile(r"tonight", re.IGNORECASE)
 _TODAY_PATTERN = re.compile(r"today", re.IGNORECASE)
 
+# Source priority for merging candidates: structured markup beats NER beats regex.
+_SOURCE_PRIORITY = {"email_jsonld": 3, "gliner": 2, "regex": 1}
+_MERGE_FIELDS = (
+    "merchant",
+    "discount_value",
+    "min_spend",
+    "max_discount",
+    "expiry",
+    "starts",
+    "code",
+    "stackable",
+)
+
+
+def merge_candidates(*candidates: FieldCandidates | None) -> FieldCandidates:
+    """
+    Merge FieldCandidates from multiple extractors into one.
+
+    Per field, the candidate from the highest-priority source wins
+    (email_jsonld > gliner > regex); ties are broken by confidence.
+    Exclusions are taken from the first candidate that has any.
+    """
+    merged = FieldCandidates()
+    present = [c for c in candidates if c is not None]
+    for name in _MERGE_FIELDS:
+        best: FieldValue | None = None
+        for cand in present:
+            fv: FieldValue | None = getattr(cand, name)
+            if fv is None or not str(fv.value).strip():
+                continue
+            if best is None or (
+                _SOURCE_PRIORITY.get(fv.source, 0),
+                fv.confidence,
+            ) > (_SOURCE_PRIORITY.get(best.source, 0), best.confidence):
+                best = fv
+        setattr(merged, name, best)
+    for cand in present:
+        if cand.exclusions:
+            merged.exclusions = list(cand.exclusions)
+            break
+    return merged
+
 
 def _parse_discount_value(
     field: FieldValue | None,
@@ -59,7 +101,9 @@ def _parse_discount_value(
         except InvalidOperation:
             return "amount_off", None, "USD", 0.5
 
-    if "reward" in text:
+    # Only try price-parser when there is an actual number; otherwise texts
+    # like "FREE Guacamole reward" get misparsed as amount_off 0.
+    if "reward" in text and any(ch.isdigit() for ch in text):
         price = Price.fromstring(field.value)
         if price.amount is not None:
             return "amount_off", Decimal(str(price.amount)), price.currency or "USD", 1.0

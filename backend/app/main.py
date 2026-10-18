@@ -11,6 +11,8 @@ CORS: Configured for chrome-extension:// origins
 from __future__ import annotations
 
 import asyncio
+import os
+from contextlib import asynccontextmanager
 import json
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
@@ -55,11 +57,43 @@ from .schemas import (
     WalletUpdate,
 )
 
+from backend.decisions.storage import Database
+from backend.decisions.common import resolve_user
+from backend.decisions.wallet.router import router as wallet_router
+
+from backend.intake.service import (
+    DemoInjectWithForce,
+    IntakeInboundResult,
+    coerce_inbound_email,
+    drain_events as drain_intake_events,
+    process_inbound,
+)
+
+# Demo merchant console (Agent D) may not have merged yet; mount if importable.
+try:
+    from backend.intake.console.router import router as demo_console_router
+except ImportError:
+    demo_console_router = None
+
+
+@asynccontextmanager
+async def lifespan(app):
+    app.state.database = None
+    if os.getenv("DATABASE_URL"):
+        app.state.database = await Database.connect()
+    try:
+        yield
+    finally:
+        if app.state.database is not None:
+            await app.state.database.close()
+
+
 # =============================================================================
 # APP SETUP
 # =============================================================================
 
 app = FastAPI(
+    lifespan=lifespan,
     title="Lapse API",
     description="Find and stack store rewards, card cashback, and memberships",
     version="0.1.0",
@@ -287,44 +321,51 @@ async def health_check() -> HealthCheck:
 # =============================================================================
 
 
-@app.post("/inbound", response_model=InboundResult, tags=["Intake"])
+@app.post("/inbound", response_model=IntakeInboundResult, tags=["Intake"])
 async def process_inbound_email(
-    email: InboundEmail,
+    request: Request,
     x_user_id: str | None = Header(None, alias="X-User-Id"),
-) -> InboundResult:
+) -> IntakeInboundResult:
     """
     Process inbound email from Postmark webhook.
 
-    STUB: Returns mock extraction result.
-    REAL: Presidio PII redaction -> dedupe -> SetFit classify -> extraction cascade
+    Accepts the raw Postmark inbound JSON (extra/missing fields tolerated) and
+    runs the intake flow: routing -> dedupe -> redaction -> extraction ->
+    persist -> reward_added events.
+
+    Always returns 200 for a parseable JSON object so Postmark never retries
+    forever; an unroutable recipient yields rewards_extracted=0 with
+    note="unknown_recipient". Only a non-JSON body gets a 400.
     """
-    user_id = get_user_id(x_user_id)
+    try:
+        payload = await request.json()
+    except Exception:  # noqa: BLE001 - body was not JSON at all
+        raise HTTPException(status_code=400, detail="Request body must be JSON")
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Request body must be a JSON object")
 
-    # Stub: Pretend we extracted one reward
-    return InboundResult(
-        message_id=email.MessageID,
-        classification=EmailClassification.reward,
-        rewards_extracted=1,
-        reward_ids=[UUID("22222222-2222-2222-2222-222222222299")],
-        needs_review=False,
-        processing_time_ms=150,
-    )
+    email = coerce_inbound_email(payload)
+    # Explicit header overrides routing; otherwise the service resolves the
+    # user from MailboxHash / recipient address.
+    user_id = get_user_id(x_user_id) if x_user_id else None
+    return process_inbound(email, user_id, source="postmark")
 
 
-@app.post("/demo/inject", response_model=InboundResult, tags=["Intake"])
+@app.post("/demo/inject", response_model=IntakeInboundResult, tags=["Intake"])
 async def inject_demo_email(
-    request: DemoInjectRequest,
+    request: DemoInjectWithForce,
     x_user_id: str | None = Header(None, alias="X-User-Id"),
-) -> InboundResult:
+) -> IntakeInboundResult:
     """
-    Replay a stored .eml file through the intake pipeline.
+    Replay a stored .eml file through the intake flow.
 
-    STUB: Returns mock result based on filename.
-    REAL: Loads .eml, parses, runs through full pipeline.
+    Pass `"force": true` to bypass the dedupe check so demos can replay the
+    same email repeatedly.
     """
+    from backend.extraction.pipeline import parse_eml
+
     user_id = request.user_id or get_user_id(x_user_id)
 
-    # Check if file exists
     eml_path = SEED_DIR / "emails" / request.eml_filename
     if not eml_path.exists():
         raise HTTPException(
@@ -332,21 +373,20 @@ async def inject_demo_email(
             detail=f"Email file not found: {request.eml_filename}",
         )
 
-    # Stub classification based on filename
-    classification = EmailClassification.reward
-    if "receipt" in request.eml_filename.lower():
-        classification = EmailClassification.receipt
-    elif "promo" in request.eml_filename.lower():
-        classification = EmailClassification.promo
+    email = parse_eml(eml_path.read_bytes())
+    return process_inbound(email, user_id, source="demo", force=request.force)
 
-    return InboundResult(
-        message_id=f"demo-{request.eml_filename}",
-        classification=classification,
-        rewards_extracted=1 if classification == EmailClassification.reward else 0,
-        reward_ids=[UUID("22222222-2222-2222-2222-222222222298")] if classification == EmailClassification.reward else [],
-        needs_review=False,
-        processing_time_ms=200,
-    )
+
+@app.get("/demo/emails", tags=["Intake"])
+async def list_demo_emails() -> dict:
+    """List the seed .eml files available for /demo/inject."""
+    emails_dir = SEED_DIR / "emails"
+    files = sorted(p.name for p in emails_dir.glob("*.eml")) if emails_dir.exists() else []
+    return {"emails": files}
+
+
+if demo_console_router is not None:
+    app.include_router(demo_console_router, prefix="/demo/console", tags=["Demo Console"])
 
 
 # =============================================================================
@@ -354,51 +394,16 @@ async def inject_demo_email(
 # =============================================================================
 
 
-@app.get("/wallet", response_model=Wallet, tags=["Wallet"])
-async def get_wallet(
-    x_user_id: str | None = Header(None, alias="X-User-Id"),
-) -> Wallet:
-    """
-    Get user's complete wallet (cards + memberships + reward counts).
-
-    STUB: Returns seed data for demo user.
-    """
-    user_id = get_user_id(x_user_id)
-
-    cards = [c for c in get_cards() if c.user_id == user_id]
-    memberships = [m for m in get_memberships() if m.user_id == user_id]
-    rewards = [r for r in get_rewards() if r.user_id == user_id and r.status == RewardStatus.active]
-
-    now = datetime.now(timezone.utc)
-    expiring_soon = [
-        r for r in rewards
-        if r.expires_at and r.expires_at.replace(tzinfo=timezone.utc) < now + timedelta(days=3)
-    ]
-
-    return Wallet(
-        user_id=user_id,
-        cards=cards,
-        memberships=memberships,
-        active_rewards_count=len(rewards),
-        expiring_soon_count=len(expiring_soon),
-    )
+app.include_router(wallet_router)
 
 
-@app.post("/wallet", response_model=Wallet, tags=["Wallet"])
-async def update_wallet(
-    update: WalletUpdate,
-    x_user_id: str | None = Header(None, alias="X-User-Id"),
-) -> Wallet:
-    """
-    Update user's wallet (add/remove cards and memberships).
-
-    STUB: Returns current wallet unchanged.
-    REAL: Persists changes to database.
-    """
-    user_id = get_user_id(x_user_id)
-
-    # Stub: Just return current wallet
-    return await get_wallet(x_user_id)
+async def get_wallet(x_user_id=None):
+    """Compatibility bridge for the existing sync stub until integration wiring."""
+    database = getattr(app.state, "database", None)
+    if database is None:
+        raise HTTPException(503, "Database is not configured")
+    async with database.transaction(resolve_user(x_user_id)) as repo:
+        return await repo.get_wallet()
 
 
 # =============================================================================
@@ -631,15 +636,21 @@ async def event_generator(user_id: UUID) -> AsyncGenerator[str, None]:
     )
     yield f"event: {event.event_type.value}\ndata: {event.model_dump_json()}\n\n"
 
-    # Stub: Send a test event every 30 seconds
+    # Deliver reward_added events queued by the intake service (1s poll),
+    # plus the original stub reward_expiring event every 30 seconds.
+    ticks = 0
     while True:
-        await asyncio.sleep(30)
-        event = Event(
-            event_type=EventType.reward_expiring,
-            user_id=user_id,
-            data={"message": "Stub event - rewards expiring soon"},
-        )
-        yield f"event: {event.event_type.value}\ndata: {event.model_dump_json()}\n\n"
+        await asyncio.sleep(1)
+        ticks += 1
+        for event in drain_intake_events(user_id):
+            yield f"event: {event.event_type.value}\ndata: {event.model_dump_json()}\n\n"
+        if ticks % 30 == 0:
+            event = Event(
+                event_type=EventType.reward_expiring,
+                user_id=user_id,
+                data={"message": "Stub event - rewards expiring soon"},
+            )
+            yield f"event: {event.event_type.value}\ndata: {event.model_dump_json()}\n\n"
 
 
 @app.get("/events", tags=["Sync"])
