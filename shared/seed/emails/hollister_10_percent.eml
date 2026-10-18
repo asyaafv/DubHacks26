@@ -1,0 +1,79 @@
+MIME-Version: 1.0
+Date: Tue, 15 Oct 2026 10:30:00 -0700
+Message-ID: <msg-001@hollisterco.com>
+From: "Hollister Co." <rewards@hollisterco.com>
+To: demo@perk.app
+Subject: Your 10% Off Voucher - Don't Miss Out!
+Content-Type: multipart/alternative; boundary="boundary123"
+
+--boundary123
+Content-Type: text/plain; charset="UTF-8"
+
+Hi there!
+
+Thanks for being a loyal Hollister customer. Here's a special reward just for you:
+
+10% OFF YOUR NEXT PURCHASE
+Code: HCOFALL10
+Minimum Purchase: $50
+Valid through: October 20, 2026
+
+Excludes: Gift Cards, Clearance items
+
+Shop now at hollisterco.com
+
+--boundary123
+Content-Type: text/html; charset="UTF-8"
+
+<!DOCTYPE html>
+<html>
+<head>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "DiscountOffer",
+  "name": "10% Off Voucher",
+  "description": "10% off your next purchase at Hollister",
+  "discountCode": "HCOFALL10",
+  "discountCurrency": "USD",
+  "discount": "10",
+  "discountType": "Percent",
+  "validFrom": "2026-10-15T00:00:00-07:00",
+  "validThrough": "2026-10-20T23:59:59-07:00",
+  "minPrice": "50.00",
+  "eligibleTransactionVolume": {
+    "@type": "PriceSpecification",
+    "minPrice": "50.00",
+    "priceCurrency": "USD"
+  },
+  "seller": {
+    "@type": "Organization",
+    "name": "Hollister Co.",
+    "url": "https://www.hollisterco.com"
+  },
+  "itemOffered": {
+    "@type": "Product",
+    "name": "Full Price Items",
+    "description": "Excludes Gift Cards and Clearance"
+  }
+}
+</script>
+</head>
+<body>
+<div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
+  <h1 style="color: #1a1a1a;">Your 10% Off Voucher</h1>
+  <p>Hi there!</p>
+  <p>Thanks for being a loyal Hollister customer. Here's a special reward just for you:</p>
+  <div style="background: #f5f5f5; padding: 20px; text-align: center; margin: 20px 0;">
+    <h2 style="color: #0066cc; margin: 0;">10% OFF</h2>
+    <p style="font-size: 24px; font-weight: bold;">Code: HCOFALL10</p>
+    <p>Minimum Purchase: $50</p>
+    <p>Valid through: October 20, 2026</p>
+  </div>
+  <p><small>Excludes: Gift Cards, Clearance items</small></p>
+  <a href="https://www.hollisterco.com" style="display: inline-block; background: #0066cc; color: white; padding: 10px 20px; text-decoration: none;">Shop Now</a>
+</div>
+</body>
+</html>
+
+--boundary123--

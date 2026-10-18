@@ -1,0 +1,122 @@
+{
+  "$defs": {
+    "InboundEmailAttachment": {
+      "description": "Email attachment metadata (Postmark-compatible).",
+      "properties": {
+        "Name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "Content": {
+          "description": "Base64-encoded content",
+          "title": "Content",
+          "type": "string"
+        },
+        "ContentType": {
+          "title": "Contenttype",
+          "type": "string"
+        },
+        "ContentLength": {
+          "title": "Contentlength",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "Name",
+        "Content",
+        "ContentType",
+        "ContentLength"
+      ],
+      "title": "InboundEmailAttachment",
+      "type": "object"
+    }
+  },
+  "description": "Postmark inbound webhook payload (subset of fields we use).",
+  "properties": {
+    "MessageID": {
+      "description": "Unique message ID",
+      "title": "Messageid",
+      "type": "string"
+    },
+    "FromFull": {
+      "additionalProperties": true,
+      "description": "Sender info with Email and Name",
+      "title": "Fromfull",
+      "type": "object"
+    },
+    "ToFull": {
+      "description": "Recipients",
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Tofull",
+      "type": "array"
+    },
+    "Subject": {
+      "title": "Subject",
+      "type": "string"
+    },
+    "TextBody": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Textbody"
+    },
+    "HtmlBody": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Htmlbody"
+    },
+    "Date": {
+      "description": "Email date string",
+      "title": "Date",
+      "type": "string"
+    },
+    "MailboxHash": {
+      "default": "",
+      "description": "Hash for user routing",
+      "title": "Mailboxhash",
+      "type": "string"
+    },
+    "Attachments": {
+      "items": {
+        "$ref": "#/$defs/InboundEmailAttachment"
+      },
+      "title": "Attachments",
+      "type": "array"
+    },
+    "Headers": {
+      "items": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "type": "object"
+      },
+      "title": "Headers",
+      "type": "array"
+    }
+  },
+  "required": [
+    "MessageID",
+    "FromFull",
+    "ToFull",
+    "Subject",
+    "Date"
+  ],
+  "title": "InboundEmail",
+  "type": "object"
+}

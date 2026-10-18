@@ -1,0 +1,11 @@
+{
+  "title": "EventType",
+  "type": "string",
+  "enum": [
+    "reward_added",
+    "reward_expiring",
+    "reward_updated",
+    "reward_used",
+    "sync_complete"
+  ]
+}

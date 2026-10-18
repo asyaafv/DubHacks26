@@ -1,0 +1,12 @@
+{
+  "title": "RewardKind",
+  "type": "string",
+  "enum": [
+    "percent_off",
+    "amount_off",
+    "points",
+    "free_item",
+    "bogo",
+    "cashback"
+  ]
+}

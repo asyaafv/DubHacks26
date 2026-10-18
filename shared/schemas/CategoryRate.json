@@ -1,0 +1,49 @@
+{
+  "description": "Cashback rate for a specific category or MCC.",
+  "properties": {
+    "category": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Category name",
+      "examples": [
+        "Dining"
+      ],
+      "title": "Category"
+    },
+    "mcc_codes": {
+      "description": "Matching MCC codes",
+      "items": {
+        "type": "string"
+      },
+      "title": "Mcc Codes",
+      "type": "array"
+    },
+    "rate": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "description": "Cashback rate (percentage)",
+      "examples": [
+        "3.0"
+      ],
+      "title": "Rate"
+    }
+  },
+  "required": [
+    "rate"
+  ],
+  "title": "CategoryRate",
+  "type": "object"
+}

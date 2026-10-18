@@ -1,0 +1,50 @@
+{
+  "_comment": "Test fixture: Hollister $500 cart scenario for stacking engine validation",
+  "scenario_name": "Hollister $500 Cart with 10% Voucher",
+  "description": "User has a $500 cart at Hollister with a 10% voucher (HCOFALL10) that requires $50 minimum. Tests basic percentage discount application.",
+  
+  "request": {
+    "user_id": "00000000-0000-0000-0000-000000000001",
+    "merchant_id": "11111111-1111-1111-1111-111111111110",
+    "domain": "hollisterco.com",
+    "cart_total": "500.00",
+    "items": [
+      {"name": "Signature Hoodie", "category": "Tops", "price": "89.95", "quantity": 2},
+      {"name": "Athletic Joggers", "category": "Bottoms", "price": "69.95", "quantity": 2},
+      {"name": "Graphic Tee 3-Pack", "category": "Tops", "price": "49.95", "quantity": 2},
+      {"name": "Canvas Sneakers", "category": "Shoes", "price": "59.95", "quantity": 1}
+    ]
+  },
+
+  "expected_result": {
+    "chosen_rewards": [
+      {
+        "reward_id": "22222222-2222-2222-2222-222222222201",
+        "code": "HCOFALL10",
+        "kind": "percent_off",
+        "value": "10.00",
+        "savings": "50.00",
+        "applied_order": 1
+      }
+    ],
+    "recommended_card": {
+      "name": "US Bank Cash+ (DEMO)",
+      "reason": "5% cashback on Department Stores (MCC 5651 - Family Clothing)"
+    },
+    "card_cashback": "22.50",
+    "original_price": "500.00",
+    "final_price": "450.00",
+    "total_savings": "72.50",
+    "savings_percent": "14.50",
+    "explanation": "Applied HCOFALL10 for 10% off ($50.00 savings). Use US Bank Cash+ for 5% cashback ($22.50). Total savings: $72.50 (14.5%)."
+  },
+
+  "validation_rules": [
+    "HCOFALL10 should be selected (only applicable Hollister reward)",
+    "Min spend $50 is satisfied by $500 cart",
+    "No max_discount cap, so full 10% applies",
+    "Exclusions (Gift Cards, Clearance) don't apply to cart items",
+    "US Bank Cash+ gives 5% on MCC 5651 (clothing stores)",
+    "Reward is not stackable, but only one Hollister reward exists"
+  ]
+}

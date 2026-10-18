@@ -1,0 +1,46 @@
+{
+  "description": "Individual cart item for stacking calculation.",
+  "properties": {
+    "name": {
+      "description": "Item name",
+      "title": "Name",
+      "type": "string"
+    },
+    "category": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Item category",
+      "title": "Category"
+    },
+    "price": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "description": "Item price",
+      "title": "Price"
+    },
+    "quantity": {
+      "default": 1,
+      "title": "Quantity",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "name",
+    "price"
+  ],
+  "title": "CartItem",
+  "type": "object"
+}

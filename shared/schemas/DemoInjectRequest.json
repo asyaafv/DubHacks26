@@ -1,0 +1,29 @@
+{
+  "description": "Request to inject a demo/test email.",
+  "properties": {
+    "eml_filename": {
+      "description": "Filename from shared/seed/emails/",
+      "title": "Eml Filename",
+      "type": "string"
+    },
+    "user_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Override user ID",
+      "title": "User Id"
+    }
+  },
+  "required": [
+    "eml_filename"
+  ],
+  "title": "DemoInjectRequest",
+  "type": "object"
+}

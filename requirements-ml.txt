@@ -1,0 +1,28 @@
+# PerkSense ML Dependencies
+# Heavy ML packages - install only when needed for real implementation
+# Install with: pip install -r requirements-ml.txt
+
+# Email Processing & NLP
+# presidio-analyzer>=2.2.0  # PII detection/redaction
+# presidio-anonymizer>=2.2.0
+
+# Classification & NER
+# setfit>=1.0.0  # Few-shot email classification
+# gliner>=0.2.0  # GLiNER2 for NER extraction
+# sentence-transformers>=2.3.0  # MiniLM embeddings (all-MiniLM-L6-v2)
+
+# Extraction
+# extruct>=0.16.0  # schema.org JSON-LD extraction
+# dateparser>=1.2.0  # Fuzzy date parsing
+# price-parser>=0.3.0  # Price extraction
+
+# Optimization
+# ortools>=9.8.0  # CP-SAT solver for reward stacking
+
+# Database (real implementation)
+# asyncpg>=0.29.0  # Async Postgres driver
+# pgvector>=0.2.0  # pgvector Python client
+# sqlalchemy[asyncio]>=2.0.0  # Async SQLAlchemy
+
+# Note: These are commented out to allow fast stub installation.
+# Uncomment as you implement each feature.

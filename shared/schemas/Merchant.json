@@ -1,0 +1,78 @@
+{
+  "description": "Full merchant record with ID.",
+  "properties": {
+    "name": {
+      "description": "Merchant display name",
+      "examples": [
+        "Target"
+      ],
+      "title": "Name",
+      "type": "string"
+    },
+    "domain": {
+      "description": "Primary domain",
+      "examples": [
+        "target.com"
+      ],
+      "title": "Domain",
+      "type": "string"
+    },
+    "mcc": {
+      "description": "Merchant Category Code (4 digits)",
+      "examples": [
+        "5311"
+      ],
+      "title": "Mcc",
+      "type": "string"
+    },
+    "category": {
+      "description": "Human-readable category",
+      "examples": [
+        "Department Stores"
+      ],
+      "title": "Category",
+      "type": "string"
+    },
+    "id": {
+      "description": "Unique merchant ID",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "aliases": {
+      "description": "Alternative domains/names",
+      "items": {
+        "type": "string"
+      },
+      "title": "Aliases",
+      "type": "array"
+    },
+    "logo_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Logo URL for display",
+      "title": "Logo Url"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "domain",
+    "mcc",
+    "category",
+    "id"
+  ],
+  "title": "Merchant",
+  "type": "object"
+}

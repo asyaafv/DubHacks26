@@ -1,0 +1,100 @@
+{
+  "_comment": "Demo store memberships for the demo user.",
+  "demo_user_id": "00000000-0000-0000-0000-000000000001",
+  "memberships": [
+    {
+      "id": "44444444-4444-4444-4444-444444444401",
+      "user_id": "00000000-0000-0000-0000-000000000001",
+      "merchant_id": "11111111-1111-1111-1111-111111111104",
+      "merchant_name": "Costco",
+      "program_name": "Executive Membership",
+      "tier": "Executive",
+      "member_id": "DEMO-111222333",
+      "benefits": [
+        "2% annual reward on qualified purchases",
+        "Extra member-only savings",
+        "Free technical support"
+      ],
+      "annual_reward_rate": "2.0",
+      "expires_at": "2027-06-15T23:59:59Z",
+      "is_active": true,
+      "created_at": "2026-06-15T10:00:00Z"
+    },
+    {
+      "id": "44444444-4444-4444-4444-444444444402",
+      "user_id": "00000000-0000-0000-0000-000000000001",
+      "merchant_id": "11111111-1111-1111-1111-111111111101",
+      "merchant_name": "Target",
+      "program_name": "Target Circle",
+      "tier": null,
+      "member_id": "DEMO-TARGET-123",
+      "benefits": [
+        "1% earnings on every purchase",
+        "Personalized offers",
+        "Birthday reward",
+        "Community giving votes"
+      ],
+      "annual_reward_rate": "1.0",
+      "expires_at": null,
+      "is_active": true,
+      "created_at": "2026-03-20T14:30:00Z"
+    },
+    {
+      "id": "44444444-4444-4444-4444-444444444403",
+      "user_id": "00000000-0000-0000-0000-000000000001",
+      "merchant_id": "11111111-1111-1111-1111-111111111109",
+      "merchant_name": "Sephora",
+      "program_name": "Beauty Insider",
+      "tier": "VIB",
+      "member_id": "DEMO-SEPHORA-456",
+      "benefits": [
+        "1 point per dollar spent",
+        "Birthday gift",
+        "10% off seasonal savings",
+        "Access to Rewards Bazaar"
+      ],
+      "annual_reward_rate": null,
+      "expires_at": "2026-12-31T23:59:59Z",
+      "is_active": true,
+      "created_at": "2026-01-10T09:00:00Z"
+    },
+    {
+      "id": "44444444-4444-4444-4444-444444444404",
+      "user_id": "00000000-0000-0000-0000-000000000001",
+      "merchant_id": "11111111-1111-1111-1111-111111111106",
+      "merchant_name": "Starbucks",
+      "program_name": "Starbucks Rewards",
+      "tier": "Gold",
+      "member_id": "DEMO-SBUX-789",
+      "benefits": [
+        "2 stars per dollar with Visa card",
+        "Free birthday reward",
+        "Free refills",
+        "Order ahead"
+      ],
+      "annual_reward_rate": null,
+      "expires_at": null,
+      "is_active": true,
+      "created_at": "2026-02-01T08:00:00Z"
+    },
+    {
+      "id": "44444444-4444-4444-4444-444444444405",
+      "user_id": "00000000-0000-0000-0000-000000000001",
+      "merchant_id": "11111111-1111-1111-1111-111111111116",
+      "merchant_name": "Nordstrom",
+      "program_name": "Nordy Club",
+      "tier": "Influencer",
+      "member_id": "DEMO-NORDY-012",
+      "benefits": [
+        "1 point per dollar",
+        "Alterations",
+        "Priority access to sales",
+        "Personal styling"
+      ],
+      "annual_reward_rate": null,
+      "expires_at": null,
+      "is_active": true,
+      "created_at": "2026-04-15T12:00:00Z"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "description": "Standardized error response.",
+  "properties": {
+    "error": {
+      "description": "Error code",
+      "title": "Error",
+      "type": "string"
+    },
+    "message": {
+      "description": "Human-readable message",
+      "title": "Message",
+      "type": "string"
+    },
+    "details": {
+      "additionalProperties": true,
+      "title": "Details",
+      "type": "object"
+    }
+  },
+  "required": [
+    "error",
+    "message"
+  ],
+  "title": "ErrorDetail",
+  "type": "object"
+}

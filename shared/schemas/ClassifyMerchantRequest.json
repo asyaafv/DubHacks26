@@ -1,0 +1,31 @@
+{
+  "description": "Request to classify an unknown merchant.",
+  "properties": {
+    "domain": {
+      "description": "Domain to classify",
+      "examples": [
+        "unknownstore.com"
+      ],
+      "title": "Domain",
+      "type": "string"
+    },
+    "page_title": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Page title for context",
+      "title": "Page Title"
+    }
+  },
+  "required": [
+    "domain"
+  ],
+  "title": "ClassifyMerchantRequest",
+  "type": "object"
+}

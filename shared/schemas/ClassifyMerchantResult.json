@@ -1,0 +1,60 @@
+{
+  "description": "Merchant classification result.",
+  "properties": {
+    "domain": {
+      "title": "Domain",
+      "type": "string"
+    },
+    "merchant_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Matched merchant ID if known",
+      "title": "Merchant Id"
+    },
+    "merchant_name": {
+      "description": "Merchant name (inferred if unknown)",
+      "title": "Merchant Name",
+      "type": "string"
+    },
+    "category": {
+      "description": "Inferred category",
+      "title": "Category",
+      "type": "string"
+    },
+    "mcc": {
+      "description": "Inferred MCC code",
+      "title": "Mcc",
+      "type": "string"
+    },
+    "confidence": {
+      "description": "Classification confidence",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "is_new": {
+      "description": "True if merchant was not in database",
+      "title": "Is New",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "domain",
+    "merchant_name",
+    "category",
+    "mcc",
+    "confidence",
+    "is_new"
+  ],
+  "title": "ClassifyMerchantResult",
+  "type": "object"
+}

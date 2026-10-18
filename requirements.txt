@@ -1,0 +1,19 @@
+# PerkSense Core Dependencies
+# Install with: pip install -r requirements.txt
+
+# Web Framework
+fastapi>=0.109.0,<0.120.0
+uvicorn[standard]>=0.27.0,<0.40.0
+pydantic>=2.5.0,<3.0.0
+
+# Database (stubs work without these, but needed for real impl)
+# asyncpg>=0.29.0  # Uncomment when adding Postgres
+# sqlalchemy>=2.0.0  # Uncomment when adding ORM
+
+# Testing
+pytest>=8.0.0,<9.0.0
+pytest-asyncio>=0.23.0,<1.0.0
+httpx>=0.26.0,<1.0.0  # For testing FastAPI
+
+# Utilities
+python-dateutil>=2.8.0  # Date parsing

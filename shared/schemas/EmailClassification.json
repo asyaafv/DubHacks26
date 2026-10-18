@@ -1,0 +1,10 @@
+{
+  "title": "EmailClassification",
+  "type": "string",
+  "enum": [
+    "reward",
+    "receipt",
+    "promo",
+    "other"
+  ]
+}
