@@ -154,7 +154,7 @@
           "Wallet"
         ],
         "summary": "Get Wallet",
-        "description": "Get user's complete wallet (cards + memberships + reward counts).\n\nSTUB: Returns seed data for demo user.",
+        "description": "Get the persistent wallet and current eligible reward counts.",
         "operationId": "get_wallet_wallet_get",
         "parameters": [
           {
@@ -202,7 +202,7 @@
           "Wallet"
         ],
         "summary": "Update Wallet",
-        "description": "Update user's wallet (add/remove cards and memberships).\n\nSTUB: Returns current wallet unchanged.\nREAL: Persists changes to database.",
+        "description": "Atomically add/remove card products and encrypted memberships.",
         "operationId": "update_wallet_wallet_post",
         "parameters": [
           {

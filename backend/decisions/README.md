@@ -1,3 +1,43 @@
+# Decisions module (Person 3)
+
+Shared implementation contract: [docs/person3-contract.md](../../docs/person3-contract.md).
+Database setup: [docs/database-setup.md](../../docs/database-setup.md).
+
+Foundation owns:
+
+- `storage/database.py`: lifecycle, migrations and user-scoped transactions.
+- `storage/repository.py`: normalized reward writes, catalog queries, wallet data,
+  email metadata, and atomic durable events.
+- `storage/migrations/`: sole schema migration authority. 001 preserves the original DDL.
+- `storage/seed.py`, `storage/__main__.py`: explicit, repeatable encrypted JSON import.
+- `wallet/router.py`: exported APIRouter for GET/POST /wallet.
+- `wallet/service.py`: atomic wallet updates.
+- `common.py`, `dependencies.py`: identity, UTC, exact numeric/rate helpers, DI.
+
+Other Person 3 chats own `stacking/`, `lookup/`, and `delivery/` (including expiry),
+and export APIRouter instances from their respective router.py. These names reserve
+interfaces without adding implementations owned by those chats. Integration owns
+additional application wiring. Persons 1/2 retain all intake/extraction ownership.
+Use public models from `backend.app.schemas`, not duplicate models.
+
+```python
+from backend.decisions.storage import Database
+
+async with database.transaction(user_id) as repo:
+    claimed = await repo.claim_email(message_id, 'reward', content_hash=digest)
+    if claimed:
+        await repo.save_reward(normalized_reward, dedupe_key=offer_digest)
+        await repo.set_email_result(message_id, 'reward', 1)
+```
+
+There are no implicit commits or external notifications inside repository methods.
+Exceptions roll back reward writes, email claims and events together. Do not log
+normalized models containing codes. The transaction user scopes every owned query.
+
+---
+
+## Original implementation guidance (other feature owners)
+
 # Decisions Module (Person 3)
 
 Data storage, stacking optimization, lookup, and real-time sync.

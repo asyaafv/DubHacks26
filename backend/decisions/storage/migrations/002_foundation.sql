@@ -39,3 +39,16 @@ DROP FUNCTION get_expiring_rewards(integer);
 DROP FUNCTION expire_rewards();
 DROP FUNCTION encrypt_value(text,text);
 DROP FUNCTION decrypt_value(bytea,text);
+
+ALTER TABLE users ADD CONSTRAINT users_email_hash_unique UNIQUE(email_hash);
+ALTER TABLE rewards ADD CONSTRAINT reward_currency_valid CHECK(currency ~ '^[A-Z]{3}$');
+ALTER TABLE rewards ADD CONSTRAINT reward_mcc_valid CHECK(mcc ~ '^[0-9]{4}$');
+ALTER TABLE events ALTER COLUMN created_at SET DEFAULT clock_timestamp();
+-- A waiting writer must use mutation time, not its pre-lock transaction start.
+CREATE OR REPLACE FUNCTION update_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = clock_timestamp();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;

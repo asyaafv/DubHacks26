@@ -173,6 +173,12 @@ GET /wallet
 
 ---
 
+Wallet now requires configured Postgres and an externally supplied encryption key;
+missing database configuration returns 503. Startup does not seed or migrate. Missing
+identity uses the demo user only with `PERK_ALLOW_DEMO_IDENTITY=true`; conflicting
+body/header identities return 400. Counts exclude expired, future, used, and review
+rewards. See `docs/database-setup.md` for explicit migration/seed commands.
+
 ### Update Wallet
 
 ```
@@ -249,7 +255,7 @@ Calculate optimal reward stacking for a purchase.
 }
 ```
 
-**Note**: Use either `merchant_id` OR `domain`, not both.
+**Note**: Supply `merchant_id`, `domain`, or both. When both are supplied they must resolve to the same merchant; conflicting identities must be rejected. Cart items are partial and `cart_total` is authoritative. See `docs/person3-contract.md` for the Hollister fixture discrepancy and conservative eligibility policy (integration adoption pending).
 
 ---
 

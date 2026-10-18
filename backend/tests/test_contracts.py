@@ -95,7 +95,8 @@ def demo_user_id():
 def client():
     """Sync HTTP client for testing FastAPI app."""
     from fastapi.testclient import TestClient
-    return TestClient(app)
+    with TestClient(app) as test_client:
+        yield test_client
 
 
 # =============================================================================

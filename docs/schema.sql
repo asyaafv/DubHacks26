@@ -1,7 +1,9 @@
 -- Lapse Database Schema
 -- Postgres + pgvector + pgcrypto
 -- 
--- Run with: psql -d lapse -f docs/schema.sql
+-- Historical baseline, preserved as migrations/001_initial.sql.
+-- For the current schema run: python -m backend.decisions.storage migrate
+-- See docs/database-setup.md; do not apply this file separately.
 
 -- Enable extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

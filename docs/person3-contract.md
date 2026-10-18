@@ -63,9 +63,11 @@ returns Merchant or None; both may be supplied only if they resolve to the same 
 arbitrary payload. It stores only safe reward status/expiry metadata, never codes.
 Use a stable expiring-alert dedupe key containing reward ID and expiration version.
 `list_events(after=0, limit=100) -> list[StoredEvent]` is ordered by sequence and
-scoped to the owner. StoredEvent has sequence and event (public Event model).
-The delivery chat uses sequence as SSE cursor; timestamp-only polling may overlap
-and must deduplicate by event/reward ID. `list_rewards(eligible_only=False,since=...)`
+scoped to the owner. StoredEvent has id, sequence and event (public Event model).
+The delivery chat uses sequence as SSE cursor. Sequence is the authoritative
+change feed: timestamp-only polling cannot guarantee replay of writes whose caller
+supplied an old timestamp. Integration should reconcile through the durable sequence
+and deduplicate overlapping snapshots by event/reward ID. `list_rewards(eligible_only=False,since=...)`
 includes used/expired/review records for offline state reconciliation. Events are
 retained regardless of the legacy delivered flag; do not globally consume events.
 Delivery owns schedulers, expiry scans, SSE and sync HTTP behavior.
@@ -114,3 +116,16 @@ for unknown/foreign IDs. An entire update and resulting wallet read share one
 transaction. `card_rate(card, category=None, mcc=None)` returns exact Decimal:
 MCC-constrained rates require MCC match; category-only rates require exact normalized
 category match; unknown categories (including auto-top-category) earn base only.
+
+## Contract-generation handoff
+
+Public models, operation IDs, header names, JSON schemas and TypeScript types are
+unchanged. Shared merchant catalog writes currently insert-only; an existing
+merchant ID/domain returns false rather than overwriting Person 2 classification.
+The generator was repaired for Python 3.11-compatible f-strings and
+canonical package imports, then rerun; only wallet OpenAPI descriptions changed.
+Behavior changes from the stub: persistence, 503 for missing DB, explicit demo
+fallback, 400 identity conflicts, 422 invalid rates/number-data fields, accurate
+query-time counts, and last_four remains null. This is the team-facing notification;
+no external messages are sent. Other endpoints retain their original behavior
+until their owners adopt the documented shared helpers.

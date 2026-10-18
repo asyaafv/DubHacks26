@@ -11,6 +11,8 @@ CORS: Configured for chrome-extension:// origins
 from __future__ import annotations
 
 import asyncio
+import os
+from contextlib import asynccontextmanager
 import json
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
@@ -55,11 +57,29 @@ from .schemas import (
     WalletUpdate,
 )
 
+from backend.decisions.storage import Database
+from backend.decisions.common import resolve_user
+from backend.decisions.wallet.router import router as wallet_router
+
+
+@asynccontextmanager
+async def lifespan(app):
+    app.state.database = None
+    if os.getenv("DATABASE_URL"):
+        app.state.database = await Database.connect()
+    try:
+        yield
+    finally:
+        if app.state.database is not None:
+            await app.state.database.close()
+
+
 # =============================================================================
 # APP SETUP
 # =============================================================================
 
 app = FastAPI(
+    lifespan=lifespan,
     title="Lapse API",
     description="Find and stack store rewards, card cashback, and memberships",
     version="0.1.0",
@@ -354,51 +374,16 @@ async def inject_demo_email(
 # =============================================================================
 
 
-@app.get("/wallet", response_model=Wallet, tags=["Wallet"])
-async def get_wallet(
-    x_user_id: str | None = Header(None, alias="X-User-Id"),
-) -> Wallet:
-    """
-    Get user's complete wallet (cards + memberships + reward counts).
-
-    STUB: Returns seed data for demo user.
-    """
-    user_id = get_user_id(x_user_id)
-
-    cards = [c for c in get_cards() if c.user_id == user_id]
-    memberships = [m for m in get_memberships() if m.user_id == user_id]
-    rewards = [r for r in get_rewards() if r.user_id == user_id and r.status == RewardStatus.active]
-
-    now = datetime.now(timezone.utc)
-    expiring_soon = [
-        r for r in rewards
-        if r.expires_at and r.expires_at.replace(tzinfo=timezone.utc) < now + timedelta(days=3)
-    ]
-
-    return Wallet(
-        user_id=user_id,
-        cards=cards,
-        memberships=memberships,
-        active_rewards_count=len(rewards),
-        expiring_soon_count=len(expiring_soon),
-    )
+app.include_router(wallet_router)
 
 
-@app.post("/wallet", response_model=Wallet, tags=["Wallet"])
-async def update_wallet(
-    update: WalletUpdate,
-    x_user_id: str | None = Header(None, alias="X-User-Id"),
-) -> Wallet:
-    """
-    Update user's wallet (add/remove cards and memberships).
-
-    STUB: Returns current wallet unchanged.
-    REAL: Persists changes to database.
-    """
-    user_id = get_user_id(x_user_id)
-
-    # Stub: Just return current wallet
-    return await get_wallet(x_user_id)
+async def get_wallet(x_user_id=None):
+    """Compatibility bridge for the existing sync stub until integration wiring."""
+    database = getattr(app.state, "database", None)
+    if database is None:
+        raise HTTPException(503, "Database is not configured")
+    async with database.transaction(resolve_user(x_user_id)) as repo:
+        return await repo.get_wallet()
 
 
 # =============================================================================
