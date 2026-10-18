@@ -4,6 +4,7 @@ import { RewardCard } from '../components/RewardCard'
 import { RewardDrawer } from '../components/RewardDrawer'
 import { useRewards } from '../context/RewardsContext'
 import { useSession } from '../context/SessionContext'
+import { copyText } from '../util/copy'
 import { formatDollars } from '../util/money'
 import { domainFor } from '../util/merchants'
 import {
@@ -59,13 +60,9 @@ export function Dashboard() {
 
   async function copyAddress() {
     if (!user) return
-    try {
-      await navigator.clipboard.writeText(user.email)
-      setCopied(true)
-      window.setTimeout(() => setCopied(false), 1500)
-    } catch {
-      setCopied(false)
-    }
+    const ok = await copyText(user.email)
+    setCopied(ok)
+    if (ok) window.setTimeout(() => setCopied(false), 1500)
   }
 
   async function handleRedeem(saved: string) {

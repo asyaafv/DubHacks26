@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Reward } from '../types'
+import { copyText } from '../util/copy'
 import { domainFor } from '../util/merchants'
 import {
   fieldNeedsReview,
@@ -40,13 +41,9 @@ export function RewardDrawer({
 
   async function copyCode() {
     if (!reward.code) return
-    try {
-      await navigator.clipboard.writeText(reward.code)
-      setCopied(true)
-      window.setTimeout(() => setCopied(false), 1500)
-    } catch {
-      setCopied(false)
-    }
+    const ok = await copyText(reward.code)
+    setCopied(ok)
+    if (ok) window.setTimeout(() => setCopied(false), 1500)
   }
 
   async function submit() {

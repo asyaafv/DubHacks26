@@ -101,8 +101,19 @@ function writeItems(items: SavingsItem[]): void {
   sessionStorage.setItem(SESSION_KEY, JSON.stringify(items))
 }
 
+function initialItems(): SavingsItem[] {
+  try {
+    if (new URLSearchParams(window.location.search).get('reset') === '1') {
+      sessionStorage.removeItem(SESSION_KEY)
+    }
+  } catch {
+    // Ignore storage access errors and fall through to the seed ledger.
+  }
+  return readItems()
+}
+
 const rewards = seedRewards()
-let items = readItems()
+let items = initialItems()
 
 function applyRedeemedStatus(): void {
   const redeemed = new Set(items.map((item) => item.reward_id))
