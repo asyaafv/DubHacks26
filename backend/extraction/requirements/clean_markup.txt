@@ -1,0 +1,3 @@
+# Deps for backend/extraction/clean.py and backend/extraction/markup.py
+selectolax==1.0.1
+extruct==0.18.0
