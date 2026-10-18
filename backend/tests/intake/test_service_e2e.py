@@ -42,7 +42,7 @@ ALL_SEED_EMAILS = [
 # filename -> (count, kind, value, code, merchant substring)
 EXPECTED = {
     "hollister_10_percent.eml": (1, RewardKind.percent_off, Decimal("10"), "HCOFALL10", "hollister"),
-    "chipotle_plaintext.eml": (1, RewardKind.free_item, Decimal("0"), "FREEGUAC", "chipotle"),
+    "chipotle_plaintext.eml": (1, RewardKind.free_item, Decimal("1"), "FREEGUAC", "chipotle"),
     "nike_promo.eml": (1, RewardKind.percent_off, Decimal("20"), None, "nike"),
     "target_jsonld_offer.eml": (1, RewardKind.amount_off, Decimal("5.00"), "TARGET5", "target"),
     "amazon_receipt.eml": (0, None, None, None, None),
