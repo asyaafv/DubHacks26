@@ -74,7 +74,7 @@
       "last_four": "3456",
       "base_rate": "1.0",
       "category_rates": [
-        {"category": "Department Stores", "mcc_codes": ["5311"], "rate": "5.0"},
+        {"category": "Department Stores", "mcc_codes": ["5311", "5651"], "rate": "5.0"},
         {"category": "Home Improvement", "mcc_codes": ["5200", "5211", "5251"], "rate": "5.0"},
         {"category": "Fast Food", "mcc_codes": ["5814"], "rate": "2.0"}
       ],
