@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 168 48" fill="none" role="img" aria-label="Lapse">
+  <!-- Mark: a time ring that depletes as a reward nears expiry. -->
+  <circle cx="24" cy="24" r="19" stroke="#dfe9d5" stroke-width="5"/>
+  <path d="M24 5 A19 19 0 1 1 6.1 18.1" stroke="#174b34" stroke-width="5" stroke-linecap="round"/>
+  <path d="M24 24 L24 12.5" stroke="#174b34" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M24 24 L31.5 28.5" stroke="#3e6b29" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="24" cy="24" r="2.6" fill="#174b34"/>
+  <!-- Wordmark in the landing page's Georgia serif -->
+  <text x="56" y="34" font-family="Georgia, 'Times New Roman', serif" font-size="30" font-weight="500" letter-spacing="-1" fill="#103b29">Lapse</text>
+</svg>
