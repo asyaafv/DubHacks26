@@ -72,4 +72,9 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=90s --retries=3 \
 
 # Single worker: the ML models are loaded per-process; 2 workers would double
 # RAM. Scale with bigger instances or more containers, not --workers.
-CMD ["sh", "-c", "exec uvicorn backend.app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1"]
+#
+# WARM_MODELS=1 (optional): after uvicorn is healthy, a background helper
+# replays one plaintext seed email through /demo/inject (throwaway user) so
+# SetFit + GLiNER2 + MiniLM are loaded in the serving process before the
+# demo — first real email ~0.4s instead of ~5s. Costs ~1.4GB RSS up front.
+CMD ["sh", "-c", "if [ \"$WARM_MODELS\" = \"1\" ]; then (python scripts/warm_models.py --http --base-url http://127.0.0.1:${PORT:-8000} &) ; fi; exec uvicorn backend.app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1"]

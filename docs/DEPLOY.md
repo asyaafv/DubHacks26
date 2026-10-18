@@ -23,13 +23,21 @@ is seconds and no HuggingFace access is needed at runtime.
 
 ## Environment variables
 
+Every variable the backend reads (`grep -rn "os.environ\|getenv" backend/`):
+
 | Var | Required | Notes |
 |---|---|---|
 | `PORT` | no (default 8000) | Render/Heroku-style; uvicorn binds to it |
-| `DATABASE_URL` | no | Postgres DSN. Without it the app runs fully in-memory (fine for the demo) |
+| `DATABASE_URL` | no* | Postgres DSN. Without it intake/extraction/`/inbound`/`/demo/*`/`/events` run in-memory, but **`/wallet` and `/sync` return 503** (wallet has no in-memory mode). Set it (with the compose Postgres) if the demo shows the wallet. |
+| `PERK_ENCRYPTION_KEY` | **yes, if `DATABASE_URL` is set** | ≥32 chars (`openssl rand -hex 32`). The app **refuses to start** without it when `DATABASE_URL` is set (pgcrypto key for reward codes). |
+| `PERK_ALLOW_DEMO_IDENTITY` | no | `true` → requests without `X-User-Id` resolve to the demo user on `/wallet` (otherwise 401). Convenient for curl demos; the extension sends the header anyway. |
+| `WARM_MODELS` | no | `1` → at container start, a background helper replays one plaintext seed email through `/demo/inject` (throwaway user) once `/health` is up, loading SetFit + GLiNER2 + MiniLM into the serving process. First demo email ~0.4s instead of ~5s; RSS goes to ~1.4GB immediately. |
 | `POSTMARK_SERVER_TOKEN` | for sending | Postmark server API token (demo console / outbound) |
 | `POSTMARK_INBOUND_ADDRESS` | for inbound | e.g. `abc123...@inbound.postmarkapp.com` (see docs/POSTMARK_SETUP.md) |
 | `DEMO_FROM_EMAIL` | for sending | Verified sender signature in Postmark |
+
+(Test-only, never set in deploys: `TEST_DATABASE_URL`, `NODE_BINARY`,
+`PLAYWRIGHT_NODE_MODULE`.)
 
 CORS: `chrome-extension://*` and localhost origins are already allowed in code
 (`backend/app/main.py`) — nothing to configure.
@@ -38,9 +46,10 @@ CORS: `chrome-extension://*` and localhost origins are already allowed in code
 
 ```bash
 docker build -t lapse-api .          # ~15-25 min first time (trains SetFit, downloads weights)
-docker run -d --name lapse -p 8000:8000 lapse-api
+docker run -d --name lapse -p 8000:8000 -e WARM_MODELS=1 lapse-api
 
 curl -s http://localhost:8000/health | python3 -m json.tool
+docker logs lapse 2>&1 | grep '\[warm\]'   # wait for "[warm] OK server warm"
 
 # Webhook smoke test without real email (stdlib-only script):
 python3 scripts/postmark_smoke.py --base-url http://localhost:8000
@@ -63,9 +72,13 @@ Render terminates TLS for you, so the Postmark webhook URL works immediately.
 2. Render Dashboard → **New → Blueprint** → select the repo. Render reads
    `render.yaml` and creates the `lapse-api` web service on the Docker runtime.
 3. When prompted, fill the secret env vars (`POSTMARK_SERVER_TOKEN`, etc.).
-   `DATABASE_URL` can be left unset for the demo.
+   `DATABASE_URL` can be left unset if the demo skips `/wallet` + `/sync`;
+   if you set it, `PERK_ENCRYPTION_KEY` (≥32 chars) is mandatory.
+   `WARM_MODELS=1` and `PERK_ALLOW_DEMO_IDENTITY=true` are preset in
+   `render.yaml`.
 4. First deploy takes 15-25 min (model training + downloads happen in the
-   image build). Watch for `[warm] done` in the build logs.
+   image build). Watch for `[warm] done` in the build logs, then
+   `[warm] OK   server warm` in the runtime logs (startup warmup).
 5. Your base URL is `https://lapse-api.onrender.com` (or similar). Verify:
 
 ```bash
@@ -127,10 +140,14 @@ docker run -d \
   --restart unless-stopped \
   -p 127.0.0.1:8000:8000 \
   -e PORT=8000 \
+  -e WARM_MODELS=1 \
+  -e PERK_ALLOW_DEMO_IDENTITY=true \
   -e POSTMARK_SERVER_TOKEN='<your-postmark-server-token>' \
   -e POSTMARK_INBOUND_ADDRESS='<hash>@inbound.postmarkapp.com' \
   -e DEMO_FROM_EMAIL='demo@yourdomain.com' \
-  # -e DATABASE_URL='postgresql://user:pass@host:5432/lapse' \  # optional
+  # Optional Postgres (needed for /wallet and /sync; see env var table):
+  # -e DATABASE_URL='postgresql://user:pass@host:5432/lapse' \
+  # -e PERK_ENCRYPTION_KEY='<openssl rand -hex 32>' \
   lapse-api
 ```
 
