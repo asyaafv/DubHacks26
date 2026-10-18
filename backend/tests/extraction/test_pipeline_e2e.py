@@ -76,6 +76,25 @@ def test_receipt_yields_nothing():
         assert extract_rewards(_load(name), USER_ID) == []
 
 
+def test_degrades_to_regex_when_gliner_unavailable(monkeypatch):
+    """Simulate a machine without gliner2: the GLiNER stage raises
+    ExtractionUnavailable at call time and the pipeline must still produce
+    rewards from the regex candidates."""
+    from backend.extraction import pipeline
+
+    def _raise(_text: str):
+        raise pipeline.ExtractionUnavailable("gliner2 not installed (simulated)")
+
+    monkeypatch.setattr(pipeline, "extract_fields", _raise)
+    monkeypatch.setattr(pipeline, "_gliner_unavailable_logged", False)
+
+    # Chipotle is plaintext (no JSON-LD), so it exercises the GLiNER+regex path.
+    rewards = pipeline.extract_rewards(_load("chipotle_plaintext.eml"), USER_ID)
+    assert len(rewards) == 1
+    assert rewards[0].kind == RewardKind.free_item
+    assert rewards[0].code == "FREEGUAC"
+
+
 def test_pipeline_reports_stage_timings():
     result = run_pipeline(_load("hollister_10_percent.eml"), USER_ID)
     timings = result.timings_ms
