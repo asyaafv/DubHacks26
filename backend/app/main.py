@@ -61,6 +61,20 @@ from backend.decisions.storage import Database
 from backend.decisions.common import resolve_user
 from backend.decisions.wallet.router import router as wallet_router
 
+from backend.intake.service import (
+    DemoInjectWithForce,
+    IntakeInboundResult,
+    coerce_inbound_email,
+    drain_events as drain_intake_events,
+    process_inbound,
+)
+
+# Demo merchant console (Agent D) may not have merged yet; mount if importable.
+try:
+    from backend.intake.console.router import router as demo_console_router
+except ImportError:
+    demo_console_router = None
+
 
 @asynccontextmanager
 async def lifespan(app):
@@ -307,45 +321,46 @@ async def health_check() -> HealthCheck:
 # =============================================================================
 
 
-def _run_extraction(email: InboundEmail, user_id: UUID) -> InboundResult:
-    """Run the extraction pipeline and persist resulting rewards in memory."""
-    from backend.extraction.pipeline import run_pipeline
-
-    result = run_pipeline(email, user_id)
-    rewards_store = get_rewards()
-    rewards_store.extend(result.rewards)
-    return InboundResult(
-        message_id=email.MessageID,
-        classification=EmailClassification(result.classification),
-        rewards_extracted=len(result.rewards),
-        reward_ids=[r.id for r in result.rewards],
-        needs_review=any(r.status == RewardStatus.needs_review for r in result.rewards),
-        processing_time_ms=int(result.timings_ms["total_ms"]),
-    )
-
-
-@app.post("/inbound", response_model=InboundResult, tags=["Intake"])
+@app.post("/inbound", response_model=IntakeInboundResult, tags=["Intake"])
 async def process_inbound_email(
-    email: InboundEmail,
+    request: Request,
     x_user_id: str | None = Header(None, alias="X-User-Id"),
-) -> InboundResult:
+) -> IntakeInboundResult:
     """
     Process inbound email from Postmark webhook.
 
-    Runs the real extraction pipeline (clean -> classify -> markup ->
-    GLiNER/regex -> normalize -> merchant) and stores extracted rewards.
+    Accepts the raw Postmark inbound JSON (extra/missing fields tolerated) and
+    runs the intake flow: routing -> dedupe -> redaction -> extraction ->
+    persist -> reward_added events.
+
+    Always returns 200 for a parseable JSON object so Postmark never retries
+    forever; an unroutable recipient yields rewards_extracted=0 with
+    note="unknown_recipient". Only a non-JSON body gets a 400.
     """
-    user_id = get_user_id(x_user_id)
-    return _run_extraction(email, user_id)
+    try:
+        payload = await request.json()
+    except Exception:  # noqa: BLE001 - body was not JSON at all
+        raise HTTPException(status_code=400, detail="Request body must be JSON")
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Request body must be a JSON object")
+
+    email = coerce_inbound_email(payload)
+    # Explicit header overrides routing; otherwise the service resolves the
+    # user from MailboxHash / recipient address.
+    user_id = get_user_id(x_user_id) if x_user_id else None
+    return process_inbound(email, user_id, source="postmark")
 
 
-@app.post("/demo/inject", response_model=InboundResult, tags=["Intake"])
+@app.post("/demo/inject", response_model=IntakeInboundResult, tags=["Intake"])
 async def inject_demo_email(
-    request: DemoInjectRequest,
+    request: DemoInjectWithForce,
     x_user_id: str | None = Header(None, alias="X-User-Id"),
-) -> InboundResult:
+) -> IntakeInboundResult:
     """
-    Replay a stored .eml file through the real extraction pipeline.
+    Replay a stored .eml file through the intake flow.
+
+    Pass `"force": true` to bypass the dedupe check so demos can replay the
+    same email repeatedly.
     """
     from backend.extraction.pipeline import parse_eml
 
@@ -359,7 +374,19 @@ async def inject_demo_email(
         )
 
     email = parse_eml(eml_path.read_bytes())
-    return _run_extraction(email, user_id)
+    return process_inbound(email, user_id, source="demo", force=request.force)
+
+
+@app.get("/demo/emails", tags=["Intake"])
+async def list_demo_emails() -> dict:
+    """List the seed .eml files available for /demo/inject."""
+    emails_dir = SEED_DIR / "emails"
+    files = sorted(p.name for p in emails_dir.glob("*.eml")) if emails_dir.exists() else []
+    return {"emails": files}
+
+
+if demo_console_router is not None:
+    app.include_router(demo_console_router, prefix="/demo/console", tags=["Demo Console"])
 
 
 # =============================================================================
@@ -609,15 +636,21 @@ async def event_generator(user_id: UUID) -> AsyncGenerator[str, None]:
     )
     yield f"event: {event.event_type.value}\ndata: {event.model_dump_json()}\n\n"
 
-    # Stub: Send a test event every 30 seconds
+    # Deliver reward_added events queued by the intake service (1s poll),
+    # plus the original stub reward_expiring event every 30 seconds.
+    ticks = 0
     while True:
-        await asyncio.sleep(30)
-        event = Event(
-            event_type=EventType.reward_expiring,
-            user_id=user_id,
-            data={"message": "Stub event - rewards expiring soon"},
-        )
-        yield f"event: {event.event_type.value}\ndata: {event.model_dump_json()}\n\n"
+        await asyncio.sleep(1)
+        ticks += 1
+        for event in drain_intake_events(user_id):
+            yield f"event: {event.event_type.value}\ndata: {event.model_dump_json()}\n\n"
+        if ticks % 30 == 0:
+            event = Event(
+                event_type=EventType.reward_expiring,
+                user_id=user_id,
+                data={"message": "Stub event - rewards expiring soon"},
+            )
+            yield f"event: {event.event_type.value}\ndata: {event.model_dump_json()}\n\n"
 
 
 @app.get("/events", tags=["Sync"])
