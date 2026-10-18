@@ -1,0 +1,5 @@
+# GLiNER2 extraction dependencies
+# Model: fastino/gliner2-base-v1 (Apache-2.0, CPU-compatible)
+gliner2[local]==2.1.0
+torch>=2.0.0
+transformers>=4.43.0
