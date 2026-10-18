@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "PerkSense API",
+    "title": "Lapse API",
     "description": "Find and stack store rewards, card cashback, and memberships",
     "version": "0.1.0"
   },

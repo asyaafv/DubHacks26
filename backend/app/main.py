@@ -1,5 +1,5 @@
 """
-PerkSense API - Stub Implementation
+Lapse API - Stub Implementation
 
 This is a STUB implementation that returns seed data for frontend integration.
 Backend developers should replace stub logic with real implementations.
@@ -60,7 +60,7 @@ from .schemas import (
 # =============================================================================
 
 app = FastAPI(
-    title="PerkSense API",
+    title="Lapse API",
     description="Find and stack store rewards, card cashback, and memberships",
     version="0.1.0",
     docs_url="/docs",
@@ -747,4 +747,4 @@ async def startup():
     get_rewards()
     get_cards()
     get_memberships()
-    print(f"PerkSense API started. Loaded {len(get_merchants())} merchants, {len(get_rewards())} rewards.")
+    print(f"Lapse API started. Loaded {len(get_merchants())} merchants, {len(get_rewards())} rewards.")

@@ -266,7 +266,7 @@ def generate_typescript_types(all_schemas: dict):
 
     lines = [
         "/**",
-        " * PerkSense Shared Types",
+        " * Lapse Shared Types",
         " *",
         " * AUTO-GENERATED from Pydantic models. Do not edit directly.",
         " * Regenerate with: python scripts/gen_contracts.py",
@@ -323,7 +323,7 @@ def generate_openapi_spec():
 
 
 def main():
-    print("Generating PerkSense contracts...")
+    print("Generating Lapse contracts...")
     print()
 
     # Generate JSON schemas

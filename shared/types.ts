@@ -1,5 +1,5 @@
 /**
- * PerkSense Shared Types
+ * Lapse Shared Types
  *
  * AUTO-GENERATED from Pydantic models. Do not edit directly.
  * Regenerate with: python scripts/gen_contracts.py

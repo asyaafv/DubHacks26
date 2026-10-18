@@ -1,5 +1,5 @@
 """
-PerkSense Contract Tests
+Lapse Contract Tests
 
 Validates:
 1. Seed data files conform to Pydantic schemas
@@ -462,7 +462,7 @@ class TestInboundEndpoint:
             json={
                 "MessageID": "test-msg-001",
                 "FromFull": {"Email": "rewards@test.com", "Name": "Test"},
-                "ToFull": [{"Email": "demo@perk.app", "Name": ""}],
+                "ToFull": [{"Email": "demo@lapse.app", "Name": ""}],
                 "Subject": "Test Offer",
                 "TextBody": "Use code TEST10 for 10% off",
                 "HtmlBody": None,
@@ -481,7 +481,7 @@ class TestInboundEndpoint:
             json={
                 "MessageID": "test-msg-002",
                 "FromFull": {"Email": "rewards@test.com", "Name": "Test"},
-                "ToFull": [{"Email": "demo@perk.app", "Name": ""}],
+                "ToFull": [{"Email": "demo@lapse.app", "Name": ""}],
                 "Subject": "Test Offer",
                 "TextBody": "Test email body",
                 "HtmlBody": None,

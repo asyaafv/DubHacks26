@@ -73,7 +73,7 @@ import type {
 
 const API_BASE = 'http://localhost:8000';
 
-class PerkSenseAPI {
+class LapseAPI {
   private userId: string;
 
   constructor(userId: string) {
@@ -121,7 +121,7 @@ class PerkSenseAPI {
   }
 }
 
-export const api = new PerkSenseAPI('00000000-0000-0000-0000-000000000001');
+export const api = new LapseAPI('00000000-0000-0000-0000-000000000001');
 ```
 
 ## SSE Hook
@@ -303,7 +303,7 @@ export default function App() {
 
   return (
     <div className="w-80 p-4">
-      <h1 className="text-xl font-bold mb-4">PerkSense</h1>
+      <h1 className="text-xl font-bold mb-4">Lapse</h1>
       
       {lookup && (
         <div className="mb-4">

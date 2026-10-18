@@ -1,5 +1,5 @@
 """
-PerkSense Shared Contracts - Pydantic v2 Models
+Lapse Shared Contracts - Pydantic v2 Models
 
 These models are the SOURCE OF TRUTH for all API contracts.
 When modified:
