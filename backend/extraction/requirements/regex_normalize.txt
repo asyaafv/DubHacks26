@@ -1,0 +1,3 @@
+# Dependencies for regex_extract.py and normalize.py
+dateparser>=1.2.0,<2.0.0
+price-parser>=0.3.0,<1.0.0
