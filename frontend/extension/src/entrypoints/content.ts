@@ -167,6 +167,7 @@ const CSS = `
     padding: 7px 12px;
     font-size: 11px;
     font-weight: 700;
+    line-height: 1.4;
   }
   .pill {
     display: none;

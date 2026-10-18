@@ -63,7 +63,7 @@ export function RewardCard({ scored, domain = '' }: { scored: ScoredReward; doma
   );
 }
 
-/** Compact one-line row for a reward flagged save_for_later. */
+/** Compact row for a reward flagged save_for_later; the label wraps so it never truncates. */
 export function SaveForLaterRow({ scored }: { scored: ScoredReward }) {
   const reward = scored.reward;
   return (
@@ -71,8 +71,12 @@ export function SaveForLaterRow({ scored }: { scored: ScoredReward }) {
       className="flex items-center justify-between gap-2 border-2 border-dashed border-ink bg-white px-3 py-1.5"
       data-testid="save-for-later-row"
     >
-      <span className="min-w-0 flex-1 truncate text-[11px] font-bold">{saveForLaterLabel(scored)}</span>
-      {reward.code ? <CopyCode code={reward.code} /> : null}
+      <span className="min-w-0 flex-1 text-[11px] font-bold leading-snug">{saveForLaterLabel(scored)}</span>
+      {reward.code ? (
+        <span className="shrink-0">
+          <CopyCode code={reward.code} />
+        </span>
+      ) : null}
     </div>
   );
 }
