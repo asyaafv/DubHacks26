@@ -4,6 +4,7 @@ from pathlib import Path
 
 from backend.app.schemas import Card, Membership, Merchant, Reward
 from backend.decisions.common import DEMO_USER_ID
+from backend.decisions.savings.schemas import Redemption
 
 SEEDS = Path(__file__).resolve().parents[3] / 'shared' / 'seed'
 
@@ -17,6 +18,7 @@ async def seed(database, directory=SEEDS):
             ('seed_cards.json', 'cards', Card, repo.add_card),
             ('seed_memberships.json', 'memberships', Membership, repo.add_membership),
             ('seed_rewards.json', 'rewards', Reward, repo.save_reward),
+            ('seed_redemptions.json', 'redemptions', Redemption, repo.add_redemption),
         ):
             claimed = await repo._conn.fetchval('INSERT INTO seed_imports(user_id,dataset) VALUES($1,$2) ON CONFLICT DO NOTHING RETURNING dataset', repo.user_id, filename)
             if claimed:

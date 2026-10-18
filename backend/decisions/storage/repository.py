@@ -179,6 +179,29 @@ class Repository:
                     user_id=self.user_id, reward_id=row['reward_id'], data=json.loads(row['data']),
                     timestamp=row['created_at'])) for row in rows]
 
+    async def add_redemption(self, redemption) -> bool:
+        """Insert one redemption; False when this reward was already redeemed."""
+        self._owner(redemption)
+        exact_number(redemption.saved, 2)
+        return await self._conn.fetchval(
+            'INSERT INTO redemptions(id,user_id,reward_id,merchant_name,description,saved,redeemed_at) '
+            'VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING RETURNING id',
+            redemption.id, self.user_id, redemption.reward_id, redemption.merchant_name,
+            redemption.description, redemption.saved, utc(redemption.redeemed_at)) is not None
+
+    async def get_redemption_for_reward(self, reward_id):
+        from backend.decisions.savings.schemas import Redemption
+        row = await self._conn.fetchrow(
+            'SELECT * FROM redemptions WHERE user_id=$1 AND reward_id=$2', self.user_id, reward_id)
+        return Redemption.model_validate(dict(row)) if row else None
+
+    async def list_redemptions(self):
+        """Newest first, for GET /savings items."""
+        from backend.decisions.savings.schemas import Redemption
+        rows = await self._conn.fetch(
+            'SELECT * FROM redemptions WHERE user_id=$1 ORDER BY redeemed_at DESC, id', self.user_id)
+        return [Redemption.model_validate(dict(row)) for row in rows]
+
     async def save_merchant(self, merchant: Merchant, embedding=None):
         normalized = merchant.model_copy(update={'domain': canonical_domain(merchant.domain)})
         extras = {'embedding': vector_literal(embedding)} if embedding is not None else {}
