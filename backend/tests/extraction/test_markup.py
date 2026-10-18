@@ -157,10 +157,24 @@ class TestExtractMarkup:
         assert elapsed_ms < 20, f"extract_markup took {elapsed_ms:.2f}ms, expected <20ms"
 
     def test_no_ml_dependency(self):
-        """Verify markup extraction doesn't depend on ML models."""
+        """Verify importing markup extraction doesn't pull in ML models.
+
+        Runs in a subprocess: checking sys.modules in-process is order-dependent
+        once other test files legitimately import torch/setfit/gliner.
+        """
+        import subprocess
         import sys
-        
-        ml_modules = ["torch", "tensorflow", "transformers", "setfit", "gliner"]
-        loaded_ml = [m for m in ml_modules if m in sys.modules]
-        
-        assert len(loaded_ml) == 0, f"ML modules loaded: {loaded_ml}"
+
+        code = (
+            "import sys; import backend.extraction.markup; "
+            "ml = [m for m in ('torch', 'tensorflow', 'transformers', 'setfit', 'gliner', 'gliner2') "
+            "if m in sys.modules]; "
+            "assert not ml, f'ML modules loaded: {ml}'"
+        )
+        result = subprocess.run(
+            [sys.executable, "-c", code],
+            capture_output=True,
+            text=True,
+            cwd=str(Path(__file__).resolve().parents[3]),
+        )
+        assert result.returncode == 0, result.stderr

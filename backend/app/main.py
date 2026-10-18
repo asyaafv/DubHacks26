@@ -287,6 +287,23 @@ async def health_check() -> HealthCheck:
 # =============================================================================
 
 
+def _run_extraction(email: InboundEmail, user_id: UUID) -> InboundResult:
+    """Run the extraction pipeline and persist resulting rewards in memory."""
+    from backend.extraction.pipeline import run_pipeline
+
+    result = run_pipeline(email, user_id)
+    rewards_store = get_rewards()
+    rewards_store.extend(result.rewards)
+    return InboundResult(
+        message_id=email.MessageID,
+        classification=EmailClassification(result.classification),
+        rewards_extracted=len(result.rewards),
+        reward_ids=[r.id for r in result.rewards],
+        needs_review=any(r.status == RewardStatus.needs_review for r in result.rewards),
+        processing_time_ms=int(result.timings_ms["total_ms"]),
+    )
+
+
 @app.post("/inbound", response_model=InboundResult, tags=["Intake"])
 async def process_inbound_email(
     email: InboundEmail,
@@ -295,20 +312,11 @@ async def process_inbound_email(
     """
     Process inbound email from Postmark webhook.
 
-    STUB: Returns mock extraction result.
-    REAL: Presidio PII redaction -> dedupe -> SetFit classify -> extraction cascade
+    Runs the real extraction pipeline (clean -> classify -> markup ->
+    GLiNER/regex -> normalize -> merchant) and stores extracted rewards.
     """
     user_id = get_user_id(x_user_id)
-
-    # Stub: Pretend we extracted one reward
-    return InboundResult(
-        message_id=email.MessageID,
-        classification=EmailClassification.reward,
-        rewards_extracted=1,
-        reward_ids=[UUID("22222222-2222-2222-2222-222222222299")],
-        needs_review=False,
-        processing_time_ms=150,
-    )
+    return _run_extraction(email, user_id)
 
 
 @app.post("/demo/inject", response_model=InboundResult, tags=["Intake"])
@@ -317,14 +325,12 @@ async def inject_demo_email(
     x_user_id: str | None = Header(None, alias="X-User-Id"),
 ) -> InboundResult:
     """
-    Replay a stored .eml file through the intake pipeline.
-
-    STUB: Returns mock result based on filename.
-    REAL: Loads .eml, parses, runs through full pipeline.
+    Replay a stored .eml file through the real extraction pipeline.
     """
+    from backend.extraction.pipeline import parse_eml
+
     user_id = request.user_id or get_user_id(x_user_id)
 
-    # Check if file exists
     eml_path = SEED_DIR / "emails" / request.eml_filename
     if not eml_path.exists():
         raise HTTPException(
@@ -332,21 +338,8 @@ async def inject_demo_email(
             detail=f"Email file not found: {request.eml_filename}",
         )
 
-    # Stub classification based on filename
-    classification = EmailClassification.reward
-    if "receipt" in request.eml_filename.lower():
-        classification = EmailClassification.receipt
-    elif "promo" in request.eml_filename.lower():
-        classification = EmailClassification.promo
-
-    return InboundResult(
-        message_id=f"demo-{request.eml_filename}",
-        classification=classification,
-        rewards_extracted=1 if classification == EmailClassification.reward else 0,
-        reward_ids=[UUID("22222222-2222-2222-2222-222222222298")] if classification == EmailClassification.reward else [],
-        needs_review=False,
-        processing_time_ms=200,
-    )
+    email = parse_eml(eml_path.read_bytes())
+    return _run_extraction(email, user_id)
 
 
 # =============================================================================
