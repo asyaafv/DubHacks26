@@ -16,8 +16,7 @@ sentence-transformers>=3,<4  # MiniLM query encoder; compatible with merchants' 
 # dateparser>=1.2.0  # Fuzzy date parsing
 # price-parser>=0.3.0  # Price extraction
 
-# Optimization
-# ortools>=9.8.0  # CP-SAT solver for reward stacking
+# Optimization: OR-Tools is declared in core requirements.txt for the stack router.
 
 # Database (real implementation)
 # asyncpg>=0.29.0  # Async Postgres driver
