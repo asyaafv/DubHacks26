@@ -283,7 +283,7 @@ function CouponB({ reward, theme }: { reward: Reward; theme: Theme }) {
 
 function DashboardB({ data, theme }: { data: MockupData; theme: Theme }) {
   const m = useDashboardModel(data)
-  const ticker = m.nudges.map((r) => `${r.merchant_name.toUpperCase()} ${formatRewardValue(r)} LAPSES ${formatExpiry(r.expires_at, NOW).toUpperCase()}`).join('  ✂  ')
+  const ticker = m.nudges.map((r) => `${r.merchant_name.toUpperCase()} ${formatRewardValue(r)} — ${formatExpiry(r.expires_at, NOW).toUpperCase()}`).join('  ✂  ')
   return (
     <div className="min-h-screen bg-[#FFF6E9] text-[#141414]" style={{ fontFamily: '"Space Grotesk", sans-serif' }}>
       <div className="overflow-hidden whitespace-nowrap border-b-2 border-[#141414] bg-[#141414] py-1.5 text-xs font-bold tracking-wider text-[#BCE740]">
@@ -329,8 +329,7 @@ function DashboardB({ data, theme }: { data: MockupData; theme: Theme }) {
         <div className="mt-6 flex rotate-[-0.4deg] items-center gap-3 border-2 border-[#141414] bg-[#F5A800] px-4 py-2" style={{ boxShadow: '6px 6px 0 #141414' }}>
           <span className="text-xl">✂</span>
           <p className="text-sm font-bold uppercase">
-            Clip 'em before they lapse: {m.nudges.length} coupons die by{' '}
-            {formatExpiry(m.nudges[m.nudges.length - 1]?.expires_at, NOW)} — worth {formatRewardValue(m.nudges[0])} at {m.nudges[0].merchant_name} alone
+            Clip 'em before they lapse: {m.nudges.length} coupons die within 3 days — {formatRewardValue(m.nudges[0])} at {m.nudges[0].merchant_name} among them
           </p>
         </div>
 
