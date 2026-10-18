@@ -42,8 +42,8 @@ Counts: 9 Works, 1 Partial, 1 Broken (fixed in this PR), 0 Missing.
 | console/hollister_10 | reward (0.84) | percent_off | 10 | HCOFALL10 | 50 | ✓ +3d | Hollister | active |
 | console/tacobell_crunchwrap | reward (0.85) | free_item | 1 | CRUNCHTIME | — | ✓ +7d | Taco Bell | active |
 | console/ulta_points | reward (0.75) | points | 500 | — | — | ✓ +14d | Ulta Beauty | active |
-| console/pacsun_bogo | reward (0.85) | bogo | 1 | PACBOGO | — | ✓ +5d | "BOGO" (!) | needs_review |
-| console/aero_50 | reward (0.82) | percent_off | 50 | AERO50 | — | ✓ +4d | Aéropostale (no id) | needs_review |
+| console/pacsun_bogo | reward (0.85) | bogo | 1 | PACBOGO | — | ✓ +5d | PacSun | active |
+| console/aero_50 | reward (0.82) | percent_off | 50 | AERO50 | — | ✓ +4d | Aéropostale | active |
 | console/target_5off | reward (0.86) | amount_off | 5 | CIRCLE5 | 25 | ✓ +10d | Target | active |
 | custom/sephora_points | reward (0.66) | points | 250 | — | — | ✓ +30d | Sephora | active |
 | custom/starbucks_bogo | reward (0.85) | bogo | 1 | SIPSHARE | — | ✓ +3d | Starbucks | active |
@@ -88,12 +88,12 @@ Tests: extraction 235 passed (231 pre-existing + 4 new), intake 134 passed, 0 fa
 
 ## Needs fix elsewhere
 
-- **P1 — `shared/seed/seed_merchants.json`: add PacSun and Aéropostale.** Both are demo console
-  templates and both appear in the decisions demo-redemptions list, but neither is in the seed
-  merchants file. Result: `console/pacsun_bogo` lands with merchant_name "BOGO" (GLiNER mislabel,
-  nothing to correct it) and `console/aero_50` with `merchant_id=null`; both get `needs_review`
-  instead of `active`. Suggested rows: `{"name": "PacSun", "domain": "pacsun.com", "mcc": "5651", ...}`,
-  `{"name": "Aéropostale", "domain": "aeropostale.com", "mcc": "5651", ...}` with fresh UUIDs.
+- **P1 — RESOLVED (approved cross-area fix on this branch):** PacSun and Aéropostale added to
+  `shared/seed/seed_merchants.json` (ids ...151/...152, mcc 5651, with email.* aliases). No
+  merchant-resolution code change was needed: `classify_merchant` checks the sender domain before
+  the GLiNER name, so the seed rows alone fix it. After the fix all 6 console templates resolve
+  to real merchant ids and land `active`: pacsun_bogo → PacSun (overall 0.886, was "BOGO" /
+  needs_review), aero_50 → Aéropostale (0.99, was no-id / needs_review).
 - **P2 — doc drift:** `backend/extraction/README.md` says needs_review threshold 0.7;
   `pipeline.py` implements 0.6 ("per the task spec"). Align the README (or the spec) — do not
   change the runtime threshold this close to demo, since 0.7 would flip chipotle/tacobell
