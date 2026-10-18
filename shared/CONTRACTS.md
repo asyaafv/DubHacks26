@@ -22,7 +22,7 @@ Demo user ID: `00000000-0000-0000-0000-000000000001`
 
 ## Error Format
 
-All errors return:
+Errors raised by endpoint handlers return:
 
 ```json
 {
@@ -31,6 +31,11 @@ All errors return:
   "details": {}
 }
 ```
+
+**Caveat (verified)**: two error classes bypass this shape today — unknown
+routes return FastAPI's default `{"detail": "Not Found"}` (404) and request
+validation failures return `{"detail": [...]}` (422). Clients should fall back
+to `response.status` when `message` is absent (both frontends already do).
 
 ---
 
@@ -93,11 +98,19 @@ POST /inbound
   "rewards_extracted": 1,
   "reward_ids": ["22222222-2222-2222-2222-222222222201"],
   "needs_review": false,
-  "processing_time_ms": 150
+  "processing_time_ms": 150,
+  "duplicate": false,
+  "note": null
 }
 ```
 
 **Classification values**: `reward`, `receipt`, `promo`, `other`
+
+The live service returns a superset of `InboundResult` (verified against the
+running app): `duplicate` is `true` when the MessageID was already processed,
+and `note` is `null` or one of `"duplicate"`, `"unknown_recipient"`,
+`"extraction_error"`. All of those outcomes still return 200 with
+`rewards_extracted: 0` so Postmark never retries. Only a non-JSON body gets 400.
 
 ---
 
@@ -113,9 +126,14 @@ Replay a stored `.eml` file through the pipeline for testing.
 ```json
 {
   "eml_filename": "hollister_10_percent.eml",
-  "user_id": "00000000-0000-0000-0000-000000000001"
+  "user_id": "00000000-0000-0000-0000-000000000001",
+  "force": true
 }
 ```
+
+`force` (optional, default `false`) bypasses the dedupe check so the same email
+can be replayed repeatedly during a demo. Without it, a second inject of the
+same file returns `duplicate: true` with `rewards_extracted: 0`.
 
 **Available test emails**:
 - `hollister_10_percent.eml` - JSON-LD discount offer
@@ -125,6 +143,18 @@ Replay a stored `.eml` file through the pipeline for testing.
 - `amazon_receipt.eml` - Receipt (not a reward)
 
 **Response**: Same as `/inbound`
+
+### List Demo Emails
+
+```
+GET /demo/emails
+```
+
+**Response** `200 OK`: `{"emails": ["amazon_receipt.eml", "chipotle_plaintext.eml", ...]}`
+(the filenames accepted by `/demo/inject`).
+
+A demo merchant console UI is served at `GET /demo/console` (redirects to its
+index page) when the console module is present.
 
 ---
 
@@ -318,6 +348,17 @@ router in `backend/decisions/delivery/`. Integration must replace the existing
 are available in the shared application. See that module's `README.md` for wiring
 and its `fetch-events.mjs` browser client.
 
+> **Current behavior of the running app (verified)** — until the delivery router
+> is wired in, `/sync` differs from the description below:
+> - Without `DATABASE_URL` set, `/sync` returns **503** ("Database is not
+>   configured") because it builds the wallet from Postgres. There is no
+>   in-memory fallback. `/lookup`, `/stack` and `/events` still work in-memory.
+> - It returns only `active` rewards (not used/expired/needs_review), ignores
+>   `since`, always returns `pending_events: []`, and does **not** set the
+>   `X-Event-Cursor` response header.
+> - A missing `X-User-Id` header is resolved by the wallet layer, which returns
+>   401 unless `PERK_ALLOW_DEMO_IDENTITY=true`. Always send the header.
+
 **Headers**: `X-User-Id: <uuid>`
 
 **Query Params**:
@@ -412,6 +453,22 @@ membership identifiers. Fetch current models through `/sync` as needed. Comment
 heartbeats keep idle connections alive; reconnect after disconnects using the last
 successfully applied cursor.
 
+> **Current behavior of the running app (verified)** — until the delivery router
+> is wired in, `/events` is an in-memory stream that differs from the above:
+> - No `id:` lines are sent and `Last-Event-ID` is ignored; there is no durable
+>   replay. Events queued before the first connect are delivered once, then lost.
+> - A `sync_complete` event is sent on connect, and a stub `reward_expiring`
+>   event (data: `{"message": ...}`) fires every 30 seconds.
+> - `reward_added` events are emitted by intake with `data` =
+>   `{"merchant_name", "kind", "value", "code", "source"}` — note this currently
+>   **does include the plaintext code**, which the extension uses for its toast
+>   text. The durable router will drop codes from events; the frontend must then
+>   fetch the code via `/sync` (toast should degrade to merchant + kind).
+> - `timestamp` is a naive datetime with **no timezone suffix** (e.g.
+>   `2026-10-18T07:44:04.206305`); treat it as UTC. Aware fields elsewhere
+>   serialize with `Z`.
+> - A missing `X-User-Id` falls back to the demo user (no 401).
+
 **Frontend Usage**:
 
 Native `EventSource` does not support custom request headers. Passing a `headers`
@@ -485,13 +542,37 @@ For known merchants:
 }
 ```
 
-### Savings & Redemption (planned, Person 3)
+### Savings & Redemption (planned, Person 3 — NOT yet implemented; both return 404 today)
 
 | Endpoint | Description | Status |
 |----------|-------------|--------|
 | `POST /rewards/{id}/redeem` | Mark a reward used, record a redemption, emit `reward_used` | planned, Person 3 |
 | `GET /savings` | Total savings, itemized redemptions (newest first), cumulative daily series | planned, Person 3 |
 
+The web dashboard (`frontend/web/src/api/savings.ts`) is already built against
+this exact contract (mocked by default). Agreed shapes:
+
+```
+POST /rewards/{id}/redeem
+Headers: X-User-Id
+Body: {"saved": "12.50"}        // decimal dollars string; optional per spec
+-> 200: the updated Reward object (status = "used")
+
+GET /savings
+Headers: X-User-Id
+-> 200: {
+  "total": "103.51",
+  "items": [
+    {"reward_id": "...", "merchant_name": "Hollister", "description": "...",
+     "saved": "10.00", "redeemed_at": "2026-09-08T18:12:00Z"}
+  ],                                            // newest first
+  "series": [{"date": "2026-09-08", "cumulative": "10.00"}]
+                 // one point per UTC day with a redemption, running total
+}
+```
+
+Money is a decimal-dollars string (never cents); `date` is `YYYY-MM-DD` UTC.
+Demo seed must total exactly **$103.51**.
 See `backend/decisions/README.md` ("NEW: Savings tracking") for the full spec.
 
 ---
@@ -562,10 +643,18 @@ Full JSON Schema files are in `shared/schemas/`.
 
 ## CORS
 
-The API allows requests from:
+The API intends to allow requests from:
 - `chrome-extension://*`
 - `http://localhost:*`
 - `http://127.0.0.1:*`
+
+**Known gap (verified)**: Starlette's `allow_origins` does exact string matching,
+so the `http://localhost:*` / `http://127.0.0.1:*` entries in
+`backend/app/main.py` match nothing. Only `chrome-extension://.*` works today
+(via `allow_origin_regex`). Preflight from `http://localhost:5173` (the web
+dashboard dev server) currently returns **400 "Disallowed CORS origin"**. Fix
+in `main.py`: replace `allow_origin_regex` with
+`r"chrome-extension://.*|https?://(localhost|127\.0\.0\.1)(:\d+)?"`.
 
 ---
 
@@ -575,3 +664,48 @@ No rate limits implemented for hackathon. In production, consider:
 - `/stack`: 10 req/min per user
 - `/lookup`: 30 req/min per user
 - `/events`: 1 connection per user
+
+---
+
+## Frontend integration notes (contracts audit, Oct 18)
+
+Verified against a running in-memory backend (`uvicorn backend.app.main:app`,
+no `DATABASE_URL`). Applies to `cursor/web-dashboard-2556` and
+`cursor/lapse-extension-6787`.
+
+**Works live today, as typed** (keep `VITE_USE_MOCKS=false` paths as-is):
+- `POST /lookup`, `POST /stack`, `POST /classify-merchant`, `POST /inbound`,
+  `POST /demo/inject` (supports `"force": true`), `GET /demo/emails`,
+  `GET /health`. Shapes match `shared/types.ts` exactly; all money fields are
+  decimal strings (`Number(value)` parses them — note `/stack` may return more
+  than 2 decimal places, e.g. `"50.0000"`; your `money()`/`toCents()` helpers
+  already handle this). Enum values match `shared/types.ts` enums exactly.
+- `X-User-Id` header: send it on every call (you already do). On stub endpoints
+  a missing header silently becomes the demo user; on `/wallet` and `/sync` it
+  is a **401** unless the server sets `PERK_ALLOW_DEMO_IDENTITY=true`.
+
+**Will fail in live mode until backend changes land — keep mocks as default:**
+1. `GET /savings` and `POST /rewards/{id}/redeem` → **404** (not implemented).
+   The shapes in `frontend/web/src/api/savings.ts` match the agreed backend spec
+   exactly (including `saved` as decimal dollars and `date` as `YYYY-MM-DD`), so
+   no frontend change needed when they land.
+2. `GET /sync` and `GET /wallet` → **503** without Postgres. The extension's
+   `/sync` polling fallback and the web dashboard's `getSync` both hit this.
+   No frontend change needed; backend must restore an in-memory path or the
+   demo must run with `DATABASE_URL` set.
+3. Web dashboard CORS: `http://localhost:5173` is **blocked** by the current
+   backend CORS config (see Known gap above). Extension origins are fine.
+
+**SSE specifics for the extension** (`core/sse.ts` parser is compatible):
+- No `id:` lines are sent; `Last-Event-ID` is ignored. Your parser ignoring
+  `id:` is correct for now.
+- `reward_added` `data` currently includes `merchant_name`, `kind`, `value`,
+  `code`, `source` — your `toastMessage()` works. When the durable delivery
+  router lands, `code` will disappear from events; keep the existing
+  "no code → shorter toast" fallback.
+- Event `timestamp` has no timezone suffix; treat as UTC (you only use it as a
+  dedupe key, which is fine).
+- Expect a stub `reward_expiring` every 30s with `data.message` only — don't
+  render it as a real expiry alert yet.
+- `/sync` polling as an events fallback yields no toasts even with a database:
+  `pending_events` is always `[]` in the stub.
