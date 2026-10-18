@@ -1,16 +1,16 @@
+import { Fragment } from 'react';
 import { formatExpiry, formatRewardValue, money } from '../core/format';
-import { useSearch } from '../hooks/useSearch';
+import type { SearchState } from '../hooks/useSearch';
 import type { SearchHit } from '../types';
 import { CopyCode } from './CopyCode';
 
 /**
- * Self-contained reward search: input, quick chips from the user's own
- * categories, and ranked results with value, expiry, code and match reason.
+ * Reward search panel: input, quick chips from the user's own categories, and
+ * ranked results with value, expiry, code and match reason. Owns no state —
+ * App passes the useSearch() state in so it can also react to the query.
  * Styling mirrors the existing popup cards so a redesign can restyle in place.
  */
-export function SearchPanel() {
-  const search = useSearch();
-
+export function SearchPanel({ search }: { search: SearchState }) {
   return (
     <section className="rounded-xl bg-white p-3 shadow-sm ring-1 ring-black/5" data-testid="search-panel">
       <label htmlFor="reward-search" className="text-xs font-medium text-stone-600">
@@ -60,8 +60,20 @@ export function SearchPanel() {
 
       {!search.loading && search.results?.length ? (
         <ul className="mt-2 flex flex-col gap-2" data-testid="search-results">
-          {search.results.map((hit) => (
-            <SearchResultRow key={hit.reward.id} hit={hit} />
+          {search.results.map((hit, index) => (
+            <Fragment key={hit.reward.id}>
+              {hit.secondary && !search.results![index - 1]?.secondary ? (
+                <li
+                  className="mt-1 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wide text-stone-400"
+                  data-testid="search-divider"
+                >
+                  <span className="h-px flex-1 bg-stone-200" />
+                  {search.secondaryLabel ?? 'More matches'}
+                  <span className="h-px flex-1 bg-stone-200" />
+                </li>
+              ) : null}
+              <SearchResultRow hit={hit} />
+            </Fragment>
           ))}
         </ul>
       ) : null}

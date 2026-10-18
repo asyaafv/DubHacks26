@@ -153,7 +153,7 @@ export function mockLookup(request: LookupRequest, now: Date = new Date()): Look
 
 /** Mock fallback for POST /search: same lexicon/ranking shape as the backend, over seed data. */
 export function mockSearch(query: string, limit = 8, now: Date = new Date()) {
-  const { results, totalMatched, totalActive } = searchSeed(
+  const { results, totalMatched, totalActive, secondaryLabel } = searchSeed(
     query,
     allRewards(),
     merchants,
@@ -161,7 +161,13 @@ export function mockSearch(query: string, limit = 8, now: Date = new Date()) {
     now,
     limit,
   );
-  return { query, results, total_matched: totalMatched, total_active: totalActive };
+  return {
+    query,
+    results,
+    total_matched: totalMatched,
+    total_active: totalActive,
+    secondary_label: secondaryLabel,
+  };
 }
 
 /** Mock fallback for GET /search/suggestions. */

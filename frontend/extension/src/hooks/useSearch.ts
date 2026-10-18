@@ -9,6 +9,8 @@ export interface SearchState {
   setQuery: (value: string) => void;
   /** null = nothing searched yet; [] = searched, no matches. */
   results: SearchHit[] | null;
+  /** Divider label for secondary results, e.g. "Also in Food". */
+  secondaryLabel: string | null;
   chips: SearchChip[];
   loading: boolean;
   error: string | null;
@@ -17,6 +19,7 @@ export interface SearchState {
 export function useSearch(): SearchState {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchHit[] | null>(null);
+  const [secondaryLabel, setSecondaryLabel] = useState<string | null>(null);
   const [chips, setChips] = useState<SearchChip[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,6 +44,7 @@ export function useSearch(): SearchState {
     if (!trimmed) {
       requestSeq.current += 1;
       setResults(null);
+      setSecondaryLabel(null);
       setError(null);
       setLoading(false);
       return;
@@ -52,11 +56,13 @@ export function useSearch(): SearchState {
         .then((response) => {
           if (requestSeq.current !== id) return;
           setResults(response.results);
+          setSecondaryLabel(response.secondary_label ?? null);
           setError(null);
         })
         .catch((cause: unknown) => {
           if (requestSeq.current !== id) return;
           setResults([]);
+          setSecondaryLabel(null);
           setError(cause instanceof Error ? cause.message : 'Search failed');
         })
         .finally(() => {
@@ -66,5 +72,5 @@ export function useSearch(): SearchState {
     return () => window.clearTimeout(timer);
   }, [query]);
 
-  return { query, setQuery, results, chips, loading, error };
+  return { query, setQuery, results, secondaryLabel, chips, loading, error };
 }

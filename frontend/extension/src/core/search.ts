@@ -54,6 +54,65 @@ export const CHIP_DEFINITIONS: Array<{ label: string; query: string; mccs: strin
   { label: 'Department stores', query: 'department stores', mccs: DEPARTMENT },
 ];
 
+/** Cuisine/style tags per merchant domain; mirrors the backend merchant tags. */
+const MERCHANT_TAGS: Record<string, string[]> = {
+  'chipotle.com': ['mexican', 'fast casual'],
+  'tacobell.com': ['mexican', 'fast food'],
+  'hollisterco.com': ['streetwear', 'casual'],
+  'pacsun.com': ['streetwear', 'casual'],
+  'aeropostale.com': ['streetwear', 'casual'],
+  'nike.com': ['athletic', 'streetwear', 'sneakers'],
+  'abercrombie.com': ['casual'],
+  'hm.com': ['fast fashion', 'casual'],
+  'zara.com': ['fast fashion'],
+  'uniqlo.com': ['fast fashion', 'casual'],
+  'gap.com': ['casual'],
+  'oldnavy.com': ['casual'],
+  'starbucks.com': ['coffee'],
+  'dunkindonuts.com': ['coffee', 'donuts'],
+  'dominos.com': ['pizza', 'italian'],
+  'pizzahut.com': ['pizza', 'italian'],
+  'papajohns.com': ['pizza', 'italian'],
+  'mcdonalds.com': ['burgers', 'fast food'],
+  'bk.com': ['burgers', 'fast food'],
+  'wendys.com': ['burgers', 'fast food'],
+  'subway.com': ['sandwiches', 'fast food'],
+  'panerabread.com': ['sandwiches', 'cafe'],
+};
+
+/** Query terms that resolve to a merchant tag (the specific match tier). */
+const TAG_TERMS: Record<string, string> = {
+  mexican: 'mexican',
+  taco: 'mexican',
+  tacos: 'mexican',
+  burrito: 'mexican',
+  burritos: 'mexican',
+  quesadilla: 'mexican',
+  guac: 'mexican',
+  guacamole: 'mexican',
+  streetwear: 'streetwear',
+  'street wear': 'streetwear',
+  athletic: 'athletic',
+  athleisure: 'athletic',
+  sporty: 'athletic',
+  sneakers: 'sneakers',
+  sneaker: 'sneakers',
+  kicks: 'sneakers',
+  casual: 'casual',
+  coffee: 'coffee',
+  latte: 'coffee',
+  espresso: 'coffee',
+  donuts: 'donuts',
+  pizza: 'pizza',
+  italian: 'italian',
+  burger: 'burgers',
+  burgers: 'burgers',
+  sandwich: 'sandwiches',
+  sandwiches: 'sandwiches',
+  'fast food': 'fast food',
+  'fast fashion': 'fast fashion',
+};
+
 const STOPWORDS = new Set(['a', 'an', 'and', 'any', 'best', 'deals', 'do', 'for', 'have', 'i', 'in', 'me', 'my', 'of', 'offers', 'on', 'reward', 'rewards', 'show', 'store', 'stores', 'the', 'to']);
 
 export function tokenize(text: string): string[] {
@@ -99,6 +158,16 @@ function matchReward(
   for (const name of names) {
     if (text.includes(name.toLowerCase())) {
       return { match: 1, reason: `Matches your ${reward.merchant_name} reward` };
+    }
+  }
+  const tags = merchant ? MERCHANT_TAGS[merchant.domain] ?? [] : [];
+  if (tags.length > 0) {
+    const terms = [...tokens.slice(0, -1).map((t, i) => `${t} ${tokens[i + 1]}`), ...tokens];
+    for (const term of terms) {
+      const tag = TAG_TERMS[term];
+      if (tag && tags.includes(tag)) {
+        return { match: 0.95, reason: `${reward.merchant_name} is tagged "${tag}" — matches "${term}"` };
+      }
     }
   }
   const nameTokens = new Set(names.flatMap((n) => tokenize(n)).filter((t) => t.length > 2));
@@ -149,7 +218,7 @@ export function searchSeed(
   cards: Card[],
   now: Date = new Date(),
   limit = 8,
-): { results: SearchHit[]; totalMatched: number; totalActive: number } {
+): { results: SearchHit[]; totalMatched: number; totalActive: number; secondaryLabel: string | null } {
   const tokens = tokenize(query);
   const mccs = lexiconMccs(tokens);
   const byId = new Map(merchants.map((m) => [m.id, m]));
@@ -171,10 +240,28 @@ export function searchSeed(
       expiring_soon: days != null && days <= 3,
       reason: found.reason,
       best_card: bestCard(reward, cards),
+      secondary: false,
     });
   }
-  hits.sort((a, b) => b.score - a.score || b.match_component - a.match_component);
-  return { results: hits.slice(0, limit), totalMatched: hits.length, totalActive: active.length };
+  const byRank = (a: SearchHit, b: SearchHit) => b.score - a.score || b.match_component - a.match_component;
+  // Specific hits (merchant name 1.0, tag 0.95, name token 0.9) come first; generic
+  // category/MCC matches follow as secondary. Broad queries stay all-primary.
+  const specific = hits.filter((hit) => hit.match_component >= 0.9).sort(byRank);
+  let ordered = hits.sort(byRank);
+  if (specific.length > 0) {
+    const generic = hits
+      .filter((hit) => hit.match_component < 0.9 && hit.match_component >= 0.75)
+      .sort(byRank)
+      .map((hit) => ({ ...hit, secondary: true }));
+    ordered = [...specific, ...generic];
+  }
+  const results = ordered.slice(0, limit);
+  const secondaryHits = results.filter((hit) => hit.secondary);
+  const chip = CHIP_DEFINITIONS.find((entry) =>
+    secondaryHits.some((hit) => entry.mccs.includes(hit.reward.mcc)),
+  );
+  const secondaryLabel = secondaryHits.length > 0 && chip ? `Also in ${chip.label}` : null;
+  return { results, totalMatched: ordered.length, totalActive: active.length, secondaryLabel };
 }
 
 export function chipsFor(rewards: Reward[], now: Date = new Date()): SearchChip[] {
