@@ -28,7 +28,7 @@ def resolve_user(header=None, body_user_id=None):
         raise HTTPException(400, 'Conflicting body and header user IDs')
     if head or body:
         return head or body
-    if os.getenv('PERK_ALLOW_DEMO_IDENTITY', '').lower() == 'true':
+    if os.getenv('LAPSE_ALLOW_DEMO_IDENTITY', '').lower() == 'true':
         return DEMO_USER_ID
     raise HTTPException(401, 'User identity required')
 

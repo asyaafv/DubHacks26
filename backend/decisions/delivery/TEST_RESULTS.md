@@ -14,7 +14,7 @@ TEST_DATABASE_URL=postgresql://asuya@127.0.0.1:55439/postgres \
 NODE_BINARY=<bundled Node executable> \
 PLAYWRIGHT_NODE_MODULE=<bundled playwright directory> \
 python -m pytest backend/tests/test_delivery.py backend/tests/test_storage_wallet.py \
-  -v -s --junitxml=/private/tmp/perk-delivery-results.xml -o junit_family=legacy
+  -v -s --junitxml=/private/tmp/lapse-delivery-results.xml -o junit_family=legacy
 ```
 
 Measured transaction-commit return to parsed `reward_added` arrival through HTTP,
