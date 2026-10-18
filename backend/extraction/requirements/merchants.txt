@@ -1,0 +1,14 @@
+# Merchant classification module dependencies
+# Install with: pip install -r backend/extraction/requirements/merchants.txt
+
+# Domain extraction
+tldextract>=5.1.0
+
+# Fuzzy string matching
+rapidfuzz>=3.6.0
+
+# Embeddings (lazy-loaded, CPU-only)
+sentence-transformers>=2.3.0
+
+# NumPy for cosine similarity
+numpy>=1.24.0
