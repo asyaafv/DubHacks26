@@ -1,5 +1,6 @@
 import { DEMO_USER_EMAIL } from '../../api/config';
 import { RewardCard } from '../../components/RewardCard';
+import { SearchPanel } from '../../components/SearchPanel';
 import { StackResultView } from '../../components/StackResult';
 import { StoreLogo } from '../../components/StoreLogo';
 import { ToastBanner } from '../../components/ToastBanner';
@@ -34,6 +35,8 @@ export default function App() {
       {events.toasts.map((toast) => (
         <ToastBanner key={toast.id} toast={toast} onDismiss={() => events.dismiss(toast.id)} />
       ))}
+
+      <SearchPanel />
 
       {page.loading ? <p className="text-sm text-stone-500">Checking this store…</p> : null}
 
