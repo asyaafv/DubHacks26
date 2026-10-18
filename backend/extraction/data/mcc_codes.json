@@ -1,0 +1,4366 @@
+{
+  "_source": "https://github.com/greggles/mcc-codes (Unlicense)",
+  "_note": "Trimmed to retail, restaurant, travel-relevant codes",
+  "codes": [
+    {
+      "mcc": "3000",
+      "description": "UNITED AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3001",
+      "description": "AMERICAN AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3002",
+      "description": "PAN AMERICAN",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3003",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3004",
+      "description": "TRANS WORLD AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3005",
+      "description": "BRITISH AIRWAYS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3006",
+      "description": "JAPAN AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3007",
+      "description": "AIR FRANCE",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3008",
+      "description": "LUFTHANSA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3009",
+      "description": "AIR CANADA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3010",
+      "description": "KLM (ROYAL DUTCH AIRLINES)",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3011",
+      "description": "AEORFLOT",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3012",
+      "description": "QANTAS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3013",
+      "description": "ALITALIA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3014",
+      "description": "SAUDIA ARABIAN AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3015",
+      "description": "SWISSAIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3016",
+      "description": "SAS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3017",
+      "description": "SOUTH AFRICAN AIRWAYS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3018",
+      "description": "VARIG (BRAZIL)",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3019",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3020",
+      "description": "AIR-INDIA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3021",
+      "description": "AIR ALGERIE",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3022",
+      "description": "PHILIPPINE AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3023",
+      "description": "MEXICANA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3024",
+      "description": "PAKISTAN INTERNATIONAL",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3025",
+      "description": "AIR NEW ZEALAND",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3026",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3027",
+      "description": "UTA/INTERAIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3028",
+      "description": "AIR MALTA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3029",
+      "description": "SABENA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3030",
+      "description": "AEROLINEAS ARGENTINAS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3031",
+      "description": "OLYMPIC AIRWAYS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3032",
+      "description": "EL AL",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3033",
+      "description": "ANSETT AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3034",
+      "description": "AUSTRAINLIAN AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3035",
+      "description": "TAP (PORTUGAL)",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3036",
+      "description": "VASP (BRAZIL)",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3037",
+      "description": "EGYPTAIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3038",
+      "description": "KUWAIT AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3039",
+      "description": "AVIANCA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3040",
+      "description": "GULF AIR (BAHRAIN)",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3041",
+      "description": "BALKAN-BULGARIAN AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3042",
+      "description": "FINNAIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3043",
+      "description": "AER LINGUS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3044",
+      "description": "AIR LANKA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3045",
+      "description": "NIGERIA AIRWAYS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3046",
+      "description": "CRUZEIRO DO SUL (BRAZIJ)",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3047",
+      "description": "THY (TURKEY)",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3048",
+      "description": "ROYAL AIR MAROC",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3049",
+      "description": "TUNIS AIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3050",
+      "description": "ICELANDAIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3051",
+      "description": "AUSTRIAN AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3052",
+      "description": "LANCHILE",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3053",
+      "description": "AVIACO (SPAIN)",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3054",
+      "description": "LADECO (CHILE)",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3055",
+      "description": "LAB (BOLIVIA)",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3056",
+      "description": "QUEBECAIRE",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3057",
+      "description": "EASTWEST AIRLINES (AUSTRALIA)",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3058",
+      "description": "DELTA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3059",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3060",
+      "description": "NORTHWEST",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3061",
+      "description": "CONTINENTAL",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3062",
+      "description": "WESTERN",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3063",
+      "description": "US AIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3064",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3065",
+      "description": "AIRINTER",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3066",
+      "description": "SOUTHWEST",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3067",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3068",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3069",
+      "description": "SUN COUNTRY AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3070",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3071",
+      "description": "AIR BRITISH COLUBIA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3072",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3073",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3074",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3075",
+      "description": "SINGAPORE AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3076",
+      "description": "AEROMEXICO",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3077",
+      "description": "THAI AIRWAYS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3078",
+      "description": "CHINA AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3079",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3080",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3081",
+      "description": "NORDAIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3082",
+      "description": "KOREAN AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3083",
+      "description": "AIR AFRIGUE",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3084",
+      "description": "EVA AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3085",
+      "description": "MIDWEST EXPRESS AIRLINES, INC.",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3086",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3087",
+      "description": "METRO AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3088",
+      "description": "CROATIA AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3089",
+      "description": "TRANSAERO",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3090",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3091",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3092",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3093",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3094",
+      "description": "ZAMBIA AIRWAYS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3095",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3096",
+      "description": "AIR ZIMBABWE",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3097",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3098",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3099",
+      "description": "CATHAY PACIFIC",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3100",
+      "description": "MALAYSIAN AIRLINE SYSTEM",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3101",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3102",
+      "description": "IBERIA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3103",
+      "description": "GARUDA (INDONESIA)",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3104",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3105",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3106",
+      "description": "BRAATHENS S.A.F.E. (NORWAY)",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3107",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3108",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3109",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3110",
+      "description": "WINGS AIRWAYS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3111",
+      "description": "BRITISH MIDLAND",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3112",
+      "description": "WINDWARD ISLAND",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3113",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3114",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3115",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3116",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3117",
+      "description": "VIASA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3118",
+      "description": "VALLEY AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3119",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3120",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3121",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3122",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3123",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3124",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3125",
+      "description": "TAN",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3126",
+      "description": "TALAIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3127",
+      "description": "TACA INTERNATIONAL",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3128",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3129",
+      "description": "SURINAM AIRWAYS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3130",
+      "description": "SUN WORLD INTERNATIONAL",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3131",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3132",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3133",
+      "description": "SUNBELT AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3134",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3135",
+      "description": "SUDAN AIRWAYS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3136",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3137",
+      "description": "SINGLETON",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3138",
+      "description": "SIMMONS AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3139",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3140",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3141",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3142",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3143",
+      "description": "SCENIC AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3144",
+      "description": "VIRGIN ATLANTIC",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3145",
+      "description": "SAN JUAN AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3146",
+      "description": "LUXAIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3147",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3148",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3149",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3150",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3151",
+      "description": "AIR ZAIRE",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3152",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3153",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3154",
+      "description": "PRINCEVILLE",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3155",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3156",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3157",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3158",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3159",
+      "description": "PBA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3160",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3161",
+      "description": "ALL NIPPON AIRWAYS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3162",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3163",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3164",
+      "description": "NORONTAIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3165",
+      "description": "NEW YORK HELICOPTER",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3166",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3167",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3168",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3169",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3170",
+      "description": "NOUNT COOK",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3171",
+      "description": "CANADIAN AIRLINES INTERNATIONAL",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3172",
+      "description": "NATIONAIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3173",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3174",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3175",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3176",
+      "description": "METROFLIGHT AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3177",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3178",
+      "description": "MESA AIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3179",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3180",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3181",
+      "description": "MALEV",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3182",
+      "description": "LOT (POLAND)",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3183",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3184",
+      "description": "LIAT",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3185",
+      "description": "LAV (VENEZUELA)",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3186",
+      "description": "LAP (PARAGUAY)",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3187",
+      "description": "LACSA (COSTA RICA)",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3188",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3189",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3190",
+      "description": "JUGOSLAV AIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3191",
+      "description": "ISLAND AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3192",
+      "description": "IRAN AIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3193",
+      "description": "INDIAN AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3194",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3195",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3196",
+      "description": "HAWAIIAN AIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3197",
+      "description": "HAVASU AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3198",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3199",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3200",
+      "description": "FUYANA AIRWAYS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3201",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3202",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3203",
+      "description": "GOLDEN PACIFIC AIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3204",
+      "description": "FREEDOM AIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3205",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3206",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3207",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3208",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3209",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3210",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3211",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3212",
+      "description": "DOMINICANA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3213",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3214",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3215",
+      "description": "DAN AIR SERVICES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3216",
+      "description": "CUMBERLAND AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3217",
+      "description": "CSA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3218",
+      "description": "CROWN AIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3219",
+      "description": "COPA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3220",
+      "description": "COMPANIA FAUCETT",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3221",
+      "description": "TRANSPORTES AEROS MILITARES ECCUATORANOS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3222",
+      "description": "COMMAND AIRWAYS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3223",
+      "description": "COMAIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3224",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3225",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3226",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3227",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3228",
+      "description": "CAYMAN AIRWAYS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3229",
+      "description": "SAETA SOCIAEDAD ECUATORIANOS DE TRANSPORTES AEREOS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3230",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3231",
+      "description": "SASHA SERVICIO AERO DE HONDURAS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3232",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3233",
+      "description": "CAPITOL AIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3234",
+      "description": "BWIA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3235",
+      "description": "BROKWAY AIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3236",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3237",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3238",
+      "description": "BEMIDJI AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3239",
+      "description": "BAR HARBOR AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3240",
+      "description": "BAHAMASAIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3241",
+      "description": "AVIATECA (GUATEMALA)",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3242",
+      "description": "AVENSA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3243",
+      "description": "AUSTRIAN AIR SERVICE",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3244",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3245",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3246",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3247",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3248",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3249",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3250",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3251",
+      "description": "ALOHA AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3252",
+      "description": "ALM",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3253",
+      "description": "AMERICA WEST",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3254",
+      "description": "TRUMP AIRLINE",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3255",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3256",
+      "description": "ALASKA AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3257",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3258",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3259",
+      "description": "AMERICAN TRANS AIR",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3260",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3261",
+      "description": "AIR CHINA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3262",
+      "description": "RENO AIR, INC.",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3263",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3264",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3265",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3266",
+      "description": "AIR SEYCHELLES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3267",
+      "description": "AIR PANAMA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3268",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3269",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3270",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3271",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3272",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3273",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3274",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3275",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3276",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3277",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3278",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3279",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3280",
+      "description": "AIR JAMAICA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3281",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3282",
+      "description": "AIR DJIBOUTI",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3283",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3284",
+      "description": "AERO VIRGIN ISLANDS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3285",
+      "description": "AERO PERU",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3286",
+      "description": "AEROLINEAS NICARAGUENSIS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3287",
+      "description": "AERO COACH AVAIATION",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3288",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3289",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3290",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3291",
+      "description": "ARIANA AFGHAN",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3292",
+      "description": "CYPRUS AIRWAYS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3293",
+      "description": "ECUATORIANA",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3294",
+      "description": "ETHIOPIAN AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3295",
+      "description": "KENYA AIRLINES",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3296",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3297",
+      "description": "Airlines",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3298",
+      "description": "AIR MAURITIUS",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3299",
+      "description": "WIDERO\u2019S FLYVESELSKAP",
+      "irs_description": "Airlines"
+    },
+    {
+      "mcc": "3351",
+      "description": "AFFILIATED AUTO RENTAL",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3352",
+      "description": "AMERICAN INTL RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3353",
+      "description": "BROOKS RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3354",
+      "description": "ACTION AUTO RENTAL",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3355",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3356",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3357",
+      "description": "HERTZ RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3358",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3359",
+      "description": "PAYLESS CAR RENTAL",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3360",
+      "description": "SNAPPY CAR RENTAL",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3361",
+      "description": "AIRWAYS RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3362",
+      "description": "ALTRA AUTO RENTAL",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3363",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3364",
+      "description": "AGENCY RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3365",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3366",
+      "description": "BUDGET RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3367",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3368",
+      "description": "HOLIDAY RENT-A-WRECK",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3369",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3370",
+      "description": "RENT-A-WRECK",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3371",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3372",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3373",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3374",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3375",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3376",
+      "description": "AJAX RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3377",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3378",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3379",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3380",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3381",
+      "description": "EUROP CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3382",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3383",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3384",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3385",
+      "description": "TROPICAL RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3386",
+      "description": "SHOWCASE RENTAL CARS",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3387",
+      "description": "ALAMO RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3388",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3389",
+      "description": "AVIS RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3390",
+      "description": "DOLLAR RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3391",
+      "description": "EUROPE BY CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3392",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3393",
+      "description": "NATIONAL CAR RENTAL",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3394",
+      "description": "KEMWELL GROUP RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3395",
+      "description": "THRIFTY RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3396",
+      "description": "TILDEN TENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3397",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3398",
+      "description": "ECONO-CAR RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3399",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3400",
+      "description": "AUTO HOST COST CAR RENTALS",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3401",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3402",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3403",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3404",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3405",
+      "description": "ENTERPRISE RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3406",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3407",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3408",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3409",
+      "description": "GENERAL RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3410",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3411",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3412",
+      "description": "A-1 RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3413",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3414",
+      "description": "GODFREY NATL RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3415",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3416",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3417",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3418",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3419",
+      "description": "ALPHA RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3420",
+      "description": "ANSA INTL RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3421",
+      "description": "ALLSTAE RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3422",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3423",
+      "description": "AVCAR RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3424",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3425",
+      "description": "AUTOMATE RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3426",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3427",
+      "description": "AVON RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3428",
+      "description": "CAREY RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3429",
+      "description": "INSURANCE RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3430",
+      "description": "MAJOR RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3431",
+      "description": "REPLACEMENT RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3432",
+      "description": "RESERVE RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3433",
+      "description": "UGLY DUCKLING RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3434",
+      "description": "USA RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3435",
+      "description": "VALUE RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3436",
+      "description": "AUTOHANSA RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3437",
+      "description": "CITE RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3438",
+      "description": "INTERENT RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3439",
+      "description": "MILLEVILLE RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3440",
+      "description": "VIA ROUTE RENT-A-CAR",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3441",
+      "description": "Car Rental",
+      "irs_description": "Car Rental"
+    },
+    {
+      "mcc": "3501",
+      "description": "HOLIDAY INNS, HOLIDAY INN EXPRESS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3502",
+      "description": "BEST WESTERN HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3503",
+      "description": "SHERATON HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3504",
+      "description": "HILTON HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3505",
+      "description": "FORTE HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3506",
+      "description": "GOLDEN TULIP HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3507",
+      "description": "FRIENDSHIP INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3508",
+      "description": "QUALITY INNS, QUALITY SUITES",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3509",
+      "description": "MARRIOTT HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3510",
+      "description": "DAYS INN, DAYSTOP",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3511",
+      "description": "ARABELLA HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3512",
+      "description": "INTER-CONTINENTAL HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3513",
+      "description": "WESTIN HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3514",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3515",
+      "description": "RODEWAY INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3516",
+      "description": "LA QUINTA MOTOR INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3517",
+      "description": "AMERICANA HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3518",
+      "description": "SOL HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3519",
+      "description": "PULLMAN INTERNATIONAL HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3520",
+      "description": "MERIDIEN HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3521",
+      "description": "CREST HOTELS (see FORTE HOTELS)",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3522",
+      "description": "TOKYO HOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3523",
+      "description": "PENNSULA HOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3524",
+      "description": "WELCOMGROUP HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3525",
+      "description": "DUNFEY HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3526",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3527",
+      "description": "DOWNTOWNER-PASSPORT HOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3528",
+      "description": "RED LION HOTELS, RED LION INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3529",
+      "description": "CP HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3530",
+      "description": "RENAISSANCE HOTELS, STOUFFER HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3531",
+      "description": "ASTIR HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3532",
+      "description": "SUN ROUTE HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3533",
+      "description": "HOTEL IBIS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3534",
+      "description": "SOUTHERN PACIFIC HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3535",
+      "description": "HILTON INTERNATIONAL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3536",
+      "description": "AMFAC HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3537",
+      "description": "ANA HOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3538",
+      "description": "CONCORDE HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3539",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3540",
+      "description": "IBEROTEL HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3541",
+      "description": "HOTEL OKURA",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3542",
+      "description": "ROYAL HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3543",
+      "description": "FOUR SEASONS HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3544",
+      "description": "CIGA HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3545",
+      "description": "SHANGRI-LA INTERNATIONAL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3546",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3547",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3548",
+      "description": "HOTELES MELIA",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3549",
+      "description": "AUBERGE DES GOVERNEURS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3550",
+      "description": "REGAL 8 INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3551",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3552",
+      "description": "COAST HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3553",
+      "description": "PARK INNS INTERNATIONAL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3554",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3555",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3556",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3557",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3558",
+      "description": "JOLLY HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3559",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3560",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3561",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3562",
+      "description": "COMFORT INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3563",
+      "description": "JOURNEY\u2019S END MOTLS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3564",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3565",
+      "description": "RELAX INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3566",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3567",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3568",
+      "description": "LADBROKE HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3569",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3570",
+      "description": "FORUM HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3571",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3572",
+      "description": "MIYAKO HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3573",
+      "description": "SANDMAN HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3574",
+      "description": "VENTURE INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3575",
+      "description": "VAGABOND HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3576",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3577",
+      "description": "MANDARIN ORIENTAL HOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3578",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3579",
+      "description": "HOTEL MERCURE",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3580",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3581",
+      "description": "DELTA HOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3582",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3583",
+      "description": "SAS HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3584",
+      "description": "PRINCESS HOTELS INTERNATIONAL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3585",
+      "description": "HUNGAR HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3586",
+      "description": "SOKOS HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3587",
+      "description": "DORAL HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3588",
+      "description": "HELMSLEY HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3589",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3590",
+      "description": "FAIRMONT HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3591",
+      "description": "SONESTA HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3592",
+      "description": "OMNI HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3593",
+      "description": "CUNARD HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3594",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3595",
+      "description": "HOSPITALITY INTERNATIONAL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3596",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3597",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3598",
+      "description": "REGENT INTERNATIONAL HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3599",
+      "description": "PANNONIA HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3600",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3601",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3602",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3603",
+      "description": "NOAH\u2019S HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3604",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3605",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3606",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3607",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3608",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3609",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3610",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3611",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3612",
+      "description": "MOVENPICK HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3613",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3614",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3615",
+      "description": "TRAVELODGE",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3616",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3617",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3618",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3619",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3620",
+      "description": "TELFORD INTERNATIONAL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3621",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3622",
+      "description": "MERLIN HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3623",
+      "description": "DORINT HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3624",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3625",
+      "description": "HOTLE UNIVERSALE",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3626",
+      "description": "PRINCE HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3627",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3628",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3629",
+      "description": "DAN HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3630",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3631",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3632",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3633",
+      "description": "RANK HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3634",
+      "description": "SWISSOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3635",
+      "description": "RESO HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3636",
+      "description": "SAROVA HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3637",
+      "description": "RAMADA INNS, RAMADA LIMITED",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3638",
+      "description": "HO JO INN, HOWARD JOHNSON",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3639",
+      "description": "MOUNT CHARLOTTE THISTLE",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3640",
+      "description": "HYATT HOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3641",
+      "description": "SOFITEL HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3642",
+      "description": "NOVOTEL HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3643",
+      "description": "STEIGENBERGER HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3644",
+      "description": "ECONO LODGES",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3645",
+      "description": "QUEENS MOAT HOUSES",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3646",
+      "description": "SWALLOW HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3647",
+      "description": "HUSA HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3648",
+      "description": "DE VERE HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3649",
+      "description": "RADISSON HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3650",
+      "description": "RED ROOK INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3651",
+      "description": "IMPERIAL LONDON HOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3652",
+      "description": "EMBASSY HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3653",
+      "description": "PENTA HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3654",
+      "description": "LOEWS HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3655",
+      "description": "SCANDIC HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3656",
+      "description": "SARA HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3657",
+      "description": "OBEROI HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3658",
+      "description": "OTANI HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3659",
+      "description": "TAJ HOTELS INTERNATIONAL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3660",
+      "description": "KNIGHTS INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3661",
+      "description": "METROPOLE HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3662",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3663",
+      "description": "HOTELES EL PRESIDENTS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3664",
+      "description": "FLAG INN",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3665",
+      "description": "HAMPTON INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3666",
+      "description": "STAKIS HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3667",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3668",
+      "description": "MARITIM HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3669",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3670",
+      "description": "ARCARD HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3671",
+      "description": "ARCTIA HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3672",
+      "description": "CAMPANIEL HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3673",
+      "description": "IBUSZ HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3674",
+      "description": "RANTASIPI HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3675",
+      "description": "INTERHOTEL CEDOK",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3676",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3677",
+      "description": "CLIMAT DE FRANCE HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3678",
+      "description": "CUMULUS HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3679",
+      "description": "DANUBIUS HOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3680",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3681",
+      "description": "ADAMS MARK HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3682",
+      "description": "ALLSTAR INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3683",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3684",
+      "description": "BUDGET HOST INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3685",
+      "description": "BUDGETEL HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3686",
+      "description": "SUISSE CHALETS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3687",
+      "description": "CLARION HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3688",
+      "description": "COMPRI HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3689",
+      "description": "CONSORT HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3690",
+      "description": "COURTYARD BY MARRIOTT",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3691",
+      "description": "DILLION INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3692",
+      "description": "DOUBLETREE HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3693",
+      "description": "DRURY INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3694",
+      "description": "ECONOMY INNS OF AMERICA",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3695",
+      "description": "EMBASSY SUITES",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3696",
+      "description": "EXEL INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3697",
+      "description": "FARFIELD HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3698",
+      "description": "HARLEY HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3699",
+      "description": "MIDWAY MOTOR LODGE",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3700",
+      "description": "MOTEL 6",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3701",
+      "description": "GUEST QUARTERS (Formally PICKETT SUITE HOTELS)",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3702",
+      "description": "THE REGISTRY HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3703",
+      "description": "RESIDENCE INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3704",
+      "description": "ROYCE HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3705",
+      "description": "SANDMAN INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3706",
+      "description": "SHILO INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3707",
+      "description": "SHONEY\u2019S INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3708",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3709",
+      "description": "SUPER8 MOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3710",
+      "description": "THE RITZ CARLTON HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3711",
+      "description": "FLAG INNS (AUSRALIA)",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3712",
+      "description": "GOLDEN CHAIN HOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3713",
+      "description": "QUALITY PACIFIC HOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3714",
+      "description": "FOUR SEASONS HOTEL (AUSTRALIA)",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3715",
+      "description": "FARIFIELD INN",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3716",
+      "description": "CARLTON HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3717",
+      "description": "CITY LODGE HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3718",
+      "description": "KAROS HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3719",
+      "description": "PROTEA HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3720",
+      "description": "SOUTHERN SUN HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3721",
+      "description": "HILTON CONRAD",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3722",
+      "description": "WYNDHAM HOTEL AND RESORTS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3723",
+      "description": "RICA HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3724",
+      "description": "INER NOR HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3725",
+      "description": "SEAINES PLANATION",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3726",
+      "description": "RIO SUITES",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3727",
+      "description": "BROADMOOR HOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3728",
+      "description": "BALLY\u2019S HOTEL AND CASINO",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3729",
+      "description": "JOHN ASCUAGA\u2019S NUGGET",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3730",
+      "description": "MGM GRAND HOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3731",
+      "description": "HARRAH\u2019S HOTELS AND CASINOS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3732",
+      "description": "OPRYLAND HOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3733",
+      "description": "BOCA RATON RESORT",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3734",
+      "description": "HARVEY/BRISTOL HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3735",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3736",
+      "description": "COLORADO BELLE/EDGEWATER RESORT",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3737",
+      "description": "RIVIERA HOTEL AND CASINO",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3738",
+      "description": "TROPICANA RESORT AND CASINO",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3739",
+      "description": "WOODSIDE HOTELS AND RESORTS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3740",
+      "description": "TOWNPLACE SUITES",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3741",
+      "description": "MILLENIUM BROADWAY HOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3742",
+      "description": "CLUB MED",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3743",
+      "description": "BILTMORE HOTEL AND SUITES",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3744",
+      "description": "CAREFREE RESORTS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3745",
+      "description": "ST. REGIS HOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3746",
+      "description": "THE ELIOT HOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3747",
+      "description": "CLUBCORP/CLUB RESORTS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3748",
+      "description": "WELESLEY INNS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3749",
+      "description": "THE BEVERLY HILLS HOTEL",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3750",
+      "description": "CROWNE PLAZA HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3751",
+      "description": "HOMEWOOD SUITES",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3752",
+      "description": "PEABODY HOTELS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3753",
+      "description": "GREENBRIAH RESORTS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3754",
+      "description": "AMELIA ISLAND PLANATION",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3755",
+      "description": "THE HOMESTEAD",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3756",
+      "description": "SOUTH SEAS RESORTS",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3757",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3758",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3759",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3760",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3761",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3762",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3763",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3764",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3765",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3766",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3767",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3768",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3769",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3770",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3771",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3772",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3773",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3774",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3775",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3776",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3777",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3778",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3779",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3780",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3781",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3782",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3783",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3784",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3785",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3786",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3787",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3788",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3789",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3790",
+      "description": "Hotels/Motels/Inns/Resorts",
+      "irs_description": "Hotels/Motels/Inns/Resorts"
+    },
+    {
+      "mcc": "3816",
+      "description": "Home2Suites",
+      "irs_description": ""
+    },
+    {
+      "mcc": "3835",
+      "description": "* MASTERS ECONOMY INNS",
+      "irs_description": ""
+    },
+    {
+      "mcc": "4011",
+      "description": "Railroads",
+      "irs_description": "Railroads"
+    },
+    {
+      "mcc": "4111",
+      "description": "Local/Suburban Commuter Passenger Transportation \u2013 Railroads, Feries, Local Water Transportation.",
+      "irs_description": "Commuter Transport, Ferries"
+    },
+    {
+      "mcc": "4112",
+      "description": "Passenger Railways",
+      "irs_description": "Passenger Railways"
+    },
+    {
+      "mcc": "4119",
+      "description": "Ambulance Services",
+      "irs_description": "Ambulance Services"
+    },
+    {
+      "mcc": "4121",
+      "description": "Taxicabs and Limousines",
+      "irs_description": "Taxicabs/Limousines"
+    },
+    {
+      "mcc": "4131",
+      "description": "Bus Lines, Including Charters, Tour Buses",
+      "irs_description": "Bus Lines"
+    },
+    {
+      "mcc": "4214",
+      "description": "Motor Freight Carriers, Moving and Storage Companies, Trucking \u2013 Local/Long Distance, Delivery Services \u2013 Local",
+      "irs_description": "Motor Freight Carriers and Trucking - Local and Long Distance, Moving and Storage Companies, and Local Delivery Services "
+    },
+    {
+      "mcc": "4215",
+      "description": "Courier Services \u2013 Air or Ground, Freight forwarders",
+      "irs_description": "Courier Services "
+    },
+    {
+      "mcc": "4225",
+      "description": "Public warehousing, Storage",
+      "irs_description": "Public Warehousing and Storage - Farm Products, Refrigerated Goods, Household Goods, and Storage "
+    },
+    {
+      "mcc": "4411",
+      "description": "Cruise and Steamship Lines",
+      "irs_description": "Cruise Lines"
+    },
+    {
+      "mcc": "4457",
+      "description": "Boat Rentals and Leases",
+      "irs_description": "Boat Rentals and Leases"
+    },
+    {
+      "mcc": "4468",
+      "description": "Marinas, Marine Service, and Supplies",
+      "irs_description": "Marinas, Service and Supplies"
+    },
+    {
+      "mcc": "4511",
+      "description": "Airlines, Air Carriers ( not listed elsewhere)",
+      "irs_description": "Airlines, Air Carriers"
+    },
+    {
+      "mcc": "4582",
+      "description": "Airports, Airport Terminals, Flying Fields",
+      "irs_description": "Airports, Flying Fields"
+    },
+    {
+      "mcc": "4722",
+      "description": "Travel Agencies and Tour Operations",
+      "irs_description": "Travel Agencies, Tour Operators"
+    },
+    {
+      "mcc": "4723",
+      "description": "Package Tour Operators (For use in Germany only)",
+      "irs_description": "TUI Travel - Germany"
+    },
+    {
+      "mcc": "4784",
+      "description": "Toll and Bridge Fees",
+      "irs_description": "Tolls/Bridge Fees"
+    },
+    {
+      "mcc": "4789",
+      "description": "Transportation Services, Not elsewhere classified)",
+      "irs_description": "Transportation Services (Not Elsewhere Classified)"
+    },
+    {
+      "mcc": "4812",
+      "description": "Telecommunications Equipment including telephone sales",
+      "irs_description": "Telecommunication Equipment and Telephone Sales"
+    },
+    {
+      "mcc": "4814",
+      "description": "Fax services, Telecommunication Services",
+      "irs_description": "Telecommunication Services"
+    },
+    {
+      "mcc": "4815",
+      "description": "VisaPhone",
+      "irs_description": ""
+    },
+    {
+      "mcc": "4816",
+      "description": "Computer Network Services",
+      "irs_description": "Computer Network Services"
+    },
+    {
+      "mcc": "4821",
+      "description": "Telegraph services",
+      "irs_description": "Telegraph Services"
+    },
+    {
+      "mcc": "4829",
+      "description": "Money Orders \u2013 Wire Transfer",
+      "irs_description": "Wires, Money Orders"
+    },
+    {
+      "mcc": "4899",
+      "description": "Cable and other pay television (previously Cable Services)",
+      "irs_description": "Cable, Satellite, and Other Pay Television and Radio"
+    },
+    {
+      "mcc": "4900",
+      "description": "Electric, Gas, Sanitary and Water Utilities",
+      "irs_description": "Utilities "
+    },
+    {
+      "mcc": "5013",
+      "description": "Motor vehicle supplies and new parts",
+      "irs_description": "Motor Vehicle Supplies and New Parts"
+    },
+    {
+      "mcc": "5021",
+      "description": "Office and Commercial Furniture",
+      "irs_description": "Office and Commercial Furniture"
+    },
+    {
+      "mcc": "5039",
+      "description": "Construction Materials, Not Elsewhere Classified",
+      "irs_description": "Construction Materials (Not Elsewhere Classified)"
+    },
+    {
+      "mcc": "5044",
+      "description": "Office, Photographic, Photocopy, and Microfilm Equipment",
+      "irs_description": "Photographic, Photocopy, Microfilm Equipment, and Supplies"
+    },
+    {
+      "mcc": "5045",
+      "description": "Computers, Computer Peripheral Equipment, Software",
+      "irs_description": "Computers, Peripherals, and Software"
+    },
+    {
+      "mcc": "5046",
+      "description": "Commercial Equipment, Not Elsewhere Classified",
+      "irs_description": "Commercial Equipment (Not Elsewhere Classified)"
+    },
+    {
+      "mcc": "5047",
+      "description": "Medical, Dental Ophthalmic, Hospital Equipment and Supplies",
+      "irs_description": "Medical, Dental, Ophthalmic, and Hospital Equipment and Supplies"
+    },
+    {
+      "mcc": "5051",
+      "description": "Metal Service Centers and Offices",
+      "irs_description": "Metal Service Centers"
+    },
+    {
+      "mcc": "5065",
+      "description": "Electrical Parts and Equipment",
+      "irs_description": "Electrical Parts and Equipment"
+    },
+    {
+      "mcc": "5072",
+      "description": "Hardware Equipment and Supplies",
+      "irs_description": "Hardware, Equipment, and Supplies"
+    },
+    {
+      "mcc": "5074",
+      "description": "Plumbing and Heating Equipment and Supplies",
+      "irs_description": "Plumbing, Heating Equipment, and Supplies"
+    },
+    {
+      "mcc": "5085",
+      "description": "Industrial Supplies, Not Elsewhere Classified",
+      "irs_description": "Industrial Supplies (Not Elsewhere Classified)"
+    },
+    {
+      "mcc": "5094",
+      "description": "Precious Stones and Metals, Watches and Jewelry",
+      "irs_description": "Precious Stones and Metals, Watches and Jewelry"
+    },
+    {
+      "mcc": "5099",
+      "description": "Durable Goods, Not Elsewhere Classified",
+      "irs_description": "Durable Goods (Not Elsewhere Classified)"
+    },
+    {
+      "mcc": "5111",
+      "description": "Stationery, Office Supplies, Printing, and Writing Paper",
+      "irs_description": "Stationary, Office Supplies, Printing and Writing Paper"
+    },
+    {
+      "mcc": "5122",
+      "description": "Drugs, Drug Proprietors, and Druggist\u2019s Sundries",
+      "irs_description": "Drugs, Drug Proprietaries, and Druggist Sundries"
+    },
+    {
+      "mcc": "5131",
+      "description": "Piece Goods, Notions, and Other Dry Goods",
+      "irs_description": "Piece Goods, Notions, and Other Dry Goods"
+    },
+    {
+      "mcc": "5137",
+      "description": "Men\u2019s Women\u2019s and Children\u2019s Uniforms and Commercial Clothing",
+      "irs_description": "Uniforms, Commercial Clothing"
+    },
+    {
+      "mcc": "5139",
+      "description": "Commercial Footwear",
+      "irs_description": "Commercial Footwear"
+    },
+    {
+      "mcc": "5169",
+      "description": "Chemicals and Allied Products, Not Elsewhere Classified",
+      "irs_description": "Chemicals and Allied Products (Not Elsewhere Classified)"
+    },
+    {
+      "mcc": "5172",
+      "description": "Petroleum and Petroleum Products",
+      "irs_description": "Petroleum and Petroleum Products"
+    },
+    {
+      "mcc": "5192",
+      "description": "Books, Periodicals, and Newspapers",
+      "irs_description": "Books, Periodicals, and Newspapers"
+    },
+    {
+      "mcc": "5193",
+      "description": "Florists\u2019 Supplies, Nursery Stock and Flowers",
+      "irs_description": "Florists Supplies, Nursery Stock, and Flowers"
+    },
+    {
+      "mcc": "5198",
+      "description": "Paints, Varnishes, and Supplies",
+      "irs_description": "Paints, Varnishes, and Supplies"
+    },
+    {
+      "mcc": "5199",
+      "description": "Non-durable Goods, Not Elsewhere Classified",
+      "irs_description": "Nondurable Goods (Not Elsewhere Classified)"
+    },
+    {
+      "mcc": "5200",
+      "description": "Home Supply Warehouse Stores",
+      "irs_description": "Home Supply Warehouse Stores"
+    },
+    {
+      "mcc": "5211",
+      "description": "Lumber and Building Materials Stores",
+      "irs_description": "Lumber, Building Materials Stores"
+    },
+    {
+      "mcc": "5231",
+      "description": "Glass, Paint, and Wallpaper Stores",
+      "irs_description": "Glass, Paint, and Wallpaper Stores"
+    },
+    {
+      "mcc": "5251",
+      "description": "Hardware Stores",
+      "irs_description": "Hardware Stores"
+    },
+    {
+      "mcc": "5261",
+      "description": "Nurseries \u2013 Lawn and Garden Supply Store",
+      "irs_description": "Nurseries, Lawn and Garden Supply Stores"
+    },
+    {
+      "mcc": "5271",
+      "description": "Mobile Home Dealers",
+      "irs_description": "Mobile Home Dealers"
+    },
+    {
+      "mcc": "5300",
+      "description": "Wholesale Clubs",
+      "irs_description": "Wholesale Clubs"
+    },
+    {
+      "mcc": "5309",
+      "description": "Duty Free Store",
+      "irs_description": "Duty Free Stores"
+    },
+    {
+      "mcc": "5310",
+      "description": "Discount Stores",
+      "irs_description": "Discount Stores"
+    },
+    {
+      "mcc": "5311",
+      "description": "Department Stores",
+      "irs_description": "Department Stores"
+    },
+    {
+      "mcc": "5331",
+      "description": "Variety Stores",
+      "irs_description": "Variety Stores"
+    },
+    {
+      "mcc": "5399",
+      "description": "Misc. General Merchandise",
+      "irs_description": "Miscellaneous General Merchandise"
+    },
+    {
+      "mcc": "5411",
+      "description": "Grocery Stores, Supermarkets",
+      "irs_description": "Grocery Stores, Supermarkets"
+    },
+    {
+      "mcc": "5422",
+      "description": "Meat Provisioners \u2013 Freezer and Locker",
+      "irs_description": "Freezer and Locker Meat Provisioners"
+    },
+    {
+      "mcc": "5441",
+      "description": "Candy, Nut, and Confectionery Stores",
+      "irs_description": "Candy, Nut, and Confectionery Stores"
+    },
+    {
+      "mcc": "5451",
+      "description": "Dairy Products Stores",
+      "irs_description": "Dairy Products Stores"
+    },
+    {
+      "mcc": "5462",
+      "description": "Bakeries",
+      "irs_description": "Bakeries"
+    },
+    {
+      "mcc": "5499",
+      "description": "Misc. Food Stores \u2013 Convenience Stores and Specialty Markets",
+      "irs_description": "Miscellaneous Food Stores - Convenience Stores and Specialty Markets"
+    },
+    {
+      "mcc": "5511",
+      "description": "Car and Truck Dealers (New and Used) Sales, Service, Repairs, Parts, and Leasing",
+      "irs_description": "Car and Truck Dealers (New & Used) Sales, Service, Repairs Parts and Leasing "
+    },
+    {
+      "mcc": "5521",
+      "description": "Automobile and Truck Dealers (Used Only)",
+      "irs_description": "Car and Truck Dealers (Used Only) Sales, Service, Repairs Parts and Leasing "
+    },
+    {
+      "mcc": "5531",
+      "description": "Automobile Supply Stores",
+      "irs_description": "Auto and Home Supply Stores"
+    },
+    {
+      "mcc": "5532",
+      "description": "Automotive Tire Stores",
+      "irs_description": "Automotive Tire Stores"
+    },
+    {
+      "mcc": "5533",
+      "description": "Automotive Parts, Accessories Stores",
+      "irs_description": "Automotive Parts and Accessories Stores"
+    },
+    {
+      "mcc": "5541",
+      "description": "Service Stations ( with or without ancillary services)",
+      "irs_description": "Service Stations "
+    },
+    {
+      "mcc": "5542",
+      "description": "Automated Fuel Dispensers",
+      "irs_description": "Automated Fuel Dispensers"
+    },
+    {
+      "mcc": "5551",
+      "description": "Boat Dealers",
+      "irs_description": "Boat Dealers"
+    },
+    {
+      "mcc": "5561",
+      "description": "Recreational and Utility Trailers, Camp Dealers",
+      "irs_description": "Motorcycle Shops, Dealers"
+    },
+    {
+      "mcc": "5571",
+      "description": "Motorcycle Dealers",
+      "irs_description": "Motorcycle Shops and Dealers"
+    },
+    {
+      "mcc": "5592",
+      "description": "Motor Home Dealers",
+      "irs_description": "Motor Homes Dealers"
+    },
+    {
+      "mcc": "5598",
+      "description": "Snowmobile Dealers",
+      "irs_description": "Snowmobile Dealers"
+    },
+    {
+      "mcc": "5599",
+      "description": "Miscellaneous Auto Dealers ",
+      "irs_description": "Miscellaneous Auto Dealers "
+    },
+    {
+      "mcc": "5611",
+      "description": "Men\u2019s and Boy\u2019s Clothing and Accessories Stores",
+      "irs_description": "Men\u2019s and Boy\u2019s Clothing and Accessories Stores"
+    },
+    {
+      "mcc": "5621",
+      "description": "Women\u2019s Ready-to-Wear Stores",
+      "irs_description": "Women\u2019s Ready-To-Wear Stores"
+    },
+    {
+      "mcc": "5631",
+      "description": "Women\u2019s Accessory and Specialty Shops",
+      "irs_description": "Women\u2019s Accessory and Specialty Shops"
+    },
+    {
+      "mcc": "5641",
+      "description": "Children\u2019s and Infant\u2019s Wear Stores",
+      "irs_description": "Children\u2019s and Infant\u2019s Wear Stores"
+    },
+    {
+      "mcc": "5651",
+      "description": "Family Clothing Stores",
+      "irs_description": "Family Clothing Stores"
+    },
+    {
+      "mcc": "5655",
+      "description": "Sports Apparel, Riding Apparel Stores",
+      "irs_description": "Sports and Riding Apparel Stores"
+    },
+    {
+      "mcc": "5661",
+      "description": "Shoe Stores",
+      "irs_description": "Shoe Stores"
+    },
+    {
+      "mcc": "5681",
+      "description": "Furriers and Fur Shops",
+      "irs_description": "Furriers and Fur Shops"
+    },
+    {
+      "mcc": "5691",
+      "description": "Men\u2019s and Women\u2019s Clothing Stores",
+      "irs_description": "Men\u2019s, Women\u2019s Clothing Stores"
+    },
+    {
+      "mcc": "5697",
+      "description": "Tailors, Seamstress, Mending, and Alterations",
+      "irs_description": "Tailors, Alterations"
+    },
+    {
+      "mcc": "5698",
+      "description": "Wig and Toupee Stores",
+      "irs_description": "Wig and Toupee Stores"
+    },
+    {
+      "mcc": "5699",
+      "description": "Miscellaneous Apparel and Accessory Shops",
+      "irs_description": "Miscellaneous Apparel and Accessory Shops"
+    },
+    {
+      "mcc": "5712",
+      "description": "Furniture, Home Furnishings, and Equipment Stores, ExceptAppliances",
+      "irs_description": "Furniture, Home Furnishings, and Equipment Stores, Except Appliances"
+    },
+    {
+      "mcc": "5713",
+      "description": "Floor Covering Stores",
+      "irs_description": "Floor Covering Stores"
+    },
+    {
+      "mcc": "5714",
+      "description": "Drapery, Window Covering and Upholstery Stores",
+      "irs_description": "Drapery, Window Covering, and Upholstery Stores"
+    },
+    {
+      "mcc": "5718",
+      "description": "Fireplace, Fireplace Screens, and Accessories Stores",
+      "irs_description": "Fireplace, Fireplace Screens, and Accessories Stores"
+    },
+    {
+      "mcc": "5719",
+      "description": "Miscellaneous Home Furnishing Specialty Stores",
+      "irs_description": "Miscellaneous Home Furnishing Specialty Stores"
+    },
+    {
+      "mcc": "5722",
+      "description": "Household Appliance Stores",
+      "irs_description": "Household Appliance Stores"
+    },
+    {
+      "mcc": "5732",
+      "description": "Electronic Sales",
+      "irs_description": "Electronics Stores"
+    },
+    {
+      "mcc": "5733",
+      "description": "Music Stores, Musical Instruments, Piano Sheet Music",
+      "irs_description": "Music Stores-Musical Instruments, Pianos, and Sheet Music"
+    },
+    {
+      "mcc": "5734",
+      "description": "Computer Software Stores",
+      "irs_description": "Computer Software Stores"
+    },
+    {
+      "mcc": "5735",
+      "description": "Record Shops",
+      "irs_description": "Record Stores"
+    },
+    {
+      "mcc": "5811",
+      "description": "Caterers",
+      "irs_description": "Caterers"
+    },
+    {
+      "mcc": "5812",
+      "description": "Eating places and Restaurants",
+      "irs_description": "Eating Places, Restaurants"
+    },
+    {
+      "mcc": "5813",
+      "description": "Drinking Places (Alcoholic Beverages), Bars, Taverns, Cocktail lounges, Nightclubs and Discotheques",
+      "irs_description": "Drinking Places"
+    },
+    {
+      "mcc": "5814",
+      "description": "Fast Food Restaurants",
+      "irs_description": "Fast Food Restaurants"
+    },
+    {
+      "mcc": "5815",
+      "description": "Digital Goods: Media, Books, Movies, Music",
+      "irs_description": ""
+    },
+    {
+      "mcc": "5816",
+      "description": "Digital Goods: Games",
+      "irs_description": ""
+    },
+    {
+      "mcc": "5817",
+      "description": "Digital Goods: Applications (Excludes Games)",
+      "irs_description": ""
+    },
+    {
+      "mcc": "5818",
+      "description": "Digital Goods: Large Digital Goods Merchant",
+      "irs_description": ""
+    },
+    {
+      "mcc": "5832",
+      "description": "Antique Shops \u2013 Sales, Repairs, and Restoration Services",
+      "irs_description": ""
+    },
+    {
+      "mcc": "5912",
+      "description": "Drug Stores and Pharmacies",
+      "irs_description": "Drug Stores and Pharmacies"
+    },
+    {
+      "mcc": "5921",
+      "description": "Package Stores \u2013 Beer, Wine, and Liquor",
+      "irs_description": "Package Stores-Beer, Wine, and Liquor"
+    },
+    {
+      "mcc": "5931",
+      "description": "Used Merchandise and Secondhand Stores",
+      "irs_description": "Used Merchandise and Secondhand Stores"
+    },
+    {
+      "mcc": "5932",
+      "description": "Antique Shops",
+      "irs_description": "Antique Shops"
+    },
+    {
+      "mcc": "5933",
+      "description": "Pawn Shops and Salvage Yards",
+      "irs_description": "Pawn Shops"
+    },
+    {
+      "mcc": "5935",
+      "description": "Wrecking and Salvage Yards",
+      "irs_description": "Wrecking and Salvage Yards"
+    },
+    {
+      "mcc": "5937",
+      "description": "Antique Reproductions",
+      "irs_description": "Antique Reproductions"
+    },
+    {
+      "mcc": "5940",
+      "description": "Bicycle Shops \u2013 Sales and Service",
+      "irs_description": "Bicycle Shops"
+    },
+    {
+      "mcc": "5941",
+      "description": "Sporting Goods Stores",
+      "irs_description": "Sporting Goods Stores"
+    },
+    {
+      "mcc": "5942",
+      "description": "Book Stores",
+      "irs_description": "Book Stores"
+    },
+    {
+      "mcc": "5943",
+      "description": "Stationery Stores, Office and School Supply Stores",
+      "irs_description": "Stationery Stores, Office, and School Supply Stores"
+    },
+    {
+      "mcc": "5944",
+      "description": "Watch, Clock, Jewelry, and Silverware Stores",
+      "irs_description": "Jewelry Stores, Watches, Clocks, and Silverware Stores"
+    },
+    {
+      "mcc": "5945",
+      "description": "Hobby, Toy, and Game Shops",
+      "irs_description": "Hobby, Toy, and Game Shops"
+    },
+    {
+      "mcc": "5946",
+      "description": "Camera and Photographic Supply Stores",
+      "irs_description": "Camera and Photographic Supply Stores"
+    },
+    {
+      "mcc": "5947",
+      "description": "Card Shops, Gift, Novelty, and Souvenir Shops",
+      "irs_description": "Gift, Card, Novelty, and Souvenir Shops"
+    },
+    {
+      "mcc": "5948",
+      "description": "Leather Goods Stores",
+      "irs_description": "Luggage and Leather Goods Stores"
+    },
+    {
+      "mcc": "5949",
+      "description": "Sewing, Needle, Fabric, and Price Goods Stores",
+      "irs_description": "Sewing, Needlework, Fabric, and Piece Goods Stores"
+    },
+    {
+      "mcc": "5950",
+      "description": "Glassware/Crystal Stores",
+      "irs_description": "Glassware, Crystal Stores"
+    },
+    {
+      "mcc": "5960",
+      "description": "Direct Marketing- Insurance Service",
+      "irs_description": "Direct Marketing - Insurance Services"
+    },
+    {
+      "mcc": "5961",
+      "description": "Mail Order Houses Including Catalog Order Stores, Book/Record Clubs (No longer permitted for U.S. original presentments)",
+      "irs_description": ""
+    },
+    {
+      "mcc": "5962",
+      "description": "Direct Marketing \u2013 Travel Related Arrangements Services",
+      "irs_description": "Direct Marketing - Travel"
+    },
+    {
+      "mcc": "5963",
+      "description": "Door-to-Door Sales",
+      "irs_description": "Door-To-Door Sales"
+    },
+    {
+      "mcc": "5964",
+      "description": "Direct Marketing \u2013 Catalog Merchant",
+      "irs_description": "Direct Marketing - Catalog Merchant"
+    },
+    {
+      "mcc": "5965",
+      "description": "Direct Marketing \u2013 Catalog and Catalog and Retail Merchant",
+      "irs_description": "Direct Marketing - Combination Catalog and Retail Merchant"
+    },
+    {
+      "mcc": "5966",
+      "description": "Direct Marketing- Outbound Telemarketing Merchant",
+      "irs_description": "Direct Marketing - Outbound Tele"
+    },
+    {
+      "mcc": "5967",
+      "description": "Direct Marketing \u2013 Inbound Teleservices Merchant",
+      "irs_description": "Direct Marketing - Inbound Tele"
+    },
+    {
+      "mcc": "5968",
+      "description": "Direct Marketing \u2013 Continuity/Subscription Merchant",
+      "irs_description": "Direct Marketing - Subscription"
+    },
+    {
+      "mcc": "5969",
+      "description": "Direct Marketing \u2013 Not Elsewhere Classified",
+      "irs_description": "Direct Marketing - Other "
+    },
+    {
+      "mcc": "5970",
+      "description": "Artist\u2019s Supply and Craft Shops",
+      "irs_description": "Artist\u2019s Supply and Craft Shops"
+    },
+    {
+      "mcc": "5971",
+      "description": "Art Dealers and Galleries",
+      "irs_description": "Art Dealers and Galleries"
+    },
+    {
+      "mcc": "5972",
+      "description": "Stamp and Coin Stores \u2013 Philatelic and Numismatic Supplies",
+      "irs_description": "Stamp and Coin Stores"
+    },
+    {
+      "mcc": "5973",
+      "description": "Religious Goods Stores",
+      "irs_description": "Religious Goods Stores"
+    },
+    {
+      "mcc": "5975",
+      "description": "Hearing Aids \u2013 Sales, Service, and Supply Stores",
+      "irs_description": "Hearing Aids Sales and Supplies"
+    },
+    {
+      "mcc": "5976",
+      "description": "Orthopedic Goods Prosthetic Devices",
+      "irs_description": "Orthopedic Goods - Prosthetic Devices"
+    },
+    {
+      "mcc": "5977",
+      "description": "Cosmetic Stores",
+      "irs_description": "Cosmetic Stores"
+    },
+    {
+      "mcc": "5978",
+      "description": "Typewriter Stores \u2013 Sales, Rental, Service",
+      "irs_description": "Typewriter Stores"
+    },
+    {
+      "mcc": "5983",
+      "description": "Fuel \u2013 Fuel Oil, Wood, Coal, Liquefied Petroleum",
+      "irs_description": "Fuel Dealers (Non Automotive)"
+    },
+    {
+      "mcc": "5992",
+      "description": "Florists",
+      "irs_description": "Florists"
+    },
+    {
+      "mcc": "5993",
+      "description": "Cigar Stores and Stands",
+      "irs_description": "Cigar Stores and Stands"
+    },
+    {
+      "mcc": "5994",
+      "description": "News Dealers and Newsstands",
+      "irs_description": "News Dealers and Newsstands"
+    },
+    {
+      "mcc": "5995",
+      "description": "Pet Shops, Pet Foods, and Supplies Stores",
+      "irs_description": "Pet Shops, Pet Food, and Supplies"
+    },
+    {
+      "mcc": "5996",
+      "description": "Swimming Pools \u2013 Sales, Service, and Supplies",
+      "irs_description": "Swimming Pools Sales"
+    },
+    {
+      "mcc": "5997",
+      "description": "Electric Razor Stores \u2013 Sales and Service",
+      "irs_description": "Electric Razor Stores"
+    },
+    {
+      "mcc": "5998",
+      "description": "Tent and Awning Shops",
+      "irs_description": "Tent and Awning Shops"
+    },
+    {
+      "mcc": "5999",
+      "description": "Miscellaneous and Specialty Retail Stores",
+      "irs_description": "Miscellaneous Specialty Retail"
+    },
+    {
+      "mcc": "7011",
+      "description": "Lodging \u2013 Hotels, Motels, Resorts, Central Reservation Services (not elsewhere classified)",
+      "irs_description": "Hotels, Motels, and Resorts"
+    },
+    {
+      "mcc": "7012",
+      "description": "Timeshares",
+      "irs_description": "Timeshares"
+    },
+    {
+      "mcc": "7032",
+      "description": "Sporting and Recreational Camps",
+      "irs_description": "Sporting/Recreation Camps"
+    },
+    {
+      "mcc": "7033",
+      "description": "Trailer Parks and Camp Grounds",
+      "irs_description": "Trailer Parks, Campgrounds"
+    },
+    {
+      "mcc": "7210",
+      "description": "Laundry, Cleaning, and Garment Services",
+      "irs_description": "Laundry, Cleaning Services"
+    },
+    {
+      "mcc": "7211",
+      "description": "Laundry \u2013 Family and Commercial",
+      "irs_description": "Laundries "
+    },
+    {
+      "mcc": "7216",
+      "description": "Dry Cleaners",
+      "irs_description": "Dry Cleaners"
+    },
+    {
+      "mcc": "7217",
+      "description": "Carpet and Upholstery Cleaning",
+      "irs_description": "Carpet/Upholstery Cleaning"
+    },
+    {
+      "mcc": "7221",
+      "description": "Photographic Studios",
+      "irs_description": "Photographic Studios"
+    },
+    {
+      "mcc": "7230",
+      "description": "Barber and Beauty Shops",
+      "irs_description": "Barber and Beauty Shops"
+    },
+    {
+      "mcc": "7251",
+      "description": "Shop Repair Shops and Shoe Shine Parlors, and Hat Cleaning Shops",
+      "irs_description": "Shoe Repair/Hat Cleaning"
+    },
+    {
+      "mcc": "7261",
+      "description": "Funeral Service and Crematories",
+      "irs_description": "Funeral Services, Crematories"
+    },
+    {
+      "mcc": "7273",
+      "description": "Dating and Escort Services",
+      "irs_description": "Dating/Escort Services"
+    },
+    {
+      "mcc": "7276",
+      "description": "Tax Preparation Service",
+      "irs_description": "Tax Preparation Services"
+    },
+    {
+      "mcc": "7277",
+      "description": "Counseling Service \u2013 Debt, Marriage, Personal",
+      "irs_description": "Counseling Services"
+    },
+    {
+      "mcc": "7278",
+      "description": "Buying/Shopping Services, Clubs",
+      "irs_description": "Buying/Shopping Services"
+    },
+    {
+      "mcc": "7296",
+      "description": "Clothing Rental \u2013 Costumes, Formal Wear, Uniforms",
+      "irs_description": "Clothing Rental "
+    },
+    {
+      "mcc": "7297",
+      "description": "Massage Parlors",
+      "irs_description": "Massage Parlors"
+    },
+    {
+      "mcc": "7298",
+      "description": "Health and Beauty Shops",
+      "irs_description": "Health and Beauty Spas"
+    },
+    {
+      "mcc": "7299",
+      "description": "Miscellaneous Personal Services ( not elsewhere classifies)",
+      "irs_description": "Miscellaneous General Services"
+    },
+    {
+      "mcc": "7511",
+      "description": "Truck Stop",
+      "irs_description": "Truck Stop"
+    },
+    {
+      "mcc": "7512",
+      "description": "Car Rental Companies ( Not Listed Below)",
+      "irs_description": "Car Rental Agencies"
+    },
+    {
+      "mcc": "7513",
+      "description": "Truck and Utility Trailer Rentals",
+      "irs_description": "Truck/Utility Trailer Rentals"
+    },
+    {
+      "mcc": "7519",
+      "description": "Motor Home and Recreational Vehicle Rentals",
+      "irs_description": "Recreational Vehicle Rentals"
+    },
+    {
+      "mcc": "7523",
+      "description": "Automobile Parking Lots and Garages",
+      "irs_description": "Parking Lots, Garages"
+    },
+    {
+      "mcc": "7531",
+      "description": "Automotive Body Repair Shops",
+      "irs_description": "Auto Body Repair Shops"
+    },
+    {
+      "mcc": "7534",
+      "description": "Tire Re-treading and Repair Shops",
+      "irs_description": "Tire Retreading and Repair"
+    },
+    {
+      "mcc": "7535",
+      "description": "Paint Shops \u2013 Automotive",
+      "irs_description": "Auto Paint Shops"
+    },
+    {
+      "mcc": "7538",
+      "description": "Automotive Service Shops",
+      "irs_description": "Auto Service Shops"
+    },
+    {
+      "mcc": "7542",
+      "description": "Car Washes",
+      "irs_description": "Car Washes"
+    },
+    {
+      "mcc": "7549",
+      "description": "Towing Services",
+      "irs_description": "Towing Services"
+    }
+  ]
+}
