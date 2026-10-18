@@ -463,8 +463,13 @@ async def lookup_rewards(
     elif request.domain:
         merchant = next((m for m in get_merchants() if request.domain in m.aliases or m.domain == request.domain), None)
 
-    # Get user's active rewards
+    # Get user's active rewards. A resolved merchant scopes the lookup
+    # server-side so every direct reward survives any limit — low-scoring
+    # direct rewards (e.g. Starbucks BOGO/points) must never be crowded out
+    # of the page by higher-value rewards from other merchants.
     rewards = [r for r in get_rewards() if r.user_id == user_id and r.status == RewardStatus.active]
+    if merchant is not None:
+        rewards = [r for r in rewards if r.merchant_id == merchant.id]
 
     # Score rewards
     scored: list[ScoredReward] = []

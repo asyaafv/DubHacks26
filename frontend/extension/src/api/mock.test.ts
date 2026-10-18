@@ -25,6 +25,13 @@ describe('mock lookup', () => {
     expect(result.merchant).toBeNull();
     expect(result.rewards).toEqual([]);
   });
+
+  it('returns every direct Starbucks reward even though both score low', () => {
+    const result = mockLookup({ user_id: DEMO_USER_ID, domain: 'starbucks.com', limit: 10 }, NOW);
+    expect(result.merchant?.name).toBe('Starbucks');
+    expect(result.rewards.map((s) => s.reward.kind).sort()).toEqual(['bogo', 'points']);
+    expect(result.rewards.every((s) => s.match_component === 1)).toBe(true);
+  });
 });
 
 describe('mock stack', () => {
