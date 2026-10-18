@@ -343,15 +343,46 @@ export function mockRewardAddedEvent(): Event {
   };
 }
 
+/** Live events send kind + value (e.g. percent_off / "10"); mocks send a prebuilt label. */
+function eventLabel(data: Record<string, unknown>): string {
+  if (typeof data.label === 'string') return data.label;
+  const kind = typeof data.kind === 'string' ? data.kind : '';
+  const value = typeof data.value === 'string' || typeof data.value === 'number' ? String(data.value) : '';
+  if (!kind) return '';
+  switch (kind) {
+    case RewardKind.percent_off:
+      return value ? `${money(value)}% off` : 'Percent off';
+    case RewardKind.amount_off:
+      return value ? `$${moneyString(money(value))} off` : 'Amount off';
+    case RewardKind.cashback:
+      return value ? `$${moneyString(money(value))} cashback` : 'Cashback';
+    case RewardKind.points:
+      return value ? `${money(value)} points` : 'Points';
+    case RewardKind.free_item:
+      return 'Free item';
+    case RewardKind.bogo:
+      return 'Buy one, get one';
+    default:
+      return value;
+  }
+}
+
 export function toastMessage(event: Event): string | null {
   if (event.event_type !== EventType.reward_added) return null;
   const data = event.data ?? {};
   const merchant = typeof data.merchant_name === 'string' ? data.merchant_name : '';
-  const label = typeof data.label === 'string' ? data.label : '';
+  const label = eventLabel(data);
   const code = typeof data.code === 'string' ? data.code : '';
   if (!merchant && !label && !code) return 'New reward added';
   const detail = [merchant, label].filter(Boolean).join(' ');
   return code ? `New reward added · ${detail} · ${code}` : `New reward added · ${detail}`;
+}
+
+/** Mock fallback for POST /rewards/{id}/redeem: returns the seed reward marked used. */
+export function mockRedeem(rewardId: string): Reward {
+  const reward = allRewards().find((candidate) => candidate.id === rewardId);
+  if (!reward) throw new Error(`Reward ${rewardId} not found`);
+  return { ...reward, status: RewardStatus.used };
 }
 
 export function mockWallet(now: Date = new Date()): Wallet {

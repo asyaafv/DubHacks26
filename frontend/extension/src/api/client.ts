@@ -1,9 +1,10 @@
 import { API_BASE, DEMO_USER_ID, USE_MOCKS } from './config';
-import { mockLookup, mockRewardAddedEvent, mockStack, mockSync } from './mock';
+import { mockLookup, mockRedeem, mockRewardAddedEvent, mockStack, mockSync } from './mock';
 import type { Event } from '../types';
 import type {
   LookupRequest,
   LookupResult,
+  Reward,
   StackRequest,
   StackResult,
   SyncResponse,
@@ -26,36 +27,88 @@ async function readError(response: Response): Promise<string> {
   return `Request failed (${response.status})`;
 }
 
+/**
+ * True only for network-level failures (server down, DNS, no host permission).
+ * HTTP errors (4xx/5xx) are real backend answers and must surface, not be mocked.
+ */
+function isUnreachable(error: unknown): boolean {
+  return error instanceof TypeError;
+}
+
+/** Live call with an automatic, clearly logged mock fallback when the backend is unreachable. */
+async function liveOrMock<T>(label: string, live: () => Promise<T>, mock: () => T): Promise<T> {
+  if (USE_MOCKS) return mock();
+  try {
+    return await live();
+  } catch (error) {
+    if (!isUnreachable(error)) throw error;
+    console.warn(`[Lapse] backend unreachable at ${API_BASE} — serving MOCK ${label}`, error);
+    return mock();
+  }
+}
+
 export async function lookup(request: Omit<LookupRequest, 'user_id'>): Promise<LookupResult> {
   const payload: LookupRequest = { ...request, user_id: DEMO_USER_ID, limit: request.limit ?? 3 };
-  if (USE_MOCKS) return mockLookup(payload);
-  const response = await fetch(`${API_BASE}/lookup`, {
-    method: 'POST',
-    headers: headers(),
-    body: JSON.stringify(payload),
-  });
-  if (!response.ok) throw new Error(await readError(response));
-  return response.json() as Promise<LookupResult>;
+  return liveOrMock(
+    'lookup',
+    async () => {
+      const response = await fetch(`${API_BASE}/lookup`, {
+        method: 'POST',
+        headers: headers(),
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) throw new Error(await readError(response));
+      return response.json() as Promise<LookupResult>;
+    },
+    () => mockLookup(payload),
+  );
 }
 
 export async function stack(request: Omit<StackRequest, 'user_id'>): Promise<StackResult> {
   const payload: StackRequest = { ...request, user_id: DEMO_USER_ID, items: request.items ?? [] };
-  if (USE_MOCKS) return mockStack(payload);
-  const response = await fetch(`${API_BASE}/stack`, {
-    method: 'POST',
-    headers: headers(),
-    body: JSON.stringify(payload),
-  });
-  if (!response.ok) throw new Error(await readError(response));
-  return response.json() as Promise<StackResult>;
+  return liveOrMock(
+    'stack',
+    async () => {
+      const response = await fetch(`${API_BASE}/stack`, {
+        method: 'POST',
+        headers: headers(),
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) throw new Error(await readError(response));
+      return response.json() as Promise<StackResult>;
+    },
+    () => mockStack(payload),
+  );
 }
 
 export async function sync(since?: string): Promise<SyncResponse> {
-  if (USE_MOCKS) return mockSync(since);
   const params = since ? `?since=${encodeURIComponent(since)}` : '';
-  const response = await fetch(`${API_BASE}/sync${params}`, { headers: headers() });
-  if (!response.ok) throw new Error(await readError(response));
-  return response.json() as Promise<SyncResponse>;
+  return liveOrMock(
+    'sync',
+    async () => {
+      const response = await fetch(`${API_BASE}/sync${params}`, { headers: headers() });
+      if (!response.ok) throw new Error(await readError(response));
+      return response.json() as Promise<SyncResponse>;
+    },
+    () => mockSync(since),
+  );
+}
+
+/** POST /rewards/{id}/redeem — marks the reward used and records the redemption. */
+export async function redeemReward(rewardId: string, saved?: string): Promise<Reward> {
+  return liveOrMock(
+    'redeem',
+    async () => {
+      const response = await fetch(`${API_BASE}/rewards/${rewardId}/redeem`, {
+        method: 'POST',
+        headers: headers(),
+        body: JSON.stringify(saved ? { saved } : {}),
+      });
+      if (!response.ok) throw new Error(await readError(response));
+      return response.json() as Promise<Reward>;
+    },
+    () => mockRedeem(rewardId),
+  );
 }
 
 /**

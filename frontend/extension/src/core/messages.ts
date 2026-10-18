@@ -40,11 +40,18 @@ export interface DismissToastMessage {
   id: string;
 }
 
+export interface RedeemRewardMessage {
+  type: 'REDEEM_REWARD';
+  rewardId: string;
+  saved?: string;
+}
+
 export type ExtensionMessage =
   | PageVisitMessage
   | CalculateStackMessage
   | GetStateMessage
-  | DismissToastMessage;
+  | DismissToastMessage
+  | RedeemRewardMessage;
 
 export type RpcResult<T> = { ok: true; data: T } | { ok: false; error: string };
 

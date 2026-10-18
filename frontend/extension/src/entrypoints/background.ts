@@ -1,4 +1,4 @@
-import { lookup, listenForEvents, stack, sync } from '../api/client';
+import { lookup, listenForEvents, redeemReward, stack, sync } from '../api/client';
 import { USE_MOCKS } from '../api/config';
 import { toastMessage } from '../api/mock';
 import {
@@ -6,6 +6,7 @@ import {
   type CalculateStackMessage,
   type DismissToastMessage,
   type PageVisitMessage,
+  type RedeemRewardMessage,
   type RpcResult,
   type StoredState,
   type ToastRecord,
@@ -24,6 +25,8 @@ export default defineBackground(() => {
           return { ok: true, data: await readState() };
         case 'DISMISS_TOAST':
           return dismissToast(message as DismissToastMessage);
+        case 'REDEEM_REWARD':
+          return handleRedeem(message as RedeemRewardMessage);
         default:
           return { ok: false, error: 'Unknown message' };
       }
@@ -93,6 +96,22 @@ async function handleStack(message: CalculateStackMessage): Promise<RpcResult<un
   return { ok: true, data: result };
 }
 
+async function handleRedeem(message: RedeemRewardMessage): Promise<RpcResult<unknown>> {
+  const reward = await redeemReward(message.rewardId, message.saved);
+  // Refresh the current lookup so the used reward leaves the popup list and badge.
+  const state = await readState();
+  if (state.currentDomain) {
+    await handlePageVisit({
+      type: 'PAGE_VISIT',
+      domain: state.currentDomain,
+      isCheckout: state.isCheckout,
+      url: state.currentUrl,
+      title: state.pageTitle,
+    });
+  }
+  return { ok: true, data: reward };
+}
+
 async function dismissToast(message: DismissToastMessage): Promise<RpcResult<{ toasts: ToastRecord[] }>> {
   const state = await readState();
   const toasts = state.toasts.filter((toast) => toast.id !== message.id);
@@ -150,16 +169,34 @@ async function poll(onEvent: (event: Event) => Promise<void>): Promise<void> {
 
 async function startEvents(): Promise<void> {
   console.info(`[Lapse] ${USE_MOCKS ? 'mock' : 'live'} mode`);
-  try {
+  if (USE_MOCKS) {
     for await (const event of listenForEvents()) {
       await publishEvent(event);
     }
-  } catch (error) {
-    console.warn('[Lapse] /events unavailable, polling /sync', error);
+    return;
+  }
+
+  // Live mode: keep the SSE stream alive across drops; after repeated
+  // failures fall back to /sync polling (which itself mock-falls-back).
+  let failures = 0;
+  while (failures < 5) {
     try {
-      await poll(publishEvent);
-    } catch (pollError) {
-      console.warn('[Lapse] sync fallback failed', pollError);
+      for await (const event of listenForEvents()) {
+        failures = 0;
+        await publishEvent(event);
+      }
+      console.warn('[Lapse] /events stream ended, reconnecting');
+    } catch (error) {
+      failures += 1;
+      console.warn(`[Lapse] /events unavailable (attempt ${failures})`, error);
     }
+    await new Promise((resolve) => setTimeout(resolve, Math.min(1000 * 2 ** failures, 15_000)));
+  }
+
+  console.warn('[Lapse] /events gave up, polling /sync instead');
+  try {
+    await poll(publishEvent);
+  } catch (pollError) {
+    console.warn('[Lapse] sync fallback failed', pollError);
   }
 }

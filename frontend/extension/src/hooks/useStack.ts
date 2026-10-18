@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { RpcResult } from '../core/messages';
 import { sendMessage } from '../core/runtime';
-import type { StackResult } from '../types';
+import type { Reward, StackResult } from '../types';
 
 export function useStack(domain: string) {
   const [cartTotal, setCartTotal] = useState('');
@@ -44,5 +44,14 @@ export function useStack(domain: string) {
     }
   }
 
-  return { cartTotal, setCartTotal, stack, stacking, error, calculate };
+  async function markUsed(rewardId: string, saved?: string) {
+    const response = await sendMessage<RpcResult<Reward>>({
+      type: 'REDEEM_REWARD',
+      rewardId,
+      saved,
+    });
+    if (!response.ok) throw new Error(response.error);
+  }
+
+  return { cartTotal, setCartTotal, stack, stacking, error, calculate, markUsed };
 }

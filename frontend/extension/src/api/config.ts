@@ -13,10 +13,11 @@ function envValue(value: string | undefined, fallback: string): string {
 export const API_BASE = envValue(env.VITE_API_BASE, 'http://localhost:8000').replace(/\/$/, '');
 
 /**
- * Mock switch. Unset or `true` serves `shared/seed` so the popup works with no backend.
- * Set `VITE_USE_MOCKS=false` and rebuild to call the API.
+ * Mock switch. Live API calls are the default; set `VITE_USE_MOCKS=true` to force
+ * `shared/seed` data with no backend. In live mode the client still falls back to
+ * mocks automatically (with a console warning) when the backend is unreachable.
  */
-export const USE_MOCKS = env.VITE_USE_MOCKS !== 'false';
+export const USE_MOCKS = env.VITE_USE_MOCKS === 'true';
 
 /** Web app dashboard. Not part of the API contract; override with `VITE_DASHBOARD_URL`. */
 export const DASHBOARD_URL = envValue(env.VITE_DASHBOARD_URL, 'http://localhost:5173/dashboard');

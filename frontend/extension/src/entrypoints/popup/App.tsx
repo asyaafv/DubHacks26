@@ -105,7 +105,7 @@ export default function App() {
             {stack.error ? <p className="mt-2 text-xs text-red-700">{stack.error}</p> : null}
           </form>
 
-          {stack.stack ? <StackResultView stack={stack.stack} /> : null}
+          {stack.stack ? <StackResultView stack={stack.stack} onMarkUsed={stack.markUsed} /> : null}
         </>
       ) : null}
 

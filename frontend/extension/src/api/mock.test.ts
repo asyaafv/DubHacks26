@@ -50,7 +50,8 @@ describe('mock stack', () => {
     );
     expect(result.chosen_rewards[0]?.reward.code).toBe('HCOFALL10');
     expect(result.final_price).toBe('72.00');
-    expect(result.recommended_card?.name).toContain('Freedom Unlimited');
+    // main's seed gives US Bank Cash+ 5% on MCC 5651, so it beats Freedom Unlimited.
+    expect(result.recommended_card?.name).toContain('Cash+');
   });
 });
 
