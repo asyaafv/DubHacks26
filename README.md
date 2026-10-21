@@ -1,11 +1,24 @@
 <div align="center">
-  <img src="frontend/extension/public/icon/128.png" alt="Lapse icon" width="96" />
+  <img src="frontend/extension/public/icon/icon.svg" alt="Lapse logo" width="200" />
 
 # Lapse
 
 **Every reward you've already earned — found, stacked, and spent before it lapses.**
 
-🏆 DubHacks 2026 · Visa "Reimagine Shopping" track · Built by Aamir, Selina, Asya & Adem
+<p>
+  <img src="https://img.shields.io/badge/VISA%20REIMAGINE%20SHOPPING-WINNER%20(%245%2C000)-1434CB?style=for-the-badge&labelColor=555555" alt="Visa Reimagine Shopping — Winner ($5,000)" />
+</p>
+<p>
+  <img src="https://img.shields.io/badge/SIDE%20SHIFT%20BEST%20STARTUP-3RD%20PLACE-FF5B1A?style=for-the-badge&labelColor=555555" alt="Side Shift Best Startup — 3rd Place" />
+</p>
+<p>
+  <a href="https://dubhacks-2026.devpost.com/"><img src="https://img.shields.io/badge/DUBHACKS-2026-111111?style=for-the-badge&labelColor=555555" alt="DubHacks 2026" /></a>
+  <a href="https://devpost.com/software/vouch-ld4voh"><img src="https://img.shields.io/badge/READ%20THE%20STORY-DEVPOST-6C5CE7?style=for-the-badge&labelColor=555555" alt="Read the story on Devpost" /></a>
+</p>
+
+**Awards:** 🏆 Visa "Reimagine Shopping" Main Track — **Winner ($5,000)** · 🥉 Side Shift Best Startup Track — **3rd Place**
+
+Built at DubHacks 2026 by Aamir, Selina, Asya & Adem
 
 </div>
 
