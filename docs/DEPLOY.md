@@ -35,12 +35,22 @@ Every variable the backend reads (`grep -rn "os.environ\|getenv" backend/`):
 | `POSTMARK_SERVER_TOKEN` | for sending | Postmark server API token (demo console / outbound) |
 | `POSTMARK_INBOUND_ADDRESS` | for inbound | e.g. `abc123...@inbound.postmarkapp.com` (see docs/POSTMARK_SETUP.md) |
 | `DEMO_FROM_EMAIL` | for sending | Verified sender signature in Postmark |
+| `CORS_EXTRA_ORIGINS` | no | Comma-separated **exact** extra origins (`scheme://host[:port]`) allowed by CORS, e.g. `https://dash.172-234-249-8.sslip.io`. Set it when a deployed dashboard is served from a different origin than the API. |
+| `CORS_EXTRA_ORIGIN_REGEX` | no | One extra regex OR'd into the allowed-origin pattern, for origins with variable parts, e.g. `https://([a-z0-9-]+\.)*172-234-249-8\.sslip\.io`. |
 
 (Test-only, never set in deploys: `TEST_DATABASE_URL`, `NODE_BINARY`,
 `PLAYWRIGHT_NODE_MODULE`.)
 
-CORS: `chrome-extension://*` and localhost origins are already allowed in code
-(`backend/app/main.py`) — nothing to configure.
+CORS: `chrome-extension://*` and localhost origins (any port) are always
+allowed in code (`backend/app/main.py`) — nothing to configure for the
+extension or local dev. For a deployed dashboard on its own origin, set
+`CORS_EXTRA_ORIGINS` (and/or `CORS_EXTRA_ORIGIN_REGEX`) on the API container,
+e.g. for the Linode deploy serving the dashboard at
+`https://dash.172-234-249-8.sslip.io`:
+
+```bash
+-e CORS_EXTRA_ORIGINS='https://dash.172-234-249-8.sslip.io'
+```
 
 ## Local build & smoke test
 
@@ -145,6 +155,8 @@ docker run -d \
   -e POSTMARK_SERVER_TOKEN='<your-postmark-server-token>' \
   -e POSTMARK_INBOUND_ADDRESS='<hash>@inbound.postmarkapp.com' \
   -e DEMO_FROM_EMAIL='demo@yourdomain.com' \
+  # If the dashboard is served from its own origin (e.g. dash.<ip>.sslip.io):
+  # -e CORS_EXTRA_ORIGINS='https://dash.172-234-249-8.sslip.io' \
   # Optional Postgres (needed for /wallet and /sync; see env var table):
   # -e DATABASE_URL='postgresql://user:pass@host:5432/lapse' \
   # -e PERK_ENCRYPTION_KEY='<openssl rand -hex 32>' \

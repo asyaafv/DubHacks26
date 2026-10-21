@@ -45,4 +45,9 @@ services:
       - key: PERK_ALLOW_DEMO_IDENTITY
         value: "true"
       # CORS note: chrome-extension://* and localhost origins are allowed in
-      # code (backend/app/main.py); no env var needed.
+      # code (backend/app/main.py); no env var needed for the extension.
+      # If a deployed dashboard runs on its own origin, allow it here:
+      - key: CORS_EXTRA_ORIGINS # optional — comma-separated exact origins,
+        sync: false #            e.g. https://dash.example.com
+      - key: CORS_EXTRA_ORIGIN_REGEX # optional — extra allowed-origin regex,
+        sync: false #                  e.g. https://([a-z0-9-]+\.)*example\.com
