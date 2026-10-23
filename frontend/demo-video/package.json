@@ -1,0 +1,30 @@
+{
+  "name": "lapse-demo-video",
+  "description": "Animated 30s intro infographic for the Lapse demo (Remotion)",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts LapseIntro out/lapse-intro.mp4",
+    "render:narrated": "remotion render src/index.ts LapseIntroNarrated out/lapse-intro-narrated.mp4",
+    "render:rehearsal": "remotion render src/index.ts LapseIntroRehearsal out/lapse-intro-rehearsal.mp4",
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.536",
+    "@remotion/google-fonts": "^4.0.536",
+    "@remotion/media-utils": "^4.0.536",
+    "@remotion/motion-blur": "^4.0.536",
+    "@remotion/noise": "^4.0.536",
+    "@remotion/paths": "^4.0.536",
+    "@remotion/shapes": "^4.0.536",
+    "@remotion/transitions": "^4.0.536",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "^4.0.536"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^7.0.2"
+  },
+  "private": true
+}
